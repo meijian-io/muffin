@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:muffin/navigator/muffin_navigator.dart';
 
 import 'main.dart';
 
@@ -35,7 +36,7 @@ class FirstScreen extends StatelessWidget {
               ),
               TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop('/first');
+                    MuffinNavigator.of(context).pop();
                   },
                   child: Text('back with data'))
             ],

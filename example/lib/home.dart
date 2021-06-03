@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'main.dart';
+import 'package:muffin/navigator/muffin_navigator.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -12,7 +11,7 @@ class HomeScreen extends StatelessWidget {
             Text('Home Screen'),
             TextButton(
                 onPressed: () async {
-                  MyRouteDelegate.of(context).push('/first');
+                  MuffinNavigator.of(context).push(Uri(path: '/first'));
                 },
                 child: Text('To First Screen')),
             TextButton(onPressed: () async {}, child: Text('To First Screen'))
