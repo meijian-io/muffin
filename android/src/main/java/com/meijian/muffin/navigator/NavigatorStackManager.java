@@ -1,5 +1,8 @@
 package com.meijian.muffin.navigator;
 
+import android.app.Activity;
+
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
 /**
@@ -20,9 +23,18 @@ public class NavigatorStackManager {
 
   private LinkedList<NavigatorStack> stacks = new LinkedList<>();
 
+  private LinkedList<WeakReference<Activity>> activityStacks = new LinkedList<>();
 
   public void push(NavigatorStack stack) {
     stacks.add(stack);
+  }
+
+  public void onActivityStart(Activity activity) {
+    activityStacks.add(new WeakReference<>(activity));
+  }
+
+  public void onActivityDestroyed(Activity activity) {
+    activityStacks.remove(new WeakReference<>(activity));
   }
 
 }
