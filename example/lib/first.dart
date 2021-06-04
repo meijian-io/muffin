@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:muffin/navigator/muffin_navigator.dart';
 
-import 'main.dart';
-
 class FirstScreen extends StatelessWidget {
+  final dynamic arguments;
+
   const FirstScreen({
     Key? key,
+    this.arguments,
   }) : super(key: key);
 
   @override
@@ -31,12 +32,13 @@ class FirstScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline4,
               ),
               Text(
-                'KK',
+                '$arguments',
                 style: Theme.of(context).textTheme.headline4,
               ),
               TextButton(
                   onPressed: () {
-                    MuffinNavigator.of(context).pop();
+                    MuffinNavigator.of(context)
+                        .pop('response from first screen');
                   },
                   child: Text('back with data'))
             ],

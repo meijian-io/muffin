@@ -32,7 +32,10 @@ void second() async {
 Widget getApp() {
   final navigator = MuffinNavigator(initRoute: '/home', routes: {
     '/home': (uri, arguments) => MuffinRoutePage(child: HomeScreen()),
-    '/first': (uri, arguments) => MuffinRoutePage(child: FirstScreen())
+    '/first': (uri, arguments) => MuffinRoutePage(
+            child: FirstScreen(
+          arguments: arguments,
+        ))
   });
   return MaterialApp.router(
     routeInformationParser: MuffinInformationParser(),

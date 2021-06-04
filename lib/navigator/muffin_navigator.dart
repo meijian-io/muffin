@@ -49,7 +49,8 @@ class MuffinNavigator extends RouterDelegate<Uri>
   ///Navigator初始化时默认为 '/'，标记已经是当前home
   @override
   Future<void> setNewRoutePath(Uri configuration) {
-    print(configuration.toString());
+    ///2. setNewRoutePath
+    print('setNewRoutePath ${configuration.toString()}');
     if (configuration.toString() == '/') {
       return navigatorStackManager.push(Uri.parse(initRoute));
     }
@@ -60,6 +61,8 @@ class MuffinNavigator extends RouterDelegate<Uri>
 class MuffinInformationParser extends RouteInformationParser<Uri> {
   @override
   Future<Uri> parseRouteInformation(RouteInformation routeInformation) async {
+    ///1. parseRouteInformation
+    print('parseRouteInformation ${routeInformation.location}');
     return Uri.parse(routeInformation.location!);
   }
 

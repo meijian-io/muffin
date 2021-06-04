@@ -11,7 +11,10 @@ class HomeScreen extends StatelessWidget {
             Text('Home Screen'),
             TextButton(
                 onPressed: () async {
-                  MuffinNavigator.of(context).push(Uri(path: '/first'));
+                  var response = await MuffinNavigator.of(context).pushNamed(
+                      Uri(path: '/first'),
+                      arguments: 'data from home screen');
+                  print(response);
                 },
                 child: Text('To First Screen')),
             TextButton(onPressed: () async {}, child: Text('To First Screen'))

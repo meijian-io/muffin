@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:collection';
+import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +14,18 @@ class NavigatorStackManager extends ChangeNotifier {
   final _pages = <Page>[];
   final _uris = <Uri>[];
 
+  ///callbacks
+  Map<Uri, Completer<dynamic>>? callbacks = {};
+
   List<Page> get pages => UnmodifiableListView(_pages);
 
   NavigatorStackManager({required this.routes});
 
-  Future<void> push(Uri uri, {dynamic arguments}) {
+  /// push a uri, if find the target uri, will add a callback
+  /// internal push, find target uri-> push, otherwise push a [No find page]
+  Future<void> _push(Uri uri, {dynamic arguments}) {
     bool _findRoute = false;
+    Pattern _findPattern = '/';
     for (int i = 0; i < routes.keys.length; i++) {
       final key = routes.keys.elementAt(i);
       if (key.matchAsPrefix(uri.path)?.group(0) == uri.path) {
@@ -26,16 +34,13 @@ class NavigatorStackManager extends ChangeNotifier {
           _findRoute = true;
           break;
         }
-
-        ///添加
-        _pages.add(routes[key]!(uri, arguments));
-        _uris.add(uri);
-
+        _findPattern = key;
         _findRoute = true;
         break;
       }
     }
 
+    ///create page
     if (!_findRoute) {
       var page = MaterialPage(
         child: Scaffold(
@@ -47,18 +52,40 @@ class NavigatorStackManager extends ChangeNotifier {
         ),
       );
       _pages.add(page);
-      _uris.add(uri);
+    } else {
+      _pages.add(routes[_findPattern]!(uri, arguments));
     }
 
-    notifyListeners();
+    ///add to uris
+    _uris.add(uri);
 
-    //TODO response call back
+    notifyListeners();
     return SynchronousFuture(null);
   }
 
-  void pop() {
+  /// only used in [MuffinNavigator] init [MuffinNavigator.setNewRoutePath]
+  Future<void> push(Uri uri, {dynamic arguments}) =>
+      _push(uri, arguments: arguments);
+
+  /// push a page with [Uri], similar to [Navigator.of(context).pushNamed]
+  /// call eg.. - [MuffinNavigator.of(context).pushNamed]
+  Future<T?> pushNamed<T extends Object?>(Uri uri, {dynamic arguments}) async {
+    final Completer<T?> callback = Completer<T?>();
+
+    ///set to current route
+    callbacks![_uris.last] = callback;
+    await _push(uri, arguments: arguments);
+    return callback.future;
+  }
+
+  /// pop with arguments
+  /// similar to [Navigator.of(context).pop]
+  void pop<T extends Object>([T? result]) {
     if (_pages.length > 1) {
       removeLastUri();
+
+      ///find call back
+      callbacks![_uris.last]!.complete(result);
     } else {
       print('can not pop');
     }
