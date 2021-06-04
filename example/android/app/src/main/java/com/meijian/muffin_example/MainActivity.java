@@ -1,18 +1,20 @@
 package com.meijian.muffin_example;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 
 import androidx.annotation.Nullable;
 
 import com.meijian.muffin.navigator.MuffinNavigator;
+import com.meijian.muffin.navigator.PathProvider;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements PathProvider {
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -28,5 +30,13 @@ public class MainActivity extends Activity {
     });
 
     findViewById(R.id.second).setOnClickListener(view -> MuffinNavigator.push(MainActivity.this, "second"));
+  }
+
+  @Override public String getPath() {
+    return "/native_main";
+  }
+
+  @Override public Context getContext() {
+    return MainActivity.this;
   }
 }

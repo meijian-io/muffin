@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,7 @@ class NavigatorStackManager extends ChangeNotifier {
   final _pages = <Page>[];
   final _uris = <Uri>[];
 
-  ///callbacks
+  ///callbacks, use for push async and pop with result
   Map<Uri, Completer<dynamic>>? callbacks = {};
 
   List<Page> get pages => UnmodifiableListView(_pages);
