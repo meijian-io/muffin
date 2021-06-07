@@ -1,11 +1,13 @@
 package com.meijian.muffin.navigator;
 
 import android.app.Activity;
+import android.text.TextUtils;
 
 import com.meijian.muffin.Logger;
 import com.meijian.muffin.MuffinFlutterActivity;
 import com.meijian.muffin.utils.WrappedWeakReference;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -43,9 +45,18 @@ public class NavigatorStackManager {
     Logger.log("stacks", "flutter has pushed ,size = " + stacks.size());
   }
 
-  public void pop(NavigatorStack stack) {
+  public void pop(NavigatorStack stack, HashMap<String, Object> result) {
     stacks.remove(stack);
+    //find next stack
     Logger.log("stacks", "flutter has popped ,size = " + stacks.size());
+    NavigatorStack lastStack = stacks.getFirst();
+    if (lastStack != null) {
+      lastStack.notifyCallbacks(result, stack.getPageName());
+      if (lastStack.getPathProvider() != null) {
+        //check last stack is native, if is native, need remove FlutterActivity
+        originActivityStacks.getFirst().get().finish();
+      }
+    }
   }
 
 
@@ -67,6 +78,18 @@ public class NavigatorStackManager {
       stacks.remove(new NavigatorStack((PathProvider) activity));
       Logger.log("stacks", "size = " + stacks.size());
     }
+  }
+
+
+  public NavigatorStack findTargetNavigatorStack(String pageName) {
+    NavigatorStack targetStack = null;
+    for (NavigatorStack navigatorStack : stacks) {
+      if (TextUtils.equals(navigatorStack.getPageName(), pageName)) {
+        targetStack = navigatorStack;
+        break;
+      }
+    }
+    return targetStack;
   }
 
 }

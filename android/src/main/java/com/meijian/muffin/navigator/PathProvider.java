@@ -2,6 +2,8 @@ package com.meijian.muffin.navigator;
 
 import android.content.Context;
 
+import java.util.HashMap;
+
 /**
  * Created by  on 2021/6/4.
  */
@@ -20,4 +22,7 @@ public interface PathProvider {
    * @return Activity
    */
   Context getContext();
+
+
+  void onFlutterActivityResult(String pageName, HashMap<String, Object> result);
 }

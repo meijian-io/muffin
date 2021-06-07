@@ -51,8 +51,14 @@ public class EngineBinding {
             result.success(new HashMap<>());
             break;
           case "pop":
-            NavigatorStackManager.getInstance().pop(
-                new NavigatorStack(context, (String) call.argument("pageName")));
+            //find target stack remove base on pageName
+            NavigatorStack targetStack = NavigatorStackManager.getInstance()
+                .findTargetNavigatorStack((String) call.argument("pageName"));
+            if (targetStack != null) {
+              //TODO argument Type [Map String ...]
+              NavigatorStackManager.getInstance().pop(
+                  targetStack, (HashMap<String, Object>) call.argument("result"));
+            }
             result.success(new HashMap<>());
             break;
           //Flutter 返回值

@@ -38,7 +38,7 @@ class FirstScreen extends StatelessWidget {
               TextButton(
                   onPressed: () {
                     MuffinNavigator.of(context)
-                        .pop('response from first screen');
+                        .pop({'data': 'response from first screen'});
                   },
                   child: Text('back with data'))
             ],

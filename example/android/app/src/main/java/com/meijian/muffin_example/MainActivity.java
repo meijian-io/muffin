@@ -3,10 +3,12 @@ package com.meijian.muffin_example;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 
 import androidx.annotation.Nullable;
 
+import com.meijian.muffin.navigator.FlutterResult;
 import com.meijian.muffin.navigator.MuffinNavigator;
 import com.meijian.muffin.navigator.PathProvider;
 
@@ -38,5 +40,9 @@ public class MainActivity extends Activity implements PathProvider {
 
   @Override public Context getContext() {
     return MainActivity.this;
+  }
+
+  @Override public void onFlutterActivityResult(String pageName, HashMap<String, Object> result) {
+    Log.e("AAA", (String) result.get("data"));
   }
 }

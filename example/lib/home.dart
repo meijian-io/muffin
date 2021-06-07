@@ -17,7 +17,12 @@ class HomeScreen extends StatelessWidget {
                   print(response);
                 },
                 child: Text('To First Screen')),
-            TextButton(onPressed: () async {}, child: Text('To First Screen'))
+            TextButton(
+                onPressed: () async {
+                  MuffinNavigator.of(context)
+                      .pop({'data': "data from Home Screen"});
+                },
+                child: Text('pop with result'))
           ],
         ),
       ),

@@ -28,10 +28,6 @@ public class MuffinNavigator {
     //while flutter has pushed, then add a new NavigatorStack to NavigatorStackManager
   }
 
-  public static void push(PathProvider provider, String pageName, FlutterResult result) {
-    //这里的context为 activity，这这些栈保存起来。
-  }
-
   public static void push(PathProvider provider, String pageName, Map<String, Object> arguments) {
     Intent intent = new Intent(provider.getContext(), MuffinFlutterActivity.class);
     intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);

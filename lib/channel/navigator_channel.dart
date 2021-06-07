@@ -14,7 +14,8 @@ class NavigatorChannel {
     return await _channel.invokeMethod('push', {'pageName': pageName});
   }
 
-  static Future<dynamic> pop(String pageName) async {
-    return await _channel.invokeMethod('pop', {'pageName': pageName});
+  static Future<dynamic> pop(String pageName, [dynamic result]) async {
+    return await _channel
+        .invokeMethod('pop', {'pageName': pageName, 'result': result});
   }
 }

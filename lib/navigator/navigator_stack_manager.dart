@@ -92,7 +92,7 @@ class NavigatorStackManager extends ChangeNotifier {
     }
 
     ///async native NavigatorStack
-    NavigatorChannel.pop(_uris.last.path);
+    NavigatorChannel.pop(_uris.last.path, result);
   }
 
   void removeLastUri() {

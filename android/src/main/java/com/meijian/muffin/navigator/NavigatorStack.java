@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * Created by  on 2021/6/4.
@@ -27,21 +26,13 @@ public class NavigatorStack {
    */
   private String pageName;
 
-  /**
-   * 事件回调
-   */
-  List<FlutterResult> callbacks = new ArrayList<>();
-
-  public NavigatorStack(PathProvider provider, FlutterResult callback) {
-    this.host = new WeakReference<>((Activity) provider.getContext());
-    this.pageName = provider.getPath();
-    callbacks.add(callback);
-  }
+  private PathProvider pathProvider;
 
 
   public NavigatorStack(PathProvider provider) {
     this.host = new WeakReference<>((Activity) provider.getContext());
     this.pageName = provider.getPath();
+    this.pathProvider = provider;
   }
 
   public NavigatorStack(Activity activity, String pageName) {
@@ -49,8 +40,23 @@ public class NavigatorStack {
     this.pageName = pageName;
   }
 
+
   @Override public boolean equals(Object o) {
     NavigatorStack that = (NavigatorStack) o;
     return TextUtils.equals(that.pageName, that.pageName);
+  }
+
+  public PathProvider getPathProvider() {
+    return pathProvider;
+  }
+
+  public String getPageName() {
+    return pageName;
+  }
+
+  public void notifyCallbacks(HashMap<String, Object> result, String pageName) {
+    if (pathProvider != null) {
+      pathProvider.onFlutterActivityResult(pageName, result);
+    }
   }
 }
