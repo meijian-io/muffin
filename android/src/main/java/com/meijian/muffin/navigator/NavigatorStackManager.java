@@ -2,7 +2,10 @@ package com.meijian.muffin.navigator;
 
 import android.app.Activity;
 
-import java.lang.ref.WeakReference;
+import com.meijian.muffin.Logger;
+import com.meijian.muffin.MuffinFlutterActivity;
+import com.meijian.muffin.utils.WrappedWeakReference;
+
 import java.util.LinkedList;
 
 /**
@@ -21,20 +24,49 @@ public class NavigatorStackManager {
     return manager;
   }
 
+  /**
+   * real stack, contains native and flutters
+   * N1 F(1) F(2) N2
+   * size = 4
+   */
   private LinkedList<NavigatorStack> stacks = new LinkedList<>();
 
-  private LinkedList<WeakReference<Activity>> activityStacks = new LinkedList<>();
+  /**
+   * native activity stack,
+   * N1 F(1) F(2) N2
+   * four pages but three activity size  = 3
+   */
+  private LinkedList<WrappedWeakReference<Activity>> originActivityStacks = new LinkedList<>();
 
   public void push(NavigatorStack stack) {
-    stacks.add(stack);
+    stacks.add(0, stack);
+    Logger.log("stacks", "flutter has pushed ,size = " + stacks.size());
   }
 
-  public void onActivityStart(Activity activity) {
-    activityStacks.add(new WeakReference<>(activity));
+  public void pop(NavigatorStack stack) {
+    stacks.remove(stack);
+    Logger.log("stacks", "flutter has popped ,size = " + stacks.size());
+  }
+
+
+  public void onActivityCreate(Activity activity) {
+    originActivityStacks.add(0, new WrappedWeakReference<>(activity));
+    Logger.log("originActivityStacks", "size = " + originActivityStacks.size());
+    //only add native activity, flutter pages has already added to stack
+    if (activity instanceof PathProvider && !(activity instanceof MuffinFlutterActivity)) {
+      stacks.add(new NavigatorStack((PathProvider) activity));
+      Logger.log("stacks", "size = " + stacks.size());
+    }
   }
 
   public void onActivityDestroyed(Activity activity) {
-    activityStacks.remove(new WeakReference<>(activity));
+    originActivityStacks.remove(new WrappedWeakReference<>(activity));
+    Logger.log("originActivityStacks", "size = " + originActivityStacks.size());
+    //only remove native activity, flutter pages has already removed
+    if (activity instanceof PathProvider && !(activity instanceof MuffinFlutterActivity)) {
+      stacks.remove(new NavigatorStack((PathProvider) activity));
+      Logger.log("stacks", "size = " + stacks.size());
+    }
   }
 
 }

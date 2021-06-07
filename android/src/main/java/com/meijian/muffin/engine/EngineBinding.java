@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 
 
 import com.meijian.muffin.Muffin;
+import com.meijian.muffin.navigator.NavigatorStack;
+import com.meijian.muffin.navigator.NavigatorStackManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,7 @@ public class EngineBinding {
     this(context, entryPoint, null);
   }
 
-  public EngineBinding(Activity context, String entryPoint, final Map<String, Object> arguments) {
+  public EngineBinding(final Activity context, String entryPoint, final Map<String, Object> arguments) {
     flutterEngine = Muffin.getInstance().getEngineGroup().createAndRunEngine(context, entryPoint);
     methodChannel = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "muffin_navigate");
     methodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
@@ -41,6 +43,17 @@ public class EngineBinding {
             } else {
               result.success(new HashMap<String, Object>());
             }
+            break;
+          //flutter has pushed, async stack
+          case "push":
+            NavigatorStackManager.getInstance().push(
+                new NavigatorStack(context, (String) call.argument("pageName")));
+            result.success(new HashMap<>());
+            break;
+          case "pop":
+            NavigatorStackManager.getInstance().pop(
+                new NavigatorStack(context, (String) call.argument("pageName")));
+            result.success(new HashMap<>());
             break;
           //Flutter 返回值
           case "setArguments":

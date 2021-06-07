@@ -1,6 +1,7 @@
 package com.meijian.muffin.navigator;
 
 import android.app.Activity;
+import android.text.TextUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -41,5 +42,15 @@ public class NavigatorStack {
   public NavigatorStack(PathProvider provider) {
     this.host = new WeakReference<>((Activity) provider.getContext());
     this.pageName = provider.getPath();
+  }
+
+  public NavigatorStack(Activity activity, String pageName) {
+    this.host = new WeakReference<>(activity);
+    this.pageName = pageName;
+  }
+
+  @Override public boolean equals(Object o) {
+    NavigatorStack that = (NavigatorStack) o;
+    return TextUtils.equals(that.pageName, that.pageName);
   }
 }

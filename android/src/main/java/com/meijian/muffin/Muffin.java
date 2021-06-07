@@ -6,7 +6,10 @@ import android.os.Bundle;
 
 
 import com.meijian.muffin.engine.EngineGroupCache;
+import com.meijian.muffin.navigator.ActivityIntentConfig;
 import com.meijian.muffin.navigator.NavigatorStackManager;
+
+import java.util.List;
 
 import io.flutter.embedding.engine.FlutterEngineGroup;
 
@@ -19,6 +22,8 @@ public class Muffin {
 
   private EngineGroupCache engineGroup;
 
+  private List<ActivityIntentConfig> intentConfigs;
+
 
   public static Muffin getInstance() {
     if (muffin == null) {
@@ -28,9 +33,10 @@ public class Muffin {
   }
 
 
-  public void init(Application context) {
+  public void init(Application context, List<ActivityIntentConfig> intentConfigs) {
     engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
     context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
+    this.intentConfigs = intentConfigs;
   }
 
 
@@ -41,11 +47,10 @@ public class Muffin {
   static class MuffinAppLifecycle implements Application.ActivityLifecycleCallbacks {
 
     @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+      NavigatorStackManager.getInstance().onActivityCreate(activity);
     }
 
     @Override public void onActivityStarted(Activity activity) {
-      NavigatorStackManager.getInstance().onActivityStart(activity);
     }
 
     @Override public void onActivityResumed(Activity activity) {

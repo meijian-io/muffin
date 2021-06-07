@@ -9,4 +9,12 @@ class NavigatorChannel {
     final dynamic arguments = await _channel.invokeMethod('getArguments');
     return Map.from(arguments);
   }
+
+  static Future<dynamic> push(String pageName) async {
+    return await _channel.invokeMethod('push', {'pageName': pageName});
+  }
+
+  static Future<dynamic> pop(String pageName) async {
+    return await _channel.invokeMethod('pop', {'pageName': pageName});
+  }
 }

@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:muffin/channel/navigator_channel.dart';
 import 'package:muffin/navigator/muffin_navigator.dart';
 
 ///管理所有的路由和页面信息
@@ -22,7 +23,7 @@ class NavigatorStackManager extends ChangeNotifier {
 
   /// push a uri, if find the target uri, will add a callback
   /// internal push, find target uri-> push, otherwise push a [No find page]
-  Future<void> _push(Uri uri, {dynamic arguments}) {
+  Future<void> _push(Uri uri, {dynamic arguments}) async {
     bool _findRoute = false;
     Pattern _findPattern = '/';
     for (int i = 0; i < routes.keys.length; i++) {
@@ -59,6 +60,9 @@ class NavigatorStackManager extends ChangeNotifier {
     _uris.add(uri);
 
     notifyListeners();
+
+    ///async native NavigatorStack
+    await NavigatorChannel.push(uri.path);
     return SynchronousFuture(null);
   }
 
@@ -85,9 +89,10 @@ class NavigatorStackManager extends ChangeNotifier {
 
       ///find call back
       callbacks![_uris.last]!.complete(result);
-    } else {
-      print('can not pop');
     }
+
+    ///async native NavigatorStack
+    NavigatorChannel.pop(_uris.last.path);
   }
 
   void removeLastUri() {

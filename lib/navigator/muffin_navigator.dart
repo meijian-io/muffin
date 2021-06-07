@@ -81,9 +81,12 @@ class MuffinBackButtonDispatcher extends RootBackButtonDispatcher {
   @override
   Future<bool> didPopRoute() {
     if (navigator.navigatorStackManager.pages.length > 1) {
-      navigator.navigatorStackManager.removeLastUri();
+      navigator.navigatorStackManager.pop();
+      /// handle by us
       return Future.value(true);
     }
+    navigator.navigatorStackManager.pop();
+    /// handle by system , will finish the MuffinFlutterActivity
     return super.didPopRoute();
   }
 }

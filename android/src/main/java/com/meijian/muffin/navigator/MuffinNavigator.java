@@ -11,13 +11,17 @@ import java.util.Map;
  * 原生路由
  * <p>
  * Created by  on 2021/5/31.
+ * <p>
+ * native to flutter
+ * 1. 直接调用 MuffinNavigator 方法
+ * 2. 通过 ARouter schema
+ * <p>
+ * flutter to native
+ * 1.直接调用 MuffinNavigator 方法。 到原生之后，拼接成 ARouter schema 跳转
  */
 public class MuffinNavigator {
 
   public static void push(PathProvider provider, String pageName) {
-    //maybe first push a flutter page
-    NavigatorStackManager.getInstance().push(new NavigatorStack(provider));
-
     Intent intent = new Intent(provider.getContext(), MuffinFlutterActivity.class);
     intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);
     provider.getContext().startActivity(intent);
