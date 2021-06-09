@@ -45,7 +45,7 @@ public class NavigatorStackManager {
     Logger.log("stacks", "flutter has pushed ,size = " + stacks.size());
   }
 
-  public void pop(NavigatorStack stack, HashMap<String, Object> result) {
+  public void pop(NavigatorStack stack, Object result) {
     stacks.remove(stack);
     //find next stack
     Logger.log("stacks", "flutter has popped ,size = " + stacks.size());

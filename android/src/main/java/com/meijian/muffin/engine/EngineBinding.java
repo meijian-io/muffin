@@ -55,9 +55,8 @@ public class EngineBinding {
             NavigatorStack targetStack = NavigatorStackManager.getInstance()
                 .findTargetNavigatorStack((String) call.argument("pageName"));
             if (targetStack != null) {
-              //TODO argument Type [Map String ...]
               NavigatorStackManager.getInstance().pop(
-                  targetStack, (HashMap<String, Object>) call.argument("result"));
+                  targetStack, call.argument("result"));
             }
             result.success(new HashMap<>());
             break;

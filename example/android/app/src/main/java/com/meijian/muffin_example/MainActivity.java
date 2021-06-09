@@ -2,6 +2,7 @@ package com.meijian.muffin_example;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -44,5 +45,9 @@ public class MainActivity extends Activity implements PathProvider {
 
   @Override public void onFlutterActivityResult(String pageName, HashMap<String, Object> result) {
     Log.e("AAA", (String) result.get("data"));
+  }
+
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
   }
 }

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by  on 2021/6/4.
@@ -54,9 +55,9 @@ public class NavigatorStack {
     return pageName;
   }
 
-  public void notifyCallbacks(HashMap<String, Object> result, String pageName) {
-    if (pathProvider != null) {
-      pathProvider.onFlutterActivityResult(pageName, result);
+  public void notifyCallbacks(Object result, String pageName) {
+    if (pathProvider != null && result instanceof HashMap) {
+      pathProvider.onFlutterActivityResult(pageName, (HashMap<String, Object>) result);
     }
   }
 }
