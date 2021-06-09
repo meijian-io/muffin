@@ -5,10 +5,10 @@ import android.text.TextUtils;
 
 import com.meijian.muffin.Logger;
 import com.meijian.muffin.MuffinFlutterActivity;
-import com.meijian.muffin.utils.WrappedWeakReference;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by  on 2021/6/4.
@@ -33,50 +33,95 @@ public class NavigatorStackManager {
    */
   private LinkedList<NavigatorStack> stacks = new LinkedList<>();
 
-  /**
-   * native activity stack,
-   * N1 F(1) F(2) N2
-   * four pages but three activity size  = 3
-   */
-  private LinkedList<WrappedWeakReference<Activity>> originActivityStacks = new LinkedList<>();
 
   public void push(NavigatorStack stack) {
-    stacks.add(0, stack);
+    stacks.addFirst(stack);
     Logger.log("stacks", "flutter has pushed ,size = " + stacks.size());
   }
 
-  public void pop(NavigatorStack stack, Object result) {
-    stacks.remove(stack);
-    //find next stack
-    Logger.log("stacks", "flutter has popped ,size = " + stacks.size());
-    NavigatorStack lastStack = stacks.getFirst();
-    if (lastStack != null) {
-      lastStack.notifyCallbacks(result, stack.getPageName());
-      if (lastStack.getPathProvider() != null) {
-        //check last stack is native, if is native, need remove FlutterActivity
-        originActivityStacks.getFirst().get().finish();
+  /**
+   * find target stack remove base on pageName
+   *
+   * @param target the path of target  NavigatorStack
+   * @param result pop result
+   */
+
+  public void pop(String target, Object result) {
+    popUntil(target, result);
+  }
+
+  /**
+   * find target stack remove base on pageName, remove top NavigatorStacks and Activity
+   *
+   * @param target the path of target  NavigatorStack
+   * @param result pop result
+   */
+  public void popUntil(String target, Object result) {
+    //1. find target NavigatorStack, and tap needs to remove NavigatorStack
+    List<NavigatorStack> shouldPoppedStacks = new ArrayList<>();
+    NavigatorStack targetStack = null;
+    boolean findTarget = false;
+    while (!findTarget) {
+      if (!stacks.isEmpty()) {
+        NavigatorStack temp = stacks.getFirst();
+        if (TextUtils.equals(temp.getPageName(), target)) {
+          targetStack = temp;
+          findTarget = true;
+        } else {
+          NavigatorStack popped = stacks.removeFirst();
+          popped.setHasPopped(true);
+          shouldPoppedStacks.add(popped);
+        }
+      } else {
+        findTarget = true;
       }
     }
+
+    if (targetStack == null) {
+      return;
+    }
+    if (shouldPoppedStacks.isEmpty()) {
+      return;
+    }
+    //2. add removed flutter stack , then flutter will continue pop
+    for (int i = shouldPoppedStacks.size() - 1; i >= 0; i--) {
+      if (shouldPoppedStacks.get(i).getHost().hashCode() == targetStack.getHost().hashCode()) {
+        stacks.addFirst(shouldPoppedStacks.get(i));
+      }
+    }
+    //3.finish vc
+    for (NavigatorStack poppedStack : shouldPoppedStacks) {
+      if (poppedStack.getHost().hashCode() == targetStack.getHost().hashCode()) {
+        continue;
+      }
+      poppedStack.getHost().finish();
+    }
+
+    //4. continue pop
+    if (targetStack.getHost() instanceof PathProvider) {
+      return;
+    }
+    ((MuffinFlutterActivity) targetStack.getHost()).getEngineBinding().popUntil(target, result);
   }
 
 
   public void onActivityCreate(Activity activity) {
-    originActivityStacks.add(0, new WrappedWeakReference<>(activity));
-    Logger.log("originActivityStacks", "size = " + originActivityStacks.size());
     //only add native activity, flutter pages has already added to stack
     if (activity instanceof PathProvider && !(activity instanceof MuffinFlutterActivity)) {
-      stacks.add(new NavigatorStack((PathProvider) activity));
+      stacks.addFirst(new NavigatorStack((PathProvider) activity));
       Logger.log("stacks", "size = " + stacks.size());
     }
   }
 
   public void onActivityDestroyed(Activity activity) {
-    originActivityStacks.remove(new WrappedWeakReference<>(activity));
-    Logger.log("originActivityStacks", "size = " + originActivityStacks.size());
-    //only remove native activity, flutter pages has already removed
+    //all stacks has already removed
+    //only for handling system backPressed
     if (activity instanceof PathProvider && !(activity instanceof MuffinFlutterActivity)) {
-      stacks.remove(new NavigatorStack((PathProvider) activity));
-      Logger.log("stacks", "size = " + stacks.size());
+      //check if has popped
+      NavigatorStack currentTopNavigatorStack = stacks.getFirst();
+      if (currentTopNavigatorStack.getHost().hashCode() == activity.hashCode()) {
+        stacks.removeFirst();
+      }
     }
   }
 

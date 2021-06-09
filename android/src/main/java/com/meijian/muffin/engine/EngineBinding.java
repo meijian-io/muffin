@@ -37,29 +37,31 @@ public class EngineBinding {
       public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         switch (call.method) {
           //Flutter 获取值
-          case "getArguments":
+          case "getArguments": {
             if (arguments != null) {
               result.success(arguments);
             } else {
               result.success(new HashMap<String, Object>());
             }
-            break;
+          }
+          break;
           //flutter has pushed, async stack
-          case "push":
+          case "push": {
             NavigatorStackManager.getInstance().push(
                 new NavigatorStack(context, (String) call.argument("pageName")));
             result.success(new HashMap<>());
-            break;
-          case "pop":
-            //find target stack remove base on pageName
-            NavigatorStack targetStack = NavigatorStackManager.getInstance()
-                .findTargetNavigatorStack((String) call.argument("pageName"));
-            if (targetStack != null) {
-              NavigatorStackManager.getInstance().pop(
-                  targetStack, call.argument("result"));
-            }
+          }
+          break;
+          case "pop": {
+            NavigatorStackManager.getInstance().pop(
+                (String) call.argument("pageName"), call.argument("result"));
             result.success(new HashMap<>());
-            break;
+          }
+          break;
+          case "popUntil": {
+
+          }
+          break;
           //Flutter 返回值
           case "setArguments":
             break;
@@ -71,6 +73,10 @@ public class EngineBinding {
   }
 
   public void attach() {
+
+  }
+
+  public void popUntil(String pageName, Object result) {
 
   }
 

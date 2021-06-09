@@ -50,4 +50,8 @@ public class MuffinFlutterActivity extends FlutterActivity {
   @Nullable @Override public FlutterEngine provideFlutterEngine(@NonNull Context context) {
     return engineBinding.getFlutterEngine();
   }
+
+  public EngineBinding getEngineBinding() {
+    return engineBinding;
+  }
 }

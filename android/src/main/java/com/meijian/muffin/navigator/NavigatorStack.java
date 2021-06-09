@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by  on 2021/6/4.
@@ -29,6 +28,8 @@ public class NavigatorStack {
 
   private PathProvider pathProvider;
 
+  private boolean hasPopped = false;
+
 
   public NavigatorStack(PathProvider provider) {
     this.host = new WeakReference<>((Activity) provider.getContext());
@@ -39,6 +40,10 @@ public class NavigatorStack {
   public NavigatorStack(Activity activity, String pageName) {
     this.host = new WeakReference<>(activity);
     this.pageName = pageName;
+  }
+
+  public Activity getHost() {
+    return host.get();
   }
 
 
@@ -59,5 +64,13 @@ public class NavigatorStack {
     if (pathProvider != null && result instanceof HashMap) {
       pathProvider.onFlutterActivityResult(pageName, (HashMap<String, Object>) result);
     }
+  }
+
+  public boolean isHasPopped() {
+    return hasPopped;
+  }
+
+  public void setHasPopped(boolean hasPopped) {
+    this.hasPopped = hasPopped;
   }
 }

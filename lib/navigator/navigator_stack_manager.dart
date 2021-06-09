@@ -87,6 +87,7 @@ class NavigatorStackManager extends ChangeNotifier {
 
   /// pop with arguments
   /// similar to [Navigator.of(context).pop]
+  /// same as [popUntil(uris.last)]
   void pop<T extends Object>([T? result]) {
     if (_pages.length > 1) {
       removeLastUri();
@@ -97,6 +98,19 @@ class NavigatorStackManager extends ChangeNotifier {
     if (multiple) {
       ///async native NavigatorStack
       NavigatorChannel.pop(_uris.last.path, result);
+    }
+  }
+
+  /// pop until a page, find the first match [target], if not find in this navigator,
+  /// find in native, this way will remove all un match VC and route
+  ///
+  /// eg: N1(/main) F1(/home) F1(/first) [popUntil(/main)] will remove /home /first and VC(F1)
+  void popUntil<T extends Object>(Uri target, [T? result]) {
+    if (multiple) {
+      /// multiply flutters should chat with native
+
+    } else {
+
     }
   }
 
