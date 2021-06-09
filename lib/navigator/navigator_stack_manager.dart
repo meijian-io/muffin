@@ -8,6 +8,9 @@ import 'package:muffin/navigator/muffin_navigator.dart';
 
 ///管理所有的路由和页面信息
 class NavigatorStackManager extends ChangeNotifier {
+  /// if multiple is true, will not call channel method
+  final bool multiple;
+
   ///所有路由
   final Map<Pattern, MuffinPageBuilder> routes;
 
@@ -19,7 +22,7 @@ class NavigatorStackManager extends ChangeNotifier {
 
   List<Page> get pages => UnmodifiableListView(_pages);
 
-  NavigatorStackManager({required this.routes});
+  NavigatorStackManager({required this.routes, required this.multiple});
 
   /// push a uri, if find the target uri, will add a callback
   /// internal push, find target uri-> push, otherwise push a [No find page]
@@ -60,9 +63,10 @@ class NavigatorStackManager extends ChangeNotifier {
     _uris.add(uri);
 
     notifyListeners();
-
-    ///async native NavigatorStack
-    await NavigatorChannel.push(uri.path);
+    if (multiple) {
+      ///async native NavigatorStack
+      await NavigatorChannel.push(uri.path);
+    }
     return SynchronousFuture(null);
   }
 
@@ -90,9 +94,10 @@ class NavigatorStackManager extends ChangeNotifier {
       ///find call back
       callbacks![_uris.last]!.complete(result);
     }
-
-    ///async native NavigatorStack
-    NavigatorChannel.pop(_uris.last.path, result);
+    if (multiple) {
+      ///async native NavigatorStack
+      NavigatorChannel.pop(_uris.last.path, result);
+    }
   }
 
   void removeLastUri() {

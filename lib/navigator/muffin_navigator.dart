@@ -17,10 +17,13 @@ class MuffinNavigator extends RouterDelegate<Uri>
 
   final String initRoute;
 
-  MuffinNavigator(
-      {required this.initRoute,
-      required Map<Pattern, MuffinPageBuilder> routes}) {
-    navigatorStackManager = NavigatorStackManager(routes: routes);
+  MuffinNavigator({
+    required this.initRoute,
+    required Map<Pattern, MuffinPageBuilder> routes,
+    bool multiple = false,
+  }) {
+    navigatorStackManager =
+        NavigatorStackManager(routes: routes, multiple: multiple);
     navigatorStackManager.addListener(notifyListeners);
   }
 
@@ -82,10 +85,12 @@ class MuffinBackButtonDispatcher extends RootBackButtonDispatcher {
   Future<bool> didPopRoute() {
     if (navigator.navigatorStackManager.pages.length > 1) {
       navigator.navigatorStackManager.pop();
+
       /// handle by us
       return Future.value(true);
     }
     navigator.navigatorStackManager.pop();
+
     /// handle by system , will finish the MuffinFlutterActivity
     return super.didPopRoute();
   }
