@@ -10,8 +10,8 @@ class NavigatorChannel {
     return Map.from(arguments);
   }
 
-  static Future<dynamic> push(String pageName) async {
-    return await _channel.invokeMethod('push', {'pageName': pageName});
+  static Future<dynamic> syncFlutterStack(String pageName) async {
+    return await _channel.invokeMethod('syncFlutterStack', {'pageName': pageName});
   }
 
   static Future<dynamic> pop(String pageName, [dynamic result]) async {
@@ -26,5 +26,10 @@ class NavigatorChannel {
 
   static Future<String> findPopTarget() async {
     return await _channel.invokeMethod('findPopTarget');
+  }
+
+  static Future<dynamic> pushNamed(String pageName, [dynamic data]) async {
+    return await _channel
+        .invokeMethod('pushNamed', {'pageName': pageName, 'data': data});
   }
 }

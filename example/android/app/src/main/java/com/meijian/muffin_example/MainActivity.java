@@ -32,7 +32,10 @@ public class MainActivity extends Activity implements PathProvider {
       MuffinNavigator.push(MainActivity.this, "first", arguments);
     });
 
-    findViewById(R.id.second).setOnClickListener(view -> MuffinNavigator.push(MainActivity.this, "second"));
+    findViewById(R.id.second).setOnClickListener(view -> {
+      //MuffinNavigator.push(MainActivity.this, "second")
+      startActivity(new Intent(MainActivity.this,SecondActivity.class));
+    });
   }
 
   @Override public String getPath() {

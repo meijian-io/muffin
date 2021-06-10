@@ -44,6 +44,10 @@ public class Muffin {
     return engineGroup;
   }
 
+  public List<ActivityIntentConfig> getIntentConfigs() {
+    return intentConfigs;
+  }
+
   static class MuffinAppLifecycle implements Application.ActivityLifecycleCallbacks {
 
     @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

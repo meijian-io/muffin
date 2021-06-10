@@ -64,8 +64,8 @@ class NavigatorStackManager extends ChangeNotifier {
 
     notifyListeners();
     if (multiple) {
-      ///async native NavigatorStack
-      await NavigatorChannel.push(uri.path);
+      ///sync native NavigatorStack
+      await NavigatorChannel.syncFlutterStack(uri.path);
     }
     return SynchronousFuture(null);
   }
@@ -76,12 +76,28 @@ class NavigatorStackManager extends ChangeNotifier {
 
   /// push a page with [Uri], similar to [Navigator.of(context).pushNamed]
   /// call eg.. - [MuffinNavigator.of(context).pushNamed]
-  Future<T?> pushNamed<T extends Object?>(Uri uri, {dynamic arguments}) async {
+  Future<T?> pushNamed<T extends Object?>(Uri uri, [dynamic arguments]) async {
     final Completer<T?> callback = Completer<T?>();
 
     ///set to current route
     callbacks![_uris.last] = callback;
-    await _push(uri, arguments: arguments);
+
+    /// find route , if exit push, else find in native
+    if (foundInTotalRoutes(uri)) {
+      await _push(uri, arguments: arguments);
+    } else {
+      if (multiple) {
+        /// found in native
+        bool find = await NavigatorChannel.pushNamed(uri.path, arguments);
+        if (!find) {
+          ///will show not found
+          await _push(uri, arguments: arguments);
+        }
+      } else {
+        ///will show not found
+        await _push(uri, arguments: arguments);
+      }
+    }
     return callback.future;
   }
 
@@ -106,7 +122,7 @@ class NavigatorStackManager extends ChangeNotifier {
   /// eg: N1(/main) F1(/home) F1(/first) [popUntil(/main)] will remove /home /first and VC(F1)
   void popUntil<T extends Object>(Uri target, [T? result]) {
     ///find in current routes, remove top
-    if (found(target)) {
+    if (foundInCurrentRoutes(target)) {
       bool findTarget = false;
       while (!findTarget) {
         if (_uris.isNotEmpty) {
@@ -138,7 +154,7 @@ class NavigatorStackManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool found(Uri uri) {
+  bool foundInCurrentRoutes(Uri uri) {
     bool foundMatching = false;
     for (Uri element in _uris) {
       if (element.path == uri.path) {
@@ -146,5 +162,21 @@ class NavigatorStackManager extends ChangeNotifier {
       }
     }
     return foundMatching;
+  }
+
+  bool foundInTotalRoutes(Uri uri) {
+    bool _findRoute = false;
+    for (int i = 0; i < routes.keys.length; i++) {
+      final key = routes.keys.elementAt(i);
+      if (key.matchAsPrefix(uri.path)?.group(0) == uri.path) {
+        if (_uris.contains(uri) && key == routes.keys.first) {
+          _findRoute = true;
+          break;
+        }
+        _findRoute = true;
+        break;
+      }
+    }
+    return _findRoute;
   }
 }

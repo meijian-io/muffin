@@ -17,8 +17,8 @@ public class App extends Application {
     super.onCreate();
     //use a router?
     List<ActivityIntentConfig> intentConfigs = new ArrayList<>();
-    intentConfigs.add(new ActivityIntentConfig(MainActivity.class));
-
+    intentConfigs.add(new ActivityIntentConfig(MainActivity.class, "/native_main"));
+    intentConfigs.add(new ActivityIntentConfig(SecondActivity.class, "/native_second"));
     Muffin.getInstance().init(this, intentConfigs);
   }
 }

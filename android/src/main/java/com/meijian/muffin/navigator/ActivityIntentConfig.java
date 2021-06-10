@@ -13,19 +13,35 @@ public class ActivityIntentConfig {
   /**
    * flutter to native, startActivity
    */
-  Class<? extends Activity> activityClazz;
+  private Class<? extends Activity> activityClazz;
 
   /**
    * intent build
    */
-  List<String> arguments = new ArrayList<>();
+  private List<String> arguments = new ArrayList<>();
 
-  public ActivityIntentConfig(Class<? extends Activity> activityClazz) {
+  private String path;
+
+  public ActivityIntentConfig(Class<? extends Activity> activityClazz, String path) {
     this.activityClazz = activityClazz;
+    this.path = path;
   }
 
-  public ActivityIntentConfig(Class<? extends Activity> activityClazz, List<String> arguments) {
+  public ActivityIntentConfig(Class<? extends Activity> activityClazz, List<String> arguments, String path) {
     this.activityClazz = activityClazz;
     this.arguments = arguments;
+    this.path = path;
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public Class<? extends Activity> getActivityClazz() {
+    return activityClazz;
   }
 }

@@ -45,9 +45,9 @@ public class EngineBinding {
             }
           }
           break;
-          //flutter has pushed, async stack
-          case "push": {
-            NavigatorStackManager.getInstance().push(
+          //flutter has pushed, sync stack
+          case "syncFlutterStack": {
+            NavigatorStackManager.getInstance().syncFlutterStack(
                 new NavigatorStack(context, (String) call.argument("pageName")));
             result.success(new HashMap<>());
           }
@@ -68,6 +68,13 @@ public class EngineBinding {
             String target = NavigatorStackManager.getInstance().findPopTarget();
             result.success(target);
           }
+          break;
+          case "pushNamed": {
+            boolean find = NavigatorStackManager.getInstance().pushNamed(
+                (String) call.argument("pageName"), call.argument("data"));
+            result.success(find);
+          }
+          break;
           //Flutter 返回值
           case "setArguments":
             break;

@@ -1,9 +1,12 @@
 package com.meijian.muffin.navigator;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
 import com.meijian.muffin.Logger;
+import com.meijian.muffin.Muffin;
 import com.meijian.muffin.MuffinFlutterActivity;
 
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ public class NavigatorStackManager {
   private LinkedList<NavigatorStack> stacks = new LinkedList<>();
 
 
-  public void push(NavigatorStack stack) {
+  public void syncFlutterStack(NavigatorStack stack) {
     stacks.addFirst(stack);
     Logger.log(TAG, "flutter has pushed ,size = " + stacks.size());
     logStack();
@@ -128,6 +131,24 @@ public class NavigatorStackManager {
     logStack();
     //6. continue flutter pop
     ((MuffinFlutterActivity) targetStack.getHost()).getEngineBinding().popUntil(target, result);
+  }
+
+  public boolean pushNamed(String pageName, Object data) {
+    List<ActivityIntentConfig> configs = Muffin.getInstance().getIntentConfigs();
+    boolean find = false;
+    if (configs.isEmpty()) {
+      return false;
+    }
+    for (ActivityIntentConfig config : configs) {
+      if (TextUtils.equals(config.getPath(), pageName)) {
+        find = true;
+        Context context = stacks.getFirst().getHost();
+        Intent intent = new Intent(context, config.getActivityClazz());
+        context.startActivity(intent);
+        break;
+      }
+    }
+    return find;
   }
 
 
