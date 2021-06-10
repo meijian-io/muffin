@@ -62,4 +62,8 @@ public class NavigatorStack {
       pathProvider.onFlutterActivityResult(pageName, (HashMap<String, Object>) result);
     }
   }
+
+  @Override public String toString() {
+    return "NavigatorStack{ host= " + host.get().getClass().getSimpleName() + " , pageName= " + pageName + "}";
+  }
 }

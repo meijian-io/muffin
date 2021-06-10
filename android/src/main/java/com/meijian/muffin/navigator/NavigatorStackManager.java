@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class NavigatorStackManager {
 
+  private static final String TAG = NavigatorStackManager.class.getSimpleName();
+
   private NavigatorStackManager() {
 
   }
@@ -36,7 +38,8 @@ public class NavigatorStackManager {
 
   public void push(NavigatorStack stack) {
     stacks.addFirst(stack);
-    Logger.log("stacks", "flutter has pushed ,size = " + stacks.size());
+    Logger.log(TAG, "flutter has pushed ,size = " + stacks.size());
+    logStack();
   }
 
   /**
@@ -78,9 +81,13 @@ public class NavigatorStackManager {
     }
 
     if (targetStack == null) {
+      Logger.log(TAG, "target not found ,size = " + stacks.size());
+      logStack();
       return;
     }
     if (shouldPoppedStacks.isEmpty()) {
+      Logger.log(TAG, "no stack to pop ,size = " + stacks.size());
+      logStack();
       return;
     }
     //2. if all should removed stacks are flutter , return
@@ -92,6 +99,8 @@ public class NavigatorStackManager {
       }
     }
     if (allInFlutterStack) {
+      Logger.log(TAG, "only flutter pop, pop finish ,size = " + stacks.size());
+      logStack();
       return;
     }
     //3. add removed flutter stack , then flutter will continue pop
@@ -111,8 +120,12 @@ public class NavigatorStackManager {
     //5. has popped to targetVC ,notifyCallbacks
     if (targetStack.getHost() instanceof PathProvider) {
       targetStack.notifyCallbacks(result, target);
+      Logger.log(TAG, "popUntil native finish ,size = " + stacks.size());
+      logStack();
       return;
     }
+    Logger.log(TAG, "has flutter stacks  to pop ,size = " + stacks.size());
+    logStack();
     //6. continue flutter pop
     ((MuffinFlutterActivity) targetStack.getHost()).getEngineBinding().popUntil(target, result);
   }
@@ -122,7 +135,8 @@ public class NavigatorStackManager {
     //only add native activity, flutter pages has already added to stack
     if (activity instanceof PathProvider && !(activity instanceof MuffinFlutterActivity)) {
       stacks.addFirst(new NavigatorStack((PathProvider) activity));
-      Logger.log("stacks", "size = " + stacks.size());
+      Logger.log(TAG, "stack add, size = " + stacks.size());
+      logStack();
     }
   }
 
@@ -134,6 +148,8 @@ public class NavigatorStackManager {
       NavigatorStack currentTopNavigatorStack = stacks.getFirst();
       if (currentTopNavigatorStack.getHost().hashCode() == activity.hashCode()) {
         stacks.removeFirst();
+        Logger.log(TAG, "stack remove, system back press, size = " + stacks.size());
+        logStack();
       }
     }
   }
@@ -157,4 +173,12 @@ public class NavigatorStackManager {
     return "/";
   }
 
+  private void logStack() {
+    if (stacks.isEmpty()) {
+      return;
+    }
+    for (NavigatorStack stack : stacks) {
+      Logger.log(TAG, stack.toString());
+    }
+  }
 }
