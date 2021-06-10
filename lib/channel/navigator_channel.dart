@@ -18,4 +18,13 @@ class NavigatorChannel {
     return await _channel
         .invokeMethod('pop', {'pageName': pageName, 'result': result});
   }
+
+  static Future<dynamic> popUntil(String pageName, [dynamic result]) async {
+    return await _channel
+        .invokeMethod('popUntil', {'pageName': pageName, 'result': result});
+  }
+
+  static Future<String> findPopTarget() async {
+    return await _channel.invokeMethod('findPopTarget');
+  }
 }

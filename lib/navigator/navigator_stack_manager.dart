@@ -88,16 +88,15 @@ class NavigatorStackManager extends ChangeNotifier {
   /// pop with arguments
   /// similar to [Navigator.of(context).pop]
   /// same as [popUntil(uris.last)]
-  void pop<T extends Object>([T? result]) {
-    if (_pages.length > 1) {
-      removeLastUri();
-
-      ///find call back
-      callbacks![_uris.last]!.complete(result);
-    }
+  void pop<T extends Object>([T? result]) async {
     if (multiple) {
-      ///async native NavigatorStack
-      NavigatorChannel.pop(_uris.last.path, result);
+      String target = await NavigatorChannel.findPopTarget();
+      popUntil(Uri.parse(target), result);
+    } else {
+      if (_uris.length <= 1) {
+        return;
+      }
+      popUntil(_uris[_uris.length - 2], result);
     }
   }
 
@@ -106,11 +105,29 @@ class NavigatorStackManager extends ChangeNotifier {
   ///
   /// eg: N1(/main) F1(/home) F1(/first) [popUntil(/main)] will remove /home /first and VC(F1)
   void popUntil<T extends Object>(Uri target, [T? result]) {
+    ///find in current routes, remove top
+    if (found(target)) {
+      bool findTarget = false;
+      while (!findTarget) {
+        if (_uris.isNotEmpty) {
+          Uri temp = _uris.last;
+          if (temp.path == target.path) {
+            findTarget = true;
+          } else {
+            _uris.removeLast();
+            _pages.removeLast();
+          }
+        } else {
+          findTarget = true;
+        }
+      }
+      notifyListeners();
+    } else {
+      print('not find ${target.path} in Uris');
+    }
     if (multiple) {
       /// multiply flutters should chat with native
-
-    } else {
-
+      NavigatorChannel.popUntil(target.path, result);
     }
   }
 
@@ -118,5 +135,15 @@ class NavigatorStackManager extends ChangeNotifier {
     _pages.removeLast();
     _uris.removeLast();
     notifyListeners();
+  }
+
+  bool found(Uri uri) {
+    bool foundMatching = false;
+    for (Uri element in _uris) {
+      if (element.path == uri.path) {
+        foundMatching = true;
+      }
+    }
+    return foundMatching;
   }
 }

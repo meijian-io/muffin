@@ -63,7 +63,8 @@ public class NavigatorStackManager {
     boolean findTarget = false;
     while (!findTarget) {
       if (!stacks.isEmpty()) {
-        NavigatorStack temp = stacks.getFirst();
+        NavigatorStack temp = stacks
+            .getFirst();
         if (TextUtils.equals(temp.getPageName(), target)) {
           targetStack = temp;
           findTarget = true;
@@ -83,6 +84,17 @@ public class NavigatorStackManager {
     if (shouldPoppedStacks.isEmpty()) {
       return;
     }
+    //if all should removed stacks are flutter , return
+    boolean allInFlutterStack = true;
+    for (NavigatorStack shouldPoppedStack : shouldPoppedStacks) {
+      if (shouldPoppedStack.getHost().hashCode() != targetStack.getHost().hashCode()) {
+        allInFlutterStack = false;
+        break;
+      }
+    }
+    if (allInFlutterStack) {
+      return;
+    }
     //2. add removed flutter stack , then flutter will continue pop
     for (int i = shouldPoppedStacks.size() - 1; i >= 0; i--) {
       if (shouldPoppedStacks.get(i).getHost().hashCode() == targetStack.getHost().hashCode()) {
@@ -99,6 +111,7 @@ public class NavigatorStackManager {
 
     //4. continue pop
     if (targetStack.getHost() instanceof PathProvider) {
+      targetStack.notifyCallbacks(result, target);
       return;
     }
     ((MuffinFlutterActivity) targetStack.getHost()).getEngineBinding().popUntil(target, result);
@@ -135,6 +148,13 @@ public class NavigatorStackManager {
       }
     }
     return targetStack;
+  }
+
+  public String findPopTarget() {
+    if (stacks.size() > 1) {
+      return stacks.get(1).getPageName();
+    }
+    return "/";
   }
 
 }

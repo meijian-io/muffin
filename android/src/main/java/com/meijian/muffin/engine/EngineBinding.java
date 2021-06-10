@@ -59,9 +59,15 @@ public class EngineBinding {
           }
           break;
           case "popUntil": {
-
+            NavigatorStackManager.getInstance().popUntil(
+                (String) call.argument("pageName"), call.argument("result"));
+            result.success(new HashMap<>());
           }
           break;
+          case "findPopTarget": {
+            String target = NavigatorStackManager.getInstance().findPopTarget();
+            result.success(target);
+          }
           //Flutter 返回值
           case "setArguments":
             break;
