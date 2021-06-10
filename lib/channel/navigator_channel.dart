@@ -5,13 +5,16 @@ import 'package:flutter/services.dart';
 class NavigatorChannel {
   static const MethodChannel _channel = const MethodChannel('muffin_navigate');
 
+  static MethodChannel get channel => _channel;
+
   static Future<Map<String, dynamic>?> get arguments async {
     final dynamic arguments = await _channel.invokeMethod('getArguments');
     return Map.from(arguments);
   }
 
   static Future<dynamic> syncFlutterStack(String pageName) async {
-    return await _channel.invokeMethod('syncFlutterStack', {'pageName': pageName});
+    return await _channel
+        .invokeMethod('syncFlutterStack', {'pageName': pageName});
   }
 
   static Future<dynamic> pop(String pageName, [dynamic result]) async {

@@ -90,7 +90,10 @@ public class EngineBinding {
   }
 
   public void popUntil(String pageName, Object result) {
-
+    Map<String, Object> map = new HashMap<>();
+    map.put("pageName", pageName);
+    map.put("result", result);
+    methodChannel.invokeMethod("popUntil", map);
   }
 
   public void detach() {

@@ -22,7 +22,17 @@ class NavigatorStackManager extends ChangeNotifier {
 
   List<Page> get pages => UnmodifiableListView(_pages);
 
-  NavigatorStackManager({required this.routes, required this.multiple});
+  NavigatorStackManager({required this.routes, required this.multiple}) {
+    NavigatorChannel.channel.setMethodCallHandler((call) {
+      switch (call.method) {
+        case 'popUntil':
+          popUntil(
+              Uri.parse(call.arguments['pageName']), call.arguments['result']);
+          break;
+      }
+      return Future.value({});
+    });
+  }
 
   /// push a uri, if find the target uri, will add a callback
   /// internal push, find target uri-> push, otherwise push a [No find page]
