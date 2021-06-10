@@ -70,7 +70,6 @@ public class NavigatorStackManager {
           findTarget = true;
         } else {
           NavigatorStack popped = stacks.removeFirst();
-          popped.setHasPopped(true);
           shouldPoppedStacks.add(popped);
         }
       } else {
@@ -84,7 +83,7 @@ public class NavigatorStackManager {
     if (shouldPoppedStacks.isEmpty()) {
       return;
     }
-    //if all should removed stacks are flutter , return
+    //2. if all should removed stacks are flutter , return
     boolean allInFlutterStack = true;
     for (NavigatorStack shouldPoppedStack : shouldPoppedStacks) {
       if (shouldPoppedStack.getHost().hashCode() != targetStack.getHost().hashCode()) {
@@ -95,13 +94,13 @@ public class NavigatorStackManager {
     if (allInFlutterStack) {
       return;
     }
-    //2. add removed flutter stack , then flutter will continue pop
+    //3. add removed flutter stack , then flutter will continue pop
     for (int i = shouldPoppedStacks.size() - 1; i >= 0; i--) {
       if (shouldPoppedStacks.get(i).getHost().hashCode() == targetStack.getHost().hashCode()) {
         stacks.addFirst(shouldPoppedStacks.get(i));
       }
     }
-    //3.finish vc
+    //4.finish top vc
     for (NavigatorStack poppedStack : shouldPoppedStacks) {
       if (poppedStack.getHost().hashCode() == targetStack.getHost().hashCode()) {
         continue;
@@ -109,11 +108,12 @@ public class NavigatorStackManager {
       poppedStack.getHost().finish();
     }
 
-    //4. continue pop
+    //5. has popped to targetVC ,notifyCallbacks
     if (targetStack.getHost() instanceof PathProvider) {
       targetStack.notifyCallbacks(result, target);
       return;
     }
+    //6. continue flutter pop
     ((MuffinFlutterActivity) targetStack.getHost()).getEngineBinding().popUntil(target, result);
   }
 

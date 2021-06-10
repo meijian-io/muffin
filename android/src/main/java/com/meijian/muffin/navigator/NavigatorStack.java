@@ -28,9 +28,6 @@ public class NavigatorStack {
 
   private PathProvider pathProvider;
 
-  private boolean hasPopped = false;
-
-
   public NavigatorStack(PathProvider provider) {
     this.host = new WeakReference<>((Activity) provider.getContext());
     this.pageName = provider.getPath();
@@ -64,13 +61,5 @@ public class NavigatorStack {
     if (pathProvider != null && result instanceof HashMap) {
       pathProvider.onFlutterActivityResult(pageName, (HashMap<String, Object>) result);
     }
-  }
-
-  public boolean isHasPopped() {
-    return hasPopped;
-  }
-
-  public void setHasPopped(boolean hasPopped) {
-    this.hasPopped = hasPopped;
   }
 }

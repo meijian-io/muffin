@@ -38,7 +38,7 @@ class MuffinNavigator extends RouterDelegate<Uri>
           return false;
         }
         if (navigatorStackManager.pages.length > 1) {
-          navigatorStackManager.removeLastUri();
+          navigatorStackManager.pop();
           return true;
         }
         return false;

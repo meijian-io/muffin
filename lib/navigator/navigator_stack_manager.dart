@@ -113,6 +113,7 @@ class NavigatorStackManager extends ChangeNotifier {
           Uri temp = _uris.last;
           if (temp.path == target.path) {
             findTarget = true;
+            callbacks![temp]!.complete(result);
           } else {
             _uris.removeLast();
             _pages.removeLast();
