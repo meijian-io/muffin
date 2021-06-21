@@ -4,11 +4,14 @@ import android.app.Activity;
 
 import androidx.annotation.NonNull;
 
-
+import com.meijian.muffin.Logger;
 import com.meijian.muffin.Muffin;
 import com.meijian.muffin.navigator.NavigatorStack;
 import com.meijian.muffin.navigator.NavigatorStackManager;
+import com.meijian.muffin.sharing.DataModelChangeListener;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,8 +23,8 @@ import io.flutter.plugin.common.MethodChannel;
  * Created by  on 2021/5/31.
  * 提供 Engine和 MethodChannel ，open flutter page and send arguments to Flutter
  */
-public class EngineBinding {
-
+public class EngineBinding implements PropertyChangeListener {
+  private static final String TAG = EngineBinding.class.getSimpleName();
   private FlutterEngine flutterEngine;
   private MethodChannel methodChannel;
 
@@ -86,7 +89,17 @@ public class EngineBinding {
   }
 
   public void attach() {
+    for (DataModelChangeListener model : Muffin.getInstance().getModels()) {
+      model.addPropertyChangeListener(this);
+    }
+  }
 
+
+  public void detach() {
+    methodChannel.setMethodCallHandler(null);
+    for (DataModelChangeListener model : Muffin.getInstance().getModels()) {
+      model.removePropertyChangeListener(this);
+    }
   }
 
   public void popUntil(String pageName, Object result) {
@@ -96,11 +109,17 @@ public class EngineBinding {
     methodChannel.invokeMethod("popUntil", map);
   }
 
-  public void detach() {
-    methodChannel.setMethodCallHandler(null);
-  }
 
   public FlutterEngine getFlutterEngine() {
     return flutterEngine;
+  }
+
+  @Override public void propertyChange(PropertyChangeEvent evt) {
+    Logger.log(TAG, "propertyChange");
+    Object source = evt.getSource();
+    if (source instanceof DataModelChangeListener) {
+      Logger.log(TAG, "value changed -- " + ((DataModelChangeListener) source).toMap().toString());
+      methodChannel.invokeMethod("syncDataModel", ((DataModelChangeListener) source).toMap());
+    }
   }
 }

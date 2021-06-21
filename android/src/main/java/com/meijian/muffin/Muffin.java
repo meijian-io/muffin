@@ -8,6 +8,7 @@ import android.os.Bundle;
 import com.meijian.muffin.engine.EngineGroupCache;
 import com.meijian.muffin.navigator.ActivityIntentConfig;
 import com.meijian.muffin.navigator.NavigatorStackManager;
+import com.meijian.muffin.sharing.DataModelChangeListener;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class Muffin {
 
   private List<ActivityIntentConfig> intentConfigs;
 
+  private List<DataModelChangeListener> models;
 
   public static Muffin getInstance() {
     if (muffin == null) {
@@ -33,10 +35,11 @@ public class Muffin {
   }
 
 
-  public void init(Application context, List<ActivityIntentConfig> intentConfigs) {
+  public void init(Application context, List<ActivityIntentConfig> intentConfigs, List<DataModelChangeListener> dataModels) {
     engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
     context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
     this.intentConfigs = intentConfigs;
+    this.models = dataModels;
   }
 
 
@@ -46,6 +49,10 @@ public class Muffin {
 
   public List<ActivityIntentConfig> getIntentConfigs() {
     return intentConfigs;
+  }
+
+  public List<DataModelChangeListener> getModels() {
+    return models;
   }
 
   static class MuffinAppLifecycle implements Application.ActivityLifecycleCallbacks {

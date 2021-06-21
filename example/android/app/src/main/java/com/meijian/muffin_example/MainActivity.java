@@ -9,12 +9,12 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.meijian.muffin.navigator.FlutterResult;
 import com.meijian.muffin.navigator.MuffinNavigator;
 import com.meijian.muffin.navigator.PathProvider;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 
 public class MainActivity extends Activity implements PathProvider {
@@ -34,8 +34,29 @@ public class MainActivity extends Activity implements PathProvider {
 
     findViewById(R.id.second).setOnClickListener(view -> {
       //MuffinNavigator.push(MainActivity.this, "second")
-      startActivity(new Intent(MainActivity.this,SecondActivity.class));
+      startActivity(new Intent(MainActivity.this, SecondActivity.class));
     });
+
+    findViewById(R.id.change_basic_info).setOnClickListener(view -> {
+          new Thread(new Runnable() {
+            @Override public void run() {
+              while (true) {
+                try {
+                  runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                      BasicInfo.getInstance().setUserId("newUserId" + new Random().nextInt());
+                    }
+                  });
+                  Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+              }
+            }
+          }).start();
+        }
+
+    );
   }
 
   @Override public String getPath() {
