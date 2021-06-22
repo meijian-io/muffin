@@ -48,6 +48,11 @@ public class BasicInfo implements DataModelChangeListener {
     return map;
   }
 
+  @Override public void formJson(HashMap<String, Object> map) {
+    setUserId((String) map.get("userId"));
+    setBindTbk((Boolean) map.get("isBindTbk"));
+  }
+
   public String getUserId() {
     //TODO 换成XXXUtils
     return "userId";

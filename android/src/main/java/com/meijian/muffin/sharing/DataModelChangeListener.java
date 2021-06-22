@@ -22,4 +22,6 @@ public interface DataModelChangeListener {
 
   HashMap<String, Object> toMap();
 
+  void formJson(HashMap<String, Object> map);
+
 }

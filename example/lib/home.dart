@@ -39,6 +39,11 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
             ),
+            TextButton(
+                onPressed: () {
+                  BasicInfo.instance.userId = 'newFlutterUserId';
+                },
+                child: Text('change BasicInfo in flutter'))
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 package com.meijian.muffin.engine;
 
 import android.app.Activity;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -86,12 +87,23 @@ public class EngineBinding implements PropertyChangeListener {
             String key = call.argument("key");
             result.success(Muffin.getInstance().getDataModelByKey(key));
             break;
+          case "syncDataModel":
+            HashMap<String, Object> model = call.arguments();
+            for (DataModelChangeListener listener : Muffin.getInstance().getModels()) {
+              if (TextUtils.equals((String) model.get("key"), listener.key())) {
+                Logger.log(TAG, "flutter change mode , native sync :" + model.toString());
+                listener.formJson(model);
+              }
+            }
+            result.success(new HashMap<>());
+            break;
           default:
             result.notImplemented();
         }
       }
     });
   }
+
 
   public void attach() {
     for (DataModelChangeListener model : Muffin.getInstance().getModels()) {

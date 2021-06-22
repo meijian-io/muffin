@@ -11,6 +11,6 @@ abstract class DataModelChangeListener extends ChangeNotifier {
   @override
   void notifyListeners() {
     super.notifyListeners();
-    NavigatorChannel.syncDataModel(toMap());
+    NavigatorChannel.syncDataModel(toMap()..['key'] = key());
   }
 }

@@ -36,8 +36,12 @@ class NavigatorChannel {
         .invokeMethod('pushNamed', {'pageName': pageName, 'data': data});
   }
 
-  static void syncDataModel(Map<String, Object> map) {}
+  ///when model be changed in flutter, sync to native
+  static Future<dynamic> syncDataModel(Map<String, Object> map) async {
+    return await _channel.invokeMethod('syncDataModel', map);
+  }
 
+  /// model in Flutter should init when flutter start,
   static Future<Map<String, dynamic>?> initDataModel(String key) async {
     final dynamic model =
         await _channel.invokeMethod('initDataModel', {'key': key});
