@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:muffin/channel/navigator_channel.dart';
 import 'package:muffin/navigator/muffin_navigator.dart';
+import 'package:muffin/sharing/share.dart';
 
 ///管理所有的路由和页面信息
 class NavigatorStackManager extends ChangeNotifier {
@@ -28,6 +29,11 @@ class NavigatorStackManager extends ChangeNotifier {
         case 'popUntil':
           popUntil(
               Uri.parse(call.arguments['pageName']), call.arguments['result']);
+          break;
+        case 'syncDataModel':
+          print('native syncDataModel , flutter received : ${call.arguments}');
+          Share.instance
+              .syncDataModel(Map<String, dynamic>.from(call.arguments));
           break;
       }
       return Future.value({});

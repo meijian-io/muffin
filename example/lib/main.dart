@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:muffin/sharing/share.dart';
 import 'package:muffin/navigator/muffin_navigator.dart';
 import 'package:muffin/navigator/muffin_page.dart';
+import 'package:muffin_example/basic_info.dart';
 
 import 'first.dart';
 import 'home.dart';
@@ -10,6 +12,7 @@ import 'home.dart';
 ///这些定义只能写在 main.dart 中
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Share.instance.init([BasicInfo.instance]);
   runApp(getApp());
 }
 

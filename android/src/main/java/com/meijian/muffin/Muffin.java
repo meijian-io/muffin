@@ -3,6 +3,7 @@ package com.meijian.muffin;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 
 import com.meijian.muffin.engine.EngineGroupCache;
@@ -10,6 +11,7 @@ import com.meijian.muffin.navigator.ActivityIntentConfig;
 import com.meijian.muffin.navigator.NavigatorStackManager;
 import com.meijian.muffin.sharing.DataModelChangeListener;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.flutter.embedding.engine.FlutterEngineGroup;
@@ -53,6 +55,15 @@ public class Muffin {
 
   public List<DataModelChangeListener> getModels() {
     return models;
+  }
+
+  public HashMap<String, Object> getDataModelByKey(String key) {
+    for (DataModelChangeListener model : models) {
+      if (TextUtils.equals(model.key(), key)) {
+        return model.toMap();
+      }
+    }
+    return new HashMap<>();
   }
 
   static class MuffinAppLifecycle implements Application.ActivityLifecycleCallbacks {

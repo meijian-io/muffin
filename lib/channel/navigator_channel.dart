@@ -35,4 +35,12 @@ class NavigatorChannel {
     return await _channel
         .invokeMethod('pushNamed', {'pageName': pageName, 'data': data});
   }
+
+  static void syncDataModel(Map<String, Object> map) {}
+
+  static Future<Map<String, dynamic>?> initDataModel(String key) async {
+    final dynamic model =
+        await _channel.invokeMethod('initDataModel', {'key': key});
+    return Map.from(model);
+  }
 }

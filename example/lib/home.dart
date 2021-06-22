@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:muffin/navigator/muffin_navigator.dart';
+import 'package:muffin_example/basic_info.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -28,7 +30,15 @@ class HomeScreen extends StatelessWidget {
                       Uri.parse('/native_second'),
                       {'data': "data from Home Screen"});
                 },
-                child: Text('pushNamed Native second'))
+                child: Text('pushNamed Native second')),
+            ChangeNotifierProvider.value(
+              value: BasicInfo.instance,
+              child: Consumer<BasicInfo>(
+                builder: (context, info, child) {
+                  return Text('${info.isBindTbk} && ${info.userId}');
+                },
+              ),
+            ),
           ],
         ),
       ),

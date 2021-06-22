@@ -81,6 +81,11 @@ public class EngineBinding implements PropertyChangeListener {
           //Flutter 返回值
           case "setArguments":
             break;
+
+          case "initDataModel":
+            String key = call.argument("key");
+            result.success(Muffin.getInstance().getDataModelByKey(key));
+            break;
           default:
             result.notImplemented();
         }

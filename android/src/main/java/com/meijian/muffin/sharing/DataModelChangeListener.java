@@ -9,6 +9,13 @@ import java.util.HashMap;
  */
 public interface DataModelChangeListener {
 
+  /**
+   * 存在多个共享类时，需要标记一下，在需要同步时按照key查找到该对象
+   *
+   * @return key
+   */
+  String key();
+
   void addPropertyChangeListener(PropertyChangeListener changeListener);
 
   void removePropertyChangeListener(PropertyChangeListener changeListener);

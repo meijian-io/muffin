@@ -28,6 +28,10 @@ public class BasicInfo implements DataModelChangeListener {
   private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 
+  @Override public String key() {
+    return "BasicInfo";
+  }
+
   @Override public void addPropertyChangeListener(PropertyChangeListener changeListener) {
     propertyChangeSupport.addPropertyChangeListener(changeListener);
   }
@@ -38,6 +42,7 @@ public class BasicInfo implements DataModelChangeListener {
 
   @Override public HashMap<String, Object> toMap() {
     HashMap<String, Object> map = new HashMap<>();
+    map.put("key", key());
     map.put("userId", userId);
     map.put("isBindTbk", isBindTbk);
     return map;
