@@ -5,9 +5,11 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: Center(
         child: Column(
           children: [
+            Padding(padding: EdgeInsets.only(top: 50)),
             Text('Home Screen'),
             TextButton(
                 onPressed: () async {

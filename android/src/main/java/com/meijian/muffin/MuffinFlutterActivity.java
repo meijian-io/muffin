@@ -1,4 +1,4 @@
-package com.meijian.muffin;
+uiipackage com.meijian.muffin;
 
 import android.content.Context;
 import android.os.Bundle;

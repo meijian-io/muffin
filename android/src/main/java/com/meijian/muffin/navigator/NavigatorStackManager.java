@@ -175,7 +175,6 @@ public class NavigatorStackManager {
     }
   }
 
-
   public NavigatorStack findTargetNavigatorStack(String pageName) {
     NavigatorStack targetStack = null;
     for (NavigatorStack navigatorStack : stacks) {
