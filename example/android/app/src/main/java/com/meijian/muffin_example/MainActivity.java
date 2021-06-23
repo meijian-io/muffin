@@ -1,23 +1,21 @@
 package com.meijian.muffin_example;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 
 import androidx.annotation.Nullable;
 
 import com.meijian.muffin.navigator.MuffinNavigator;
-import com.meijian.muffin.navigator.PathProvider;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 
-public class MainActivity extends Activity implements PathProvider {
+public class MainActivity extends Activity {
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -33,8 +31,7 @@ public class MainActivity extends Activity implements PathProvider {
     });
 
     findViewById(R.id.second).setOnClickListener(view -> {
-      //MuffinNavigator.push(MainActivity.this, "second")
-      startActivity(new Intent(MainActivity.this, SecondActivity.class));
+      MuffinNavigator.push(MainActivity.this, Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
     });
 
     findViewById(R.id.change_basic_info).setOnClickListener(view -> {
@@ -57,18 +54,6 @@ public class MainActivity extends Activity implements PathProvider {
         }
 
     );
-  }
-
-  @Override public String getPath() {
-    return "/native_main";
-  }
-
-  @Override public Context getContext() {
-    return MainActivity.this;
-  }
-
-  @Override public void onFlutterActivityResult(String pageName, HashMap<String, Object> result) {
-    Log.e("AAA", (String) result.get("data"));
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {

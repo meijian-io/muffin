@@ -29,7 +29,7 @@ public class SchemeUtils {
   }
 
   public static String getPath(Uri uri) {
-    return uri.getQueryParameter("url");
+    return "/" + uri.getQueryParameter("url");
   }
 
   public static Map<String, Object> getParams(Uri uri) {

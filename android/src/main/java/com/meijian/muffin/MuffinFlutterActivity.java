@@ -1,6 +1,7 @@
 package com.meijian.muffin;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,21 +22,27 @@ public class MuffinFlutterActivity extends FlutterActivity {
 
   public static final String PAGE_NAME = "pageName";
   public static final String ARGUMENTS = "arguments";
+  public static final String URI = "uri";
 
   private EngineBinding engineBinding;
 
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
-    if (!getIntent().hasExtra(PAGE_NAME)) {
-      throw new RuntimeException("FlutterActivity mast has 'pageName'");
+    if (!getIntent().hasExtra(PAGE_NAME) && !getIntent().hasExtra(URI)) {
+      throw new RuntimeException("FlutterActivity mast has 'pageName' or 'Uri'");
     }
-    String pageName = getIntent().getStringExtra(PAGE_NAME);
-    Map<String, Object> arguments = (Map<String, Object>) getIntent().getSerializableExtra(ARGUMENTS);
-    if (arguments == null) {
-      engineBinding = new EngineBinding(this, pageName);
+    if (getIntent().hasExtra(URI)) {
+      engineBinding = new EngineBinding(this, (Uri) getIntent().getParcelableExtra(URI));
     } else {
-      engineBinding = new EngineBinding(this, pageName, arguments);
+      String pageName = getIntent().getStringExtra(PAGE_NAME);
+      Map<String, Object> arguments = (Map<String, Object>) getIntent().getSerializableExtra(ARGUMENTS);
+      if (arguments == null) {
+        engineBinding = new EngineBinding(this, pageName);
+      } else {
+        engineBinding = new EngineBinding(this, pageName, arguments);
+      }
     }
+
     super.onCreate(savedInstanceState);
     //FlutterEngine attach, set method channel
     engineBinding.attach();
