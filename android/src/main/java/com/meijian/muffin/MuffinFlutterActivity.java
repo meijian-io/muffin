@@ -1,4 +1,4 @@
-uiipackage com.meijian.muffin;
+package com.meijian.muffin;
 
 import android.content.Context;
 import android.net.Uri;
