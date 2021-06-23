@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:muffin/sharing/share.dart';
 import 'package:muffin/navigator/muffin_navigator.dart';
 import 'package:muffin/navigator/muffin_page.dart';
+import 'package:muffin_example/basic_info.dart';
 
 import 'first.dart';
 import 'home.dart';
@@ -10,37 +12,22 @@ import 'home.dart';
 ///这些定义只能写在 main.dart 中
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(getApp());
-}
 
-@pragma('vm:entry-point')
-void first() async {
-  ///确保 Flutter 通讯渠道已经实例化
-  WidgetsFlutterBinding.ensureInitialized();
-  var arguments = {};
-  runApp(getApp());
-}
-
-@pragma('vm:entry-point')
-void second() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  var arguments = {};
-  runApp(getApp());
+  ///sharing data
+  await Share.instance.init([BasicInfo.instance]);
+  runApp(await getApp());
 }
 
 ///get a App with dif initialRoute
-Widget getApp() {
-  final navigator = MuffinNavigator(
-      initRoute: '/home',
-      routes: {
-        '/home': (uri, arguments) => MuffinRoutePage(child: HomeScreen()),
-        '/first': (uri, arguments) => MuffinRoutePage(
-                child: FirstScreen(
-              arguments: arguments,
-            ))
-      },
-      multiple: true);
-
+Future<Widget> getApp() async {
+  final navigator = MuffinNavigator(routes: {
+    '/home': (uri, arguments) => MuffinRoutePage(child: HomeScreen()),
+    '/first': (uri, arguments) => MuffinRoutePage(
+            child: FirstScreen(
+          arguments: arguments,
+        ))
+  }, multiple: true);
+  await navigator.init();
   return MaterialApp.router(
     routeInformationParser: MuffinInformationParser(),
     routerDelegate: navigator,

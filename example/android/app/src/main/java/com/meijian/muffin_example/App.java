@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.meijian.muffin.Muffin;
 import com.meijian.muffin.navigator.ActivityIntentConfig;
+import com.meijian.muffin.sharing.DataModelChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,9 @@ public class App extends Application {
     List<ActivityIntentConfig> intentConfigs = new ArrayList<>();
     intentConfigs.add(new ActivityIntentConfig(MainActivity.class, "/native_main"));
     intentConfigs.add(new ActivityIntentConfig(SecondActivity.class, "/native_second"));
-    Muffin.getInstance().init(this, intentConfigs);
+
+    List<DataModelChangeListener> models = new ArrayList<>();
+    models.add(BasicInfo.getInstance());
+    Muffin.getInstance().init(this, intentConfigs, models);
   }
 }

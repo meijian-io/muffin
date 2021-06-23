@@ -30,13 +30,13 @@ public class EngineGroupCache {
     createAndRunEngine(context, "main");
   }
 
-  public FlutterEngine createAndRunEngine(Context context, String pageName) {
-    if (TextUtils.isEmpty(pageName)) {
-      pageName = "main";
+  public FlutterEngine createAndRunEngine(Context context, String entryPoint) {
+    if (TextUtils.isEmpty(entryPoint)) {
+      entryPoint = "main";
     }
     FlutterLoader flutterLoader = FlutterInjector.instance().flutterLoader();
     return engineGroup.createAndRunEngine(context,
-        new DartExecutor.DartEntrypoint(flutterLoader.findAppBundlePath(), pageName));
+        new DartExecutor.DartEntrypoint(flutterLoader.findAppBundlePath(), entryPoint));
   }
 
 }

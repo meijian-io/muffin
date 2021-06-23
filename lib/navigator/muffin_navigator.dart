@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:muffin/channel/navigator_channel.dart';
 
 import 'navigator_stack_manager.dart';
 
@@ -15,10 +16,18 @@ class MuffinNavigator extends RouterDelegate<Uri>
 
   late NavigatorStackManager navigatorStackManager;
 
-  final String initRoute;
+  late String initRoute;
+
+  late dynamic initArguments;
+
+  init() async {
+    dynamic arguments = await NavigatorChannel.arguments;
+    initRoute = arguments['url'];
+    initArguments = arguments['arguments'];
+    return this;
+  }
 
   MuffinNavigator({
-    required this.initRoute,
     required Map<Pattern, MuffinPageBuilder> routes,
     bool multiple = false,
   }) {
@@ -51,11 +60,12 @@ class MuffinNavigator extends RouterDelegate<Uri>
 
   ///Navigator初始化时默认为 '/'，标记已经是当前home
   @override
-  Future<void> setNewRoutePath(Uri configuration) {
+  Future<void> setNewRoutePath(Uri configuration) async {
     ///2. setNewRoutePath
     print('setNewRoutePath ${configuration.toString()}');
     if (configuration.toString() == '/') {
-      return navigatorStackManager.push(Uri.parse(initRoute));
+      return navigatorStackManager.push(Uri.parse(initRoute),
+          arguments: initArguments);
     }
     return navigatorStackManager.push(configuration);
   }

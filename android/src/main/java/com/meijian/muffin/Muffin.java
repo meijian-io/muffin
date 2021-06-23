@@ -3,12 +3,15 @@ package com.meijian.muffin;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 
 import com.meijian.muffin.engine.EngineGroupCache;
 import com.meijian.muffin.navigator.ActivityIntentConfig;
 import com.meijian.muffin.navigator.NavigatorStackManager;
+import com.meijian.muffin.sharing.DataModelChangeListener;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.flutter.embedding.engine.FlutterEngineGroup;
@@ -24,6 +27,7 @@ public class Muffin {
 
   private List<ActivityIntentConfig> intentConfigs;
 
+  private List<DataModelChangeListener> models;
 
   public static Muffin getInstance() {
     if (muffin == null) {
@@ -33,10 +37,11 @@ public class Muffin {
   }
 
 
-  public void init(Application context, List<ActivityIntentConfig> intentConfigs) {
+  public void init(Application context, List<ActivityIntentConfig> intentConfigs, List<DataModelChangeListener> dataModels) {
     engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
     context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
     this.intentConfigs = intentConfigs;
+    this.models = dataModels;
   }
 
 
@@ -46,6 +51,19 @@ public class Muffin {
 
   public List<ActivityIntentConfig> getIntentConfigs() {
     return intentConfigs;
+  }
+
+  public List<DataModelChangeListener> getModels() {
+    return models;
+  }
+
+  public HashMap<String, Object> getDataModelByKey(String key) {
+    for (DataModelChangeListener model : models) {
+      if (TextUtils.equals(model.key(), key)) {
+        return model.toMap();
+      }
+    }
+    return new HashMap<>();
   }
 
   static class MuffinAppLifecycle implements Application.ActivityLifecycleCallbacks {

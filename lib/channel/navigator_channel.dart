@@ -12,6 +12,11 @@ class NavigatorChannel {
     return Map.from(arguments);
   }
 
+  static Future<dynamic> get url async {
+    final dynamic url = await _channel.invokeMethod('getUrl');
+    return url;
+  }
+
   static Future<dynamic> syncFlutterStack(String pageName) async {
     return await _channel
         .invokeMethod('syncFlutterStack', {'pageName': pageName});
@@ -34,5 +39,17 @@ class NavigatorChannel {
   static Future<dynamic> pushNamed(String pageName, [dynamic data]) async {
     return await _channel
         .invokeMethod('pushNamed', {'pageName': pageName, 'data': data});
+  }
+
+  ///when model be changed in flutter, sync to native
+  static Future<dynamic> syncDataModel(Map<String, Object> map) async {
+    return await _channel.invokeMethod('syncDataModel', map);
+  }
+
+  /// model in Flutter should init when flutter start,
+  static Future<Map<String, dynamic>?> initDataModel(String key) async {
+    final dynamic model =
+        await _channel.invokeMethod('initDataModel', {'key': key});
+    return Map.from(model);
   }
 }

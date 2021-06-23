@@ -12,5 +12,11 @@
       android:text="This is Native Second Activity"
       />
 
+  <Button
+      android:id="@+id/first"
+      android:text="Go Flutter home"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"/>
+
 
 </LinearLayout>

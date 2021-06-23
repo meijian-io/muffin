@@ -1,6 +1,8 @@
 package com.meijian.muffin.navigator;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 
 import com.meijian.muffin.MuffinFlutterActivity;
 
@@ -21,22 +23,45 @@ import java.util.Map;
  */
 public class MuffinNavigator {
 
-  public static void push(PathProvider provider, String pageName) {
-    Intent intent = new Intent(provider.getContext(), MuffinFlutterActivity.class);
+  public static void push(Activity context, String pageName) {
+    Intent intent = new Intent(context, MuffinFlutterActivity.class);
     intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);
-    provider.getContext().startActivity(intent);
+    context.startActivity(intent);
     //while flutter has pushed, then add a new NavigatorStack to NavigatorStackManager
   }
 
-  public static void push(PathProvider provider, String pageName, Map<String, Object> arguments) {
-    Intent intent = new Intent(provider.getContext(), MuffinFlutterActivity.class);
+  public static void pushForResult(Activity context, String pageName) {
+    Intent intent = new Intent(context, MuffinFlutterActivity.class);
     intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);
-    intent.putExtra(MuffinFlutterActivity.ARGUMENTS, (Serializable) arguments);
-    provider.getContext().startActivity(intent);
+    context.startActivityForResult(intent, MuffinFlutterActivity.REQUEST_CODE);
+    //while flutter has pushed, then add a new NavigatorStack to NavigatorStackManager
   }
 
-  public static void push(PathProvider provider, String pageName, Map<String, Object> arguments, FlutterResult result) {
+  public static void pushForResult(Activity context, String pageName, Map<String, Object> arguments) {
+    Intent intent = new Intent(context, MuffinFlutterActivity.class);
+    intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);
+    intent.putExtra(MuffinFlutterActivity.ARGUMENTS, (Serializable) arguments);
+    context.startActivityForResult(intent, MuffinFlutterActivity.REQUEST_CODE);
+  }
 
+  public static void push(Activity context, String pageName, Map<String, Object> arguments) {
+    Intent intent = new Intent(context, MuffinFlutterActivity.class);
+    intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);
+    intent.putExtra(MuffinFlutterActivity.ARGUMENTS, (Serializable) arguments);
+    context.startActivity(intent);
+  }
+
+  public static void push(Activity context, Uri uri) {
+    Intent intent = new Intent(context, MuffinFlutterActivity.class);
+    intent.putExtra(MuffinFlutterActivity.URI, uri);
+    context.startActivity(intent);
+  }
+
+
+  public static void pushForResult(Activity context, Uri uri) {
+    Intent intent = new Intent(context, MuffinFlutterActivity.class);
+    intent.putExtra(MuffinFlutterActivity.URI, uri);
+    context.startActivityForResult(intent, MuffinFlutterActivity.REQUEST_CODE);
   }
 
 }

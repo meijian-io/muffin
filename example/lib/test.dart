@@ -1,8 +1,8 @@
 void main() {
 
-  Uri uri = Uri.parse('meijianclient://meijian.io/name?url=discover');
+  Uri uri = Uri.parse('meijianclient://meijian.io/name/file?url=discover');
   print(uri.path);
-  print(uri.queryParameters);
+  print(uri.queryParameters['url']);
   print('----');
   Pattern pattern = 'discover/game';
 
