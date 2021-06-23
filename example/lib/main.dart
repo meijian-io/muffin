@@ -15,20 +15,19 @@ void main() async {
 
   ///sharing data
   await Share.instance.init([BasicInfo.instance]);
-  runApp(getApp());
+  runApp(await getApp());
 }
 
 ///get a App with dif initialRoute
-Widget getApp() {
+Future<Widget> getApp() async {
   final navigator = MuffinNavigator(routes: {
     '/home': (uri, arguments) => MuffinRoutePage(child: HomeScreen()),
     '/first': (uri, arguments) => MuffinRoutePage(
             child: FirstScreen(
           arguments: arguments,
         ))
-  }, multiple: true)
-    ..init();
-
+  }, multiple: true);
+  await navigator.init();
   return MaterialApp.router(
     routeInformationParser: MuffinInformationParser(),
     routerDelegate: navigator,
