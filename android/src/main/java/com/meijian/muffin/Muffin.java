@@ -7,8 +7,8 @@ import android.text.TextUtils;
 
 
 import com.meijian.muffin.engine.EngineGroupCache;
-import com.meijian.muffin.navigator.ActivityIntentConfig;
 import com.meijian.muffin.navigator.NavigatorStackManager;
+import com.meijian.muffin.navigator.PushNativeHandler;
 import com.meijian.muffin.sharing.DataModelChangeListener;
 
 import java.util.HashMap;
@@ -25,9 +25,9 @@ public class Muffin {
 
   private EngineGroupCache engineGroup;
 
-  private List<ActivityIntentConfig> intentConfigs;
-
   private List<DataModelChangeListener> models;
+
+  private PushNativeHandler nativeHandler;
 
   public static Muffin getInstance() {
     if (muffin == null) {
@@ -37,11 +37,11 @@ public class Muffin {
   }
 
 
-  public void init(Application context, List<ActivityIntentConfig> intentConfigs, List<DataModelChangeListener> dataModels) {
+  public void init(Application context, List<DataModelChangeListener> dataModels, PushNativeHandler handler) {
     engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
     context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
-    this.intentConfigs = intentConfigs;
     this.models = dataModels;
+    this.nativeHandler = handler;
   }
 
 
@@ -49,9 +49,6 @@ public class Muffin {
     return engineGroup;
   }
 
-  public List<ActivityIntentConfig> getIntentConfigs() {
-    return intentConfigs;
-  }
 
   public List<DataModelChangeListener> getModels() {
     return models;
@@ -64,6 +61,10 @@ public class Muffin {
       }
     }
     return new HashMap<>();
+  }
+
+  public PushNativeHandler getNativeHandler() {
+    return nativeHandler;
   }
 
   static class MuffinAppLifecycle implements Application.ActivityLifecycleCallbacks {

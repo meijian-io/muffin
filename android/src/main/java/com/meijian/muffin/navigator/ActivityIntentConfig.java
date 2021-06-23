@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * Created by  on 2021/6/7.
  */
+@Deprecated
 public class ActivityIntentConfig {
 
   /**

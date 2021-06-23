@@ -1,8 +1,6 @@
 package com.meijian.muffin.navigator;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 
 import com.meijian.muffin.Logger;
@@ -10,6 +8,7 @@ import com.meijian.muffin.Muffin;
 import com.meijian.muffin.MuffinFlutterActivity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -134,22 +133,20 @@ public class NavigatorStackManager {
     ((MuffinFlutterActivity) targetStack.getHost()).getEngineBinding().popUntil(target, result);
   }
 
+  /**
+   * 给外侧跳转
+   *
+   * @param pageName pageName
+   * @param data arguments
+   * @return find
+   */
   public boolean pushNamed(String pageName, Object data) {
-    List<ActivityIntentConfig> configs = Muffin.getInstance().getIntentConfigs();
-    boolean find = false;
-    if (configs.isEmpty()) {
-      return false;
+    HashMap<String, Object> arguments = new HashMap<>();
+    if (data instanceof HashMap) {
+      arguments = (HashMap<String, Object>) data;
     }
-    for (ActivityIntentConfig config : configs) {
-      if (TextUtils.equals(config.getPath(), pageName)) {
-        find = true;
-        Context context = stacks.getFirst().getHost();
-        Intent intent = new Intent(context, config.getActivityClazz());
-        context.startActivity(intent);
-        break;
-      }
-    }
-    return find;
+    Muffin.getInstance().getNativeHandler().pushNamed(getTopActivity(), pageName, arguments);
+    return true;
   }
 
 
