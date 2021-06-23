@@ -12,6 +12,11 @@ class NavigatorChannel {
     return Map.from(arguments);
   }
 
+  static Future<dynamic> get url async {
+    final dynamic url = await _channel.invokeMethod('getUrl');
+    return url;
+  }
+
   static Future<dynamic> syncFlutterStack(String pageName) async {
     return await _channel
         .invokeMethod('syncFlutterStack', {'pageName': pageName});

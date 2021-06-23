@@ -1,6 +1,7 @@
 package com.meijian.muffin.engine;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import com.meijian.muffin.Muffin;
 import com.meijian.muffin.navigator.NavigatorStack;
 import com.meijian.muffin.navigator.NavigatorStackManager;
 import com.meijian.muffin.sharing.DataModelChangeListener;
+import com.meijian.muffin.utils.SchemeUtils;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -29,12 +31,16 @@ public class EngineBinding implements PropertyChangeListener {
   private FlutterEngine flutterEngine;
   private MethodChannel methodChannel;
 
-  public EngineBinding(Activity context, String entryPoint) {
-    this(context, entryPoint, null);
+  public EngineBinding(Activity context, String pageName) {
+    this(context, pageName, null);
   }
 
-  public EngineBinding(final Activity context, String entryPoint, final Map<String, Object> arguments) {
-    flutterEngine = Muffin.getInstance().getEngineGroup().createAndRunEngine(context, entryPoint);
+  public EngineBinding(Activity context, Uri uri) {
+    this(context, SchemeUtils.getPath(uri), SchemeUtils.getParams(uri));
+  }
+
+  public EngineBinding(final Activity context, final String pageName, final Map<String, Object> arguments) {
+    flutterEngine = Muffin.getInstance().getEngineGroup().createAndRunEngine(context, "main");
     methodChannel = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "muffin_navigate");
     methodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
       @Override
@@ -42,11 +48,10 @@ public class EngineBinding implements PropertyChangeListener {
         switch (call.method) {
           //Flutter 获取值
           case "getArguments": {
-            if (arguments != null) {
-              result.success(arguments);
-            } else {
-              result.success(new HashMap<String, Object>());
-            }
+            Map<String, Object> map = new HashMap<>();
+            map.put("url", pageName);
+            map.put("arguments", arguments == null ? new HashMap<String, Object>() : arguments);
+            result.success(map);
           }
           break;
           //flutter has pushed, sync stack

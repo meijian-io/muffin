@@ -176,6 +176,11 @@ public class NavigatorStackManager {
   }
 
 
+  public Activity getTopActivity() {
+    return stacks.getFirst().getHost();
+  }
+
+
   public NavigatorStack findTargetNavigatorStack(String pageName) {
     NavigatorStack targetStack = null;
     for (NavigatorStack navigatorStack : stacks) {
