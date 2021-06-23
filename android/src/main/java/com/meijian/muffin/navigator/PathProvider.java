@@ -7,6 +7,7 @@ import java.util.HashMap;
 /**
  * Created by  on 2021/6/4.
  */
+@Deprecated
 public interface PathProvider {
 
   /**

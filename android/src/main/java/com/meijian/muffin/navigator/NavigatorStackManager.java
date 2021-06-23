@@ -117,11 +117,12 @@ public class NavigatorStackManager {
       if (poppedStack.getHost().hashCode() == targetStack.getHost().hashCode()) {
         continue;
       }
+      poppedStack.setResult(result, target);
       poppedStack.getHost().finish();
     }
 
     //5. has popped to targetVC ,notifyCallbacks
-    if (targetStack.getHost() instanceof PathProvider) {
+    if (!(targetStack.getHost() instanceof MuffinFlutterActivity)) {
       targetStack.notifyCallbacks(result, target);
       Logger.log(TAG, "popUntil native finish ,size = " + stacks.size());
       logStack();
@@ -154,8 +155,8 @@ public class NavigatorStackManager {
 
   public void onActivityCreate(Activity activity) {
     //only add native activity, flutter pages has already added to stack
-    if (activity instanceof PathProvider && !(activity instanceof MuffinFlutterActivity)) {
-      stacks.addFirst(new NavigatorStack((PathProvider) activity));
+    if (!(activity instanceof MuffinFlutterActivity)) {
+      stacks.addFirst(new NavigatorStack(activity, activity.getClass().getSimpleName()));
       Logger.log(TAG, "stack add, size = " + stacks.size());
       logStack();
     }
@@ -164,7 +165,7 @@ public class NavigatorStackManager {
   public void onActivityDestroyed(Activity activity) {
     //all stacks has already removed
     //only for handling system backPressed
-    if (activity instanceof PathProvider && !(activity instanceof MuffinFlutterActivity)) {
+    if (!(activity instanceof MuffinFlutterActivity)) {
       //check if has popped
       NavigatorStack currentTopNavigatorStack = stacks.getFirst();
       if (currentTopNavigatorStack.getHost().hashCode() == activity.hashCode()) {

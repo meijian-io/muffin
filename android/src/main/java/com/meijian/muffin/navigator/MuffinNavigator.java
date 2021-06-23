@@ -1,7 +1,6 @@
 package com.meijian.muffin.navigator;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
@@ -42,6 +41,13 @@ public class MuffinNavigator {
     Intent intent = new Intent(context, MuffinFlutterActivity.class);
     intent.putExtra(MuffinFlutterActivity.URI, uri);
     context.startActivity(intent);
+  }
+
+
+  public static void pushForResult(Activity context, Uri uri) {
+    Intent intent = new Intent(context, MuffinFlutterActivity.class);
+    intent.putExtra(MuffinFlutterActivity.URI, uri);
+    context.startActivityForResult(intent, MuffinFlutterActivity.REQUEST_CODE);
   }
 
 }

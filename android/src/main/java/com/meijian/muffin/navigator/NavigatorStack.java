@@ -1,8 +1,12 @@
 package com.meijian.muffin.navigator;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.text.TextUtils;
 
+import com.meijian.muffin.MuffinFlutterActivity;
+
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
@@ -26,13 +30,13 @@ public class NavigatorStack {
    */
   private String pageName;
 
-  private PathProvider pathProvider;
+  //private PathProvider pathProvider;
 
-  public NavigatorStack(PathProvider provider) {
+  /*public NavigatorStack(PathProvider provider) {
     this.host = new WeakReference<>((Activity) provider.getContext());
     this.pageName = provider.getPath();
     this.pathProvider = provider;
-  }
+  }*/
 
   public NavigatorStack(Activity activity, String pageName) {
     this.host = new WeakReference<>(activity);
@@ -49,18 +53,41 @@ public class NavigatorStack {
     return TextUtils.equals(that.pageName, that.pageName);
   }
 
-  public PathProvider getPathProvider() {
-    return pathProvider;
-  }
+  // public PathProvider getPathProvider() {
+  // return pathProvider;
+  // }
 
   public String getPageName() {
     return pageName;
   }
 
-  public void notifyCallbacks(Object result, String pageName) {
-    if (pathProvider != null && result instanceof HashMap) {
-      pathProvider.onFlutterActivityResult(pageName, (HashMap<String, Object>) result);
+
+  /**
+   * Top vc finish ,set result
+   *
+   * @param result result
+   * @param pageName finished page's name
+   */
+  public void setResult(Object result, String pageName) {
+    if (getHost() != null && result instanceof HashMap) {
+      Intent intent = new Intent();
+      intent.putExtra("result", (Serializable) result);
+      intent.putExtra("pageName", pageName);
+      getHost().setResult(MuffinFlutterActivity.RESULT_CODE, intent);
     }
+  }
+
+  /**
+   * may be used in future
+   *
+   * @param result result
+   * @param pageName pageName
+   */
+  public void notifyCallbacks(Object result, String pageName) {
+   /* if (pathProvider != null && result instanceof HashMap) {
+      pathProvider.onFlutterActivityResult(pageName, (HashMap<String, Object>) result);
+    }*/
+
   }
 
   @Override public String toString() {
