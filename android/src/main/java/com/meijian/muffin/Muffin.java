@@ -13,6 +13,7 @@ import com.meijian.muffin.navigator.PushFlutterHandler;
 import com.meijian.muffin.navigator.PushNativeHandler;
 import com.meijian.muffin.sharing.DataModelChangeListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,6 +50,13 @@ public class Muffin {
     this.flutterHandler = new DefaultPushFlutterHandler();
   }
 
+  public void init(Application context, PushNativeHandler handler) {
+    engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
+    context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
+    this.nativeHandler = handler;
+    this.flutterHandler = new DefaultPushFlutterHandler();
+  }
+
   public void init(Application context, List<DataModelChangeListener> dataModels, PushNativeHandler handler, PushFlutterHandler flutterHandler) {
     engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
     context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
@@ -63,6 +71,9 @@ public class Muffin {
 
 
   public List<DataModelChangeListener> getModels() {
+    if (models == null) {
+      return new ArrayList<>();
+    }
     return models;
   }
 
