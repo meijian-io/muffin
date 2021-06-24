@@ -36,7 +36,9 @@ public class EngineBinding implements PropertyChangeListener {
   }
 
   public EngineBinding(Activity context, Uri uri) {
-    this(context, SchemeUtils.getPath(uri), SchemeUtils.getParams(uri));
+    this(context,
+        Muffin.getInstance().getFlutterHandler().getPath(uri),
+        Muffin.getInstance().getFlutterHandler().getArguments(uri));
   }
 
   public EngineBinding(final Activity context, final String pageName, final Map<String, Object> arguments) {
