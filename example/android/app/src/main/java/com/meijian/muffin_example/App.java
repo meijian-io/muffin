@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 
 import com.meijian.muffin.Muffin;
+import com.meijian.muffin.navigator.DefaultPushFlutterHandler;
 import com.meijian.muffin.sharing.DataModelChangeListener;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class App extends Application {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
       }
-    }).setModels(models);
+    }).setModels(models)
+        .setFlutterHandler(new DefaultPushFlutterHandler());
   }
 }
