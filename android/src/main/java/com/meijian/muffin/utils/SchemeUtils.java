@@ -39,7 +39,6 @@ public class SchemeUtils {
         arguments.put(queryParameterName, uri.getQueryParameter(queryParameterName));
       }
     }
-
     return arguments;
   }
 }
