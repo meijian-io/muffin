@@ -92,7 +92,7 @@ packages:
     dependency: transitive
     description:
       name: nested
-      url: "https://pub.dartlang.org"
+      url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
   path:
@@ -106,7 +106,7 @@ packages:
     dependency: "direct main"
     description:
       name: provider
-      url: "https://pub.dartlang.org"
+      url: "https://pub.flutter-io.cn"
     source: hosted
     version: "5.0.0"
   sky_engine:
