@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 
+import androidx.annotation.NonNull;
+
 import com.meijian.muffin.engine.EngineGroupCache;
 import com.meijian.muffin.navigator.DefaultPushFlutterHandler;
 import com.meijian.muffin.navigator.NavigatorStackManager;
@@ -36,33 +38,26 @@ public class Muffin {
 
   public static Muffin getInstance() {
     if (muffin == null) {
-      muffin = new Muffin();
+      throw new RuntimeException("Must call Muffin init");
     }
     return muffin;
   }
 
-
-  public void init(Application context, List<DataModelChangeListener> dataModels, PushNativeHandler handler) {
-    engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
-    context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
+  public Muffin(List<DataModelChangeListener> dataModels, PushNativeHandler handler, PushFlutterHandler flutterHandler) {
     this.models = dataModels;
     this.nativeHandler = handler;
-    this.flutterHandler = new DefaultPushFlutterHandler();
+    this.flutterHandler = flutterHandler == null ? new DefaultPushFlutterHandler() : flutterHandler;
   }
 
-  public void init(Application context, PushNativeHandler handler) {
-    engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
-    context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
-    this.nativeHandler = handler;
-    this.flutterHandler = new DefaultPushFlutterHandler();
+  public static void init(Application context, Options options) {
+    muffin = new Muffin(options.models, options.nativeHandler, options.flutterHandler);
+    muffin.init(context);
   }
 
-  public void init(Application context, List<DataModelChangeListener> dataModels, PushNativeHandler handler, PushFlutterHandler flutterHandler) {
+
+  public void init(Application context) {
     engineGroup = new EngineGroupCache(context, new FlutterEngineGroup(context));
     context.registerActivityLifecycleCallbacks(new MuffinAppLifecycle());
-    this.models = dataModels;
-    this.nativeHandler = handler;
-    this.flutterHandler = flutterHandler;
   }
 
   public EngineGroupCache getEngineGroup() {
@@ -92,6 +87,32 @@ public class Muffin {
 
   public PushFlutterHandler getFlutterHandler() {
     return flutterHandler;
+  }
+
+  public static class Options {
+
+    private List<DataModelChangeListener> models;
+
+    private PushNativeHandler nativeHandler;
+
+    private PushFlutterHandler flutterHandler;
+
+
+    public Options setModels(@NonNull List<DataModelChangeListener> models) {
+      this.models = models;
+      return this;
+    }
+
+    public Options setNativeHandler(@NonNull PushNativeHandler nativeHandler) {
+      this.nativeHandler = nativeHandler;
+      return this;
+
+    }
+
+    public Options setFlutterHandler(@NonNull PushFlutterHandler flutterHandler) {
+      this.flutterHandler = flutterHandler;
+      return this;
+    }
   }
 
   static class MuffinAppLifecycle implements Application.ActivityLifecycleCallbacks {

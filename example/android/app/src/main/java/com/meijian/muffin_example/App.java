@@ -18,15 +18,19 @@ public class App extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
+    Muffin.init(this, options());
+  }
+
+  private Muffin.Options options() {
     List<DataModelChangeListener> models = new ArrayList<>();
     models.add(BasicInfo.getInstance());
 
-    Muffin.getInstance().init(this, models, (activity, pageName, data) -> {
+    return new Muffin.Options().setNativeHandler((activity, pageName, data) -> {
       //根据 pageName 和 data 拼接成 schema 跳转
       if (TextUtils.equals("/main", pageName)) {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
       }
-    });
+    }).setModels(models);
   }
 }
