@@ -74,6 +74,13 @@ MuffinNavigator.of(context).popUntil(Uri.parse('/first'), {'data': "data from Ho
 ## 接入Muffin
 
 ~~~
+
+导入 Flutter项目
+muffin:
+    git:
+      url: 'git@gitlab.qunhequnhe.com:meijianGroups/mobileApp/muffin.git'
+      ref: 'master'
+
 1. 在Applocation中初始化Muffin
    
    //普通初始化，第二个参数为 各种提供给上层的接口实现
