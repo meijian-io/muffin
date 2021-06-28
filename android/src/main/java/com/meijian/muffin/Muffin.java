@@ -72,6 +72,15 @@ public class Muffin {
     return models;
   }
 
+  /**
+   * late add
+   *
+   * @param models [DataModelChangeListener]
+   */
+  public void addChangeableModels(List<DataModelChangeListener> models) {
+    getModels().addAll(models);
+  }
+
   public HashMap<String, Object> getDataModelByKey(String key) {
     for (DataModelChangeListener model : models) {
       if (TextUtils.equals(model.key(), key)) {
