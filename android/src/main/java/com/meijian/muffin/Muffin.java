@@ -67,7 +67,7 @@ public class Muffin {
 
   public List<DataModelChangeListener> getModels() {
     if (models == null) {
-      return new ArrayList<>();
+      models = new ArrayList<>();
     }
     return models;
   }
