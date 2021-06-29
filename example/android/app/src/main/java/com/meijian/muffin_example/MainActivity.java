@@ -55,6 +55,9 @@ public class MainActivity extends Activity {
         }
 
     );
+
+    findViewById(R.id.open_with_fragment).setOnClickListener(v ->
+        startActivity(new Intent(MainActivity.this, BaseFlutterActivity.class)));
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {

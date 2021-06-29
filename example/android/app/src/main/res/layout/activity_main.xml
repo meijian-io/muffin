@@ -39,4 +39,11 @@
       android:text="change basic info"
       />
 
+  <Button
+      android:id="@+id/open_with_fragment"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="open with fragment"
+      />
+
 </LinearLayout>

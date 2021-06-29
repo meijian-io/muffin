@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.meijian.muffin.Logger;
 import com.meijian.muffin.Muffin;
-import com.meijian.muffin.MuffinFlutterActivity;
+import com.meijian.muffin.engine.EngineBindingProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,7 +122,7 @@ public class NavigatorStackManager {
     }
 
     //5. has popped to targetVC ,notifyCallbacks
-    if (!(targetStack.getHost() instanceof MuffinFlutterActivity)) {
+    if (!(targetStack.getHost() instanceof EngineBindingProvider)) {
       targetStack.notifyCallbacks(result, target);
       Logger.log(TAG, "popUntil native finish ,size = " + stacks.size());
       logStack();
@@ -131,7 +131,7 @@ public class NavigatorStackManager {
     Logger.log(TAG, "has flutter stacks  to pop ,size = " + stacks.size());
     logStack();
     //6. continue flutter pop
-    ((MuffinFlutterActivity) targetStack.getHost()).getEngineBinding().popUntil(target, result);
+    ((EngineBindingProvider) targetStack.getHost()).provideEngineBinding().popUntil(target, result);
   }
 
   /**
@@ -141,7 +141,7 @@ public class NavigatorStackManager {
    * @param data arguments
    * @return find
    */
-  public boolean pushNamed(String pageName, Object data) {
+  @SuppressWarnings("unchecked") public boolean pushNamed(String pageName, Object data) {
     HashMap<String, Object> arguments = new HashMap<>();
     if (data instanceof HashMap) {
       arguments = (HashMap<String, Object>) data;
@@ -153,7 +153,7 @@ public class NavigatorStackManager {
 
   public void onActivityCreate(Activity activity) {
     //only add native activity, flutter pages has already added to stack
-    if (!(activity instanceof MuffinFlutterActivity)) {
+    if (!(activity instanceof EngineBindingProvider)) {
       stacks.addFirst(new NavigatorStack(activity, activity.getClass().getSimpleName()));
       Logger.log(TAG, "stack add, size = " + stacks.size());
       logStack();
@@ -163,7 +163,7 @@ public class NavigatorStackManager {
   public void onActivityDestroyed(Activity activity) {
     //all stacks has already removed
     //only for handling system backPressed
-    if (!(activity instanceof MuffinFlutterActivity)) {
+    if (!(activity instanceof EngineBindingProvider)) {
       //check if has popped
       Iterator<NavigatorStack> iterator = stacks.iterator();
       while (iterator.hasNext()) {
@@ -181,7 +181,6 @@ public class NavigatorStackManager {
   public Activity getTopActivity() {
     return stacks.getFirst().getHost();
   }
-
 
   public NavigatorStack findTargetNavigatorStack(String pageName) {
     NavigatorStack targetStack = null;
