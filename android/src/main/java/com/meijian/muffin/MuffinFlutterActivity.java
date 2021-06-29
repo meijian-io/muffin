@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
 import com.meijian.muffin.engine.EngineBinding;
 import com.meijian.muffin.engine.EngineBindingProvider;
 
@@ -15,6 +14,7 @@ import java.util.Map;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
+import io.flutter.plugin.common.BinaryMessenger;
 
 /**
  * Created by  on 2021/5/31.
@@ -33,14 +33,14 @@ public class MuffinFlutterActivity extends FlutterActivity implements EngineBind
 
   @SuppressWarnings("unchecked") @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
-    if (!getIntent().hasExtra(PAGE_NAME) && !getIntent().hasExtra(URI)) {
+    if (getUri() == null && getPageName() == null) {
       throw new RuntimeException("FlutterActivity mast has 'pageName' or 'Uri'");
     }
-    if (getIntent().hasExtra(URI)) {
-      engineBinding = new EngineBinding(this, (Uri) getIntent().getParcelableExtra(URI));
+    if (getUri() != null) {
+      engineBinding = new EngineBinding(this, getUri());
     } else {
-      String pageName = getIntent().getStringExtra(PAGE_NAME);
-      Map<String, Object> arguments = (Map<String, Object>) getIntent().getSerializableExtra(ARGUMENTS);
+      String pageName = getPageName();
+      Map<String, Object> arguments = getArguments();
       if (arguments == null) {
         engineBinding = new EngineBinding(this, pageName);
       } else {
@@ -63,11 +63,29 @@ public class MuffinFlutterActivity extends FlutterActivity implements EngineBind
     return engineBinding.getFlutterEngine();
   }
 
-  public EngineBinding getEngineBinding() {
+  @Override public EngineBinding provideEngineBinding() {
     return engineBinding;
   }
 
-  @Override public EngineBinding provideEngineBinding() {
-    return engineBinding;
+  @Override public void provideMethodChannel(BinaryMessenger messenger) {
+
+  }
+
+  @Override public Uri getUri() {
+    if (getIntent().hasExtra(URI)) {
+      return (Uri) getIntent().getParcelableExtra(URI);
+    }
+    return null;
+  }
+
+  @Override public String getPageName() {
+    if (getIntent().hasExtra(PAGE_NAME)) {
+      return getIntent().getStringExtra(PAGE_NAME);
+    }
+    return null;
+  }
+
+  @SuppressWarnings("unchecked") @Override public Map<String, Object> getArguments() {
+    return (Map<String, Object>) getIntent().getSerializableExtra(ARGUMENTS);
   }
 }

@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import com.meijian.muffin.engine.EngineBindingProvider;
 import com.meijian.muffin.engine.EngineGroupCache;
 import com.meijian.muffin.navigator.DefaultPushFlutterHandler;
 import com.meijian.muffin.navigator.NavigatorStackManager;
@@ -36,6 +37,9 @@ public class Muffin {
 
   private PushFlutterHandler flutterHandler;
 
+  private Class<? extends EngineBindingProvider> attachVc;
+
+
   public static Muffin getInstance() {
     if (muffin == null) {
       throw new RuntimeException("Must call Muffin init");
@@ -43,14 +47,17 @@ public class Muffin {
     return muffin;
   }
 
-  public Muffin(List<DataModelChangeListener> dataModels, PushNativeHandler handler, PushFlutterHandler flutterHandler) {
+  public Muffin(List<DataModelChangeListener> dataModels, PushNativeHandler handler,
+      PushFlutterHandler flutterHandler,
+      Class<? extends EngineBindingProvider> attachVc) {
     this.models = dataModels;
     this.nativeHandler = handler;
     this.flutterHandler = flutterHandler == null ? new DefaultPushFlutterHandler() : flutterHandler;
+    this.attachVc = attachVc;
   }
 
   public static void init(Application context, Options options) {
-    muffin = new Muffin(options.models, options.nativeHandler, options.flutterHandler);
+    muffin = new Muffin(options.models, options.nativeHandler, options.flutterHandler, options.attachVc);
     muffin.init(context);
   }
 
@@ -70,6 +77,10 @@ public class Muffin {
       models = new ArrayList<>();
     }
     return models;
+  }
+
+  public Class<? extends EngineBindingProvider> getAttachVc() {
+    return attachVc;
   }
 
   /**
@@ -106,20 +117,37 @@ public class Muffin {
 
     private PushFlutterHandler flutterHandler;
 
+    private Class<? extends EngineBindingProvider> attachVc = MuffinFlutterActivity.class;
 
     public Options setModels(@NonNull List<DataModelChangeListener> models) {
       this.models = models;
       return this;
     }
 
-    public Options setNativeHandler(@NonNull PushNativeHandler nativeHandler) {
+    /**
+     * Flutter -> Native
+     *
+     * @param nativeHandler PushNativeHandler
+     * @return Options
+     */
+    public Options setPushNativeHandler(@NonNull PushNativeHandler nativeHandler) {
       this.nativeHandler = nativeHandler;
       return this;
-
     }
 
-    public Options setFlutterHandler(@NonNull PushFlutterHandler flutterHandler) {
+    /**
+     * Native -> Flutter
+     *
+     * @param flutterHandler PushFlutterHandler
+     * @return Options
+     */
+    public Options setPushFlutterHandler(@NonNull PushFlutterHandler flutterHandler) {
       this.flutterHandler = flutterHandler;
+      return this;
+    }
+
+    public Options setAttachVc(Class<? extends EngineBindingProvider> attachVc) {
+      this.attachVc = attachVc;
       return this;
     }
   }
