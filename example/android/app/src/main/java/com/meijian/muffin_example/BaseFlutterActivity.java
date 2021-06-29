@@ -15,16 +15,14 @@ import java.util.Map;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 
-import static com.meijian.muffin.MuffinFlutterActivity.ARGUMENTS;
-import static com.meijian.muffin.MuffinFlutterActivity.PAGE_NAME;
-import static com.meijian.muffin.MuffinFlutterActivity.URI;
-
 /**
  * Created by  on 2021/6/29.
  */
 public class BaseFlutterActivity extends FragmentActivity implements BindingProvider {
 
   private MuffinFlutterFragment flutterFragment;
+
+  private MethodChannel customChannel;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -44,10 +42,17 @@ public class BaseFlutterActivity extends FragmentActivity implements BindingProv
 
   @Override public void provideMethodChannel(BinaryMessenger messenger) {
     //destory
-    MethodChannel methodChannel = new MethodChannel(messenger, "custom_channel");
-    methodChannel.setMethodCallHandler((call, result) -> {
+    customChannel = new MethodChannel(messenger, "custom_channel");
+    customChannel.setMethodCallHandler((call, result) -> {
 
     });
+  }
+
+  @Override protected void onDestroy() {
+    if (customChannel != null) {
+      customChannel.setMethodCallHandler(null);
+    }
+    super.onDestroy();
   }
 
   @Override public Uri getUri() {

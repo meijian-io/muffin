@@ -11,6 +11,10 @@ import io.flutter.plugin.common.BinaryMessenger;
  */
 public interface BindingProvider {
 
+  String PAGE_NAME = "pageName";
+  String ARGUMENTS = "arguments";
+  String URI = "uri";
+
   EngineBinding provideEngineBinding();
 
   void provideMethodChannel(BinaryMessenger messenger);

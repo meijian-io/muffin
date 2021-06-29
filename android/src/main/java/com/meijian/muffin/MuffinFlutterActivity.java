@@ -24,10 +24,6 @@ public class MuffinFlutterActivity extends FlutterActivity implements BindingPro
   public static final int REQUEST_CODE = 16;
   public static final int RESULT_CODE = 17;
 
-  public static final String PAGE_NAME = "pageName";
-  public static final String ARGUMENTS = "arguments";
-  public static final String URI = "uri";
-
   private EngineBinding engineBinding;
 
 
