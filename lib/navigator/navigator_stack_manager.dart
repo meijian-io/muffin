@@ -30,6 +30,9 @@ class NavigatorStackManager extends ChangeNotifier {
           popUntil(
               Uri.parse(call.arguments['pageName']), call.arguments['result']);
           break;
+        case "pop":
+          pop();
+          break;
         case 'syncDataModel':
           print('native syncDataModel , flutter received : ${call.arguments}');
           Share.instance

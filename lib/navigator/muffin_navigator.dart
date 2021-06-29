@@ -20,17 +20,25 @@ class MuffinNavigator extends RouterDelegate<Uri>
 
   late dynamic initArguments;
 
+  bool? multiple;
+
   init() async {
-    dynamic arguments = await NavigatorChannel.arguments;
-    initRoute = arguments['url'];
-    initArguments = arguments['arguments'];
+    if (multiple!) {
+      dynamic arguments = await NavigatorChannel.arguments;
+      initRoute = arguments['url'];
+      initArguments = arguments['arguments'];
+    }
     return this;
   }
 
-  MuffinNavigator({
-    required Map<Pattern, MuffinPageBuilder> routes,
-    bool multiple = false,
-  }) {
+  MuffinNavigator(
+      {required Map<Pattern, MuffinPageBuilder> routes,
+      required bool multiple,
+      String initRoute = '/',
+      dynamic initArguments}) {
+    this.initRoute = initRoute;
+    this.initArguments = initArguments;
+    this.multiple = multiple;
     navigatorStackManager =
         NavigatorStackManager(routes: routes, multiple: multiple);
     navigatorStackManager.addListener(notifyListeners);

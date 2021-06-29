@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 
 import com.meijian.muffin.engine.EngineBinding;
+import com.meijian.muffin.engine.EngineBindingProvider;
 
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import io.flutter.embedding.engine.FlutterEngine;
 /**
  * Created by  on 2021/5/31.
  */
-public class MuffinFlutterActivity extends FlutterActivity {
+public class MuffinFlutterActivity extends FlutterActivity implements EngineBindingProvider {
 
   public static final int REQUEST_CODE = 16;
   public static final int RESULT_CODE = 17;
@@ -30,7 +31,8 @@ public class MuffinFlutterActivity extends FlutterActivity {
   private EngineBinding engineBinding;
 
 
-  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+  @SuppressWarnings("unchecked") @Override
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
     if (!getIntent().hasExtra(PAGE_NAME) && !getIntent().hasExtra(URI)) {
       throw new RuntimeException("FlutterActivity mast has 'pageName' or 'Uri'");
     }
@@ -62,6 +64,10 @@ public class MuffinFlutterActivity extends FlutterActivity {
   }
 
   public EngineBinding getEngineBinding() {
+    return engineBinding;
+  }
+
+  @Override public EngineBinding provideEngineBinding() {
     return engineBinding;
   }
 }
