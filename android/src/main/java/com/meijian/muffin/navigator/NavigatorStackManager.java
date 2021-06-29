@@ -9,6 +9,7 @@ import com.meijian.muffin.MuffinFlutterActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -164,11 +165,14 @@ public class NavigatorStackManager {
     //only for handling system backPressed
     if (!(activity instanceof MuffinFlutterActivity)) {
       //check if has popped
-      NavigatorStack currentTopNavigatorStack = stacks.getFirst();
-      if (currentTopNavigatorStack.getHost().hashCode() == activity.hashCode()) {
-        stacks.removeFirst();
-        Logger.log(TAG, "stack remove, system back press, size = " + stacks.size());
-        logStack();
+      Iterator<NavigatorStack> iterator = stacks.iterator();
+      while (iterator.hasNext()) {
+        NavigatorStack stack = iterator.next();
+        if (stack.getHost().hashCode() == activity.hashCode()) {
+          iterator.remove();
+          Logger.log(TAG, "stack remove, system back press, size = " + stacks.size());
+          logStack();
+        }
       }
     }
   }

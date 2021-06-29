@@ -11,7 +11,6 @@ import com.meijian.muffin.Muffin;
 import com.meijian.muffin.navigator.NavigatorStack;
 import com.meijian.muffin.navigator.NavigatorStackManager;
 import com.meijian.muffin.sharing.DataModelChangeListener;
-import com.meijian.muffin.utils.SchemeUtils;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -120,7 +119,13 @@ public class EngineBinding implements PropertyChangeListener {
 
 
   public void detach() {
-    methodChannel.setMethodCallHandler(null);
+    if (flutterEngine != null) {
+      //activeEngines in FlutterEngineGroup will call [onEngineWillDestroy]
+      flutterEngine.destroy();
+    }
+    if (methodChannel != null) {
+      methodChannel.setMethodCallHandler(null);
+    }
     for (DataModelChangeListener model : Muffin.getInstance().getModels()) {
       model.removePropertyChangeListener(this);
     }

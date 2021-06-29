@@ -5,7 +5,7 @@ import 'data_model_change_listener.dart';
 class Share {
   static Share instance = Share();
 
-  late List<DataModelChangeListener> models;
+  List<DataModelChangeListener> models = [];
 
   Future<void> init(List<DataModelChangeListener> models) async {
     this.models = models;

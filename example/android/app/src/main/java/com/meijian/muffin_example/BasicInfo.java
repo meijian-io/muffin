@@ -11,12 +11,14 @@ import java.util.HashMap;
  */
 public class BasicInfo implements DataModelChangeListener {
 
+  //单例，确保数据只有一份
   private static final BasicInfo instance = new BasicInfo();
 
   public static BasicInfo getInstance() {
     return instance;
   }
 
+  //被观察字段
   private String userId;
   private boolean isBindTbk;
 
@@ -25,6 +27,7 @@ public class BasicInfo implements DataModelChangeListener {
     isBindTbk = isBindTbk();
   }
 
+  //字段变更监听器
   private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 
