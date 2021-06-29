@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.meijian.muffin.Logger;
 import com.meijian.muffin.Muffin;
-import com.meijian.muffin.engine.EngineBindingProvider;
+import com.meijian.muffin.engine.BindingProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,7 +122,7 @@ public class NavigatorStackManager {
     }
 
     //5. has popped to targetVC ,notifyCallbacks
-    if (!(targetStack.getHost() instanceof EngineBindingProvider)) {
+    if (!(targetStack.getHost() instanceof BindingProvider)) {
       targetStack.notifyCallbacks(result, target);
       Logger.log(TAG, "popUntil native finish ,size = " + stacks.size());
       logStack();
@@ -131,7 +131,7 @@ public class NavigatorStackManager {
     Logger.log(TAG, "has flutter stacks  to pop ,size = " + stacks.size());
     logStack();
     //6. continue flutter pop
-    ((EngineBindingProvider) targetStack.getHost()).provideEngineBinding().popUntil(target, result);
+    ((BindingProvider) targetStack.getHost()).provideEngineBinding().popUntil(target, result);
   }
 
   /**
@@ -153,7 +153,7 @@ public class NavigatorStackManager {
 
   public void onActivityCreate(Activity activity) {
     //only add native activity, flutter pages has already added to stack
-    if (!(activity instanceof EngineBindingProvider)) {
+    if (!(activity instanceof BindingProvider)) {
       stacks.addFirst(new NavigatorStack(activity, activity.getClass().getSimpleName()));
       Logger.log(TAG, "stack add, size = " + stacks.size());
       logStack();
@@ -163,7 +163,7 @@ public class NavigatorStackManager {
   public void onActivityDestroyed(Activity activity) {
     //all stacks has already removed
     //only for handling system backPressed
-    if (!(activity instanceof EngineBindingProvider)) {
+    if (!(activity instanceof BindingProvider)) {
       //check if has popped
       Iterator<NavigatorStack> iterator = stacks.iterator();
       while (iterator.hasNext()) {

@@ -8,7 +8,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.meijian.muffin.engine.EngineBindingProvider;
+import com.meijian.muffin.engine.BindingProvider;
 import com.meijian.muffin.engine.EngineGroupCache;
 import com.meijian.muffin.navigator.DefaultPushFlutterHandler;
 import com.meijian.muffin.navigator.NavigatorStackManager;
@@ -37,7 +37,7 @@ public class Muffin {
 
   private PushFlutterHandler flutterHandler;
 
-  private Class<? extends EngineBindingProvider> attachVc;
+  private Class<? extends BindingProvider> attachVc;
 
 
   public static Muffin getInstance() {
@@ -49,7 +49,7 @@ public class Muffin {
 
   public Muffin(List<DataModelChangeListener> dataModels, PushNativeHandler handler,
       PushFlutterHandler flutterHandler,
-      Class<? extends EngineBindingProvider> attachVc) {
+      Class<? extends BindingProvider> attachVc) {
     this.models = dataModels;
     this.nativeHandler = handler;
     this.flutterHandler = flutterHandler == null ? new DefaultPushFlutterHandler() : flutterHandler;
@@ -79,7 +79,7 @@ public class Muffin {
     return models;
   }
 
-  public Class<? extends EngineBindingProvider> getAttachVc() {
+  public Class<? extends BindingProvider> getAttachVc() {
     return attachVc;
   }
 
@@ -117,7 +117,7 @@ public class Muffin {
 
     private PushFlutterHandler flutterHandler;
 
-    private Class<? extends EngineBindingProvider> attachVc = MuffinFlutterActivity.class;
+    private Class<? extends BindingProvider> attachVc = MuffinFlutterActivity.class;
 
     public Options setModels(@NonNull List<DataModelChangeListener> models) {
       this.models = models;
@@ -146,7 +146,7 @@ public class Muffin {
       return this;
     }
 
-    public Options setAttachVc(Class<? extends EngineBindingProvider> attachVc) {
+    public Options setAttachVc(Class<? extends BindingProvider> attachVc) {
       this.attachVc = attachVc;
       return this;
     }

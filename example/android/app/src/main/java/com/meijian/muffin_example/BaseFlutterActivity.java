@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.meijian.muffin.MuffinFlutterFragment;
 import com.meijian.muffin.engine.EngineBinding;
-import com.meijian.muffin.engine.EngineBindingProvider;
+import com.meijian.muffin.engine.BindingProvider;
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import static com.meijian.muffin.MuffinFlutterActivity.URI;
 /**
  * Created by  on 2021/6/29.
  */
-public class BaseFlutterActivity extends FragmentActivity implements EngineBindingProvider {
+public class BaseFlutterActivity extends FragmentActivity implements BindingProvider {
 
   private MuffinFlutterFragment flutterFragment;
 

@@ -9,7 +9,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 /**
  * Created by  on 2021/6/29.
  */
-public interface EngineBindingProvider {
+public interface BindingProvider {
 
   EngineBinding provideEngineBinding();
 

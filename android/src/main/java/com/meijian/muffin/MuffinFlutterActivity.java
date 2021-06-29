@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.meijian.muffin.engine.EngineBinding;
-import com.meijian.muffin.engine.EngineBindingProvider;
+import com.meijian.muffin.engine.BindingProvider;
 
 import java.util.Map;
 
@@ -19,7 +19,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 /**
  * Created by  on 2021/5/31.
  */
-public class MuffinFlutterActivity extends FlutterActivity implements EngineBindingProvider {
+public class MuffinFlutterActivity extends FlutterActivity implements BindingProvider {
 
   public static final int REQUEST_CODE = 16;
   public static final int RESULT_CODE = 17;

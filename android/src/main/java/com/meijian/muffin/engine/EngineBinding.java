@@ -109,8 +109,8 @@ public class EngineBinding implements PropertyChangeListener {
       }
     });
 
-    if (context instanceof EngineBindingProvider) {
-      ((EngineBindingProvider) context).provideMethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger());
+    if (context instanceof BindingProvider) {
+      ((BindingProvider) context).provideMethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger());
     }
   }
 
