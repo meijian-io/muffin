@@ -20,13 +20,17 @@ void main() async {
 
 ///get a App with dif initialRoute
 Future<Widget> getApp() async {
-  final navigator = MuffinNavigator(routes: {
-    '/home': (uri, arguments) => MuffinRoutePage(child: HomeScreen()),
-    '/first': (uri, arguments) => MuffinRoutePage(
-            child: FirstScreen(
-          arguments: arguments,
-        ))
-  }, multiple: true);
+  final navigator = MuffinNavigator(
+      initRoute: '/home',
+      initArguments: {'data': 'Data init'},
+      routes: {
+        '/home': (uri, arguments) => MuffinRoutePage(child: HomeScreen()),
+        '/first': (uri, arguments) => MuffinRoutePage(
+                child: FirstScreen(
+              arguments: arguments,
+            ))
+      },
+      multiple: false);
   await navigator.init();
   return MaterialApp.router(
     routeInformationParser: MuffinInformationParser(),
