@@ -38,6 +38,7 @@ class MuffinNavigator extends RouterDelegate<Uri>
       dynamic initArguments}) {
     this.initRoute = initRoute;
     this.initArguments = initArguments;
+    this.multiple = multiple;
     navigatorStackManager =
         NavigatorStackManager(routes: routes, multiple: multiple);
     navigatorStackManager.addListener(notifyListeners);
