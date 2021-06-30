@@ -12,13 +12,13 @@
 
 @property (nonatomic, strong)id params;
 @property (nonatomic, strong)NSString *pageName;
+@property (nonatomic, strong)EngineBinding *engineBinding;
 
 @end
 
 @implementation MuffinVC
 
 - (instancetype)initWithPageName:(nonnull NSString *)pageName AndParams:(nullable id)params{
-
 
     EngineBinding *binding = nil;
     if (params == nil) {
@@ -40,6 +40,10 @@
     [super viewDidLoad];
     
     self.view.backgroundColor = [UIColor whiteColor];
+}
+
+- (EngineBinding *)getCurrentEngineBinding{
+    return self.engineBinding;
 }
 
 - (void)dealloc{

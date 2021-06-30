@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithPageName:(nonnull NSString *)pageName AndParams:(nullable id)params;
 
-@property (nonatomic, strong)EngineBinding *engineBinding;
+- (EngineBinding *)getCurrentEngineBinding;
 
 @end
 
