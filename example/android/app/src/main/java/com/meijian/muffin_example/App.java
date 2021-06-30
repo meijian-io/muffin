@@ -26,13 +26,16 @@ public class App extends Application {
     List<DataModelChangeListener> models = new ArrayList<>();
     models.add(BasicInfo.getInstance());
 
-    return new Muffin.Options().setNativeHandler((activity, pageName, data) -> {
-      //根据 pageName 和 data 拼接成 schema 跳转
-      if (TextUtils.equals("/main", pageName)) {
-        Intent intent = new Intent(activity, MainActivity.class);
-        activity.startActivity(intent);
-      }
-    }).setModels(models)
-        .setFlutterHandler(new DefaultPushFlutterHandler());
+    return new Muffin.Options()
+        .setPushNativeHandler((activity, pageName, data) -> {
+          //根据 pageName 和 data 拼接成 schema 跳转
+          if (TextUtils.equals("/main", pageName)) {
+            Intent intent = new Intent(activity, MainActivity.class);
+            activity.startActivity(intent);
+          }
+        })
+        .setModels(models)
+        .setPushFlutterHandler(new DefaultPushFlutterHandler())
+        .setAttachVc(BaseFlutterActivity.class);
   }
 }

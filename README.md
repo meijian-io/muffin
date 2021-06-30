@@ -5,18 +5,26 @@
 
 ## 功能API
 
+**新增Feature**
+
+AndroidFragment级别支持
+自定义MethodChannel 
+ -- 参考Demo[BaseFlutterActivity]
+
+## 功能API
+
 **Native push Flutter**
 ~~~
 //基本push
-MuffinNavigator.push(MainActivity.this, "/home");
+MuffinNavigator.push("/home");
 
 //push携带参数
 Map<String, Object> arguments = new HashMap<>();
 arguments.put("count", 1);
-MuffinNavigator.push(MainActivity.this, "/first",arguments);
+MuffinNavigator.push("/first",arguments);
 
 //push Uri
-MuffinNavigator.push(MainActivity.this, Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
+MuffinNavigator.push(Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
 
 //对应都有pushForResult API
 @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -74,13 +82,6 @@ MuffinNavigator.of(context).popUntil(Uri.parse('/first'), {'data': "data from Ho
 ## 接入Muffin
 
 ~~~
-
-导入 Flutter项目
-muffin:
-    git:
-      url: 'git@gitlab.qunhequnhe.com:meijianGroups/mobileApp/muffin.git'
-      ref: 'master'
-
 1. 在Applocation中初始化Muffin
    
    //普通初始化，第二个参数为 各种提供给上层的接口实现
@@ -93,7 +94,7 @@ muffin:
 
     return new Muffin.Options()
     //Flutter 跳转 Native 时提供给上层的接口
-    .setNativeHandler((activity, pageName, data) -> {
+    .setPushNativeHandler((activity, pageName, data) -> {
       //根据 pageName 和 data 拼接成 schema 跳转
       if (TextUtils.equals("/main", pageName)) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -101,9 +102,11 @@ muffin:
       }
     })
     //Native Uri 类型跳转到 Flutter 接口，可参考默认实现
-    .setFlutterHandler(new DefaultPushFlutterHandler())
+    .setPushFlutterHandler(new DefaultPushFlutterHandler())
     //带有数据同步能力
-    .setModels(models);
+    .setModels(models)
+    //新增自定义VC, 参考[BaseFlutterActivity]
+    .setAttachVc(BaseFlutterActivity.class);
   }
 
 2. 好了，你可以在原生使用Muffin了

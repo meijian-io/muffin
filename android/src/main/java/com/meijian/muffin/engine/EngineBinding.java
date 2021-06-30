@@ -108,6 +108,10 @@ public class EngineBinding implements PropertyChangeListener {
         }
       }
     });
+
+    if (context instanceof BindingProvider) {
+      ((BindingProvider) context).provideMethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger());
+    }
   }
 
 
@@ -126,6 +130,7 @@ public class EngineBinding implements PropertyChangeListener {
     if (methodChannel != null) {
       methodChannel.setMethodCallHandler(null);
     }
+
     for (DataModelChangeListener model : Muffin.getInstance().getModels()) {
       model.removePropertyChangeListener(this);
     }

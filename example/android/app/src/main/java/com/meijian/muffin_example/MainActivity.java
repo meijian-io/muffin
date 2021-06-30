@@ -21,18 +21,18 @@ public class MainActivity extends Activity {
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    findViewById(R.id.main).setOnClickListener(view -> MuffinNavigator.push(MainActivity.this, "/home"));
+    findViewById(R.id.main).setOnClickListener(view -> MuffinNavigator.push("/home"));
 
     findViewById(R.id.first).setOnClickListener(view -> {
       Map<String, Object> arguments = new HashMap<>();
       arguments.put("count", 1);
       arguments.put("desc", "This is cool");
       arguments.put("good", true);
-      MuffinNavigator.push(MainActivity.this, "/first", arguments);
+      MuffinNavigator.push("/first", arguments);
     });
 
     findViewById(R.id.second).setOnClickListener(view -> {
-      MuffinNavigator.pushForResult(MainActivity.this, Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
+      MuffinNavigator.pushForResult(Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
     });
 
     findViewById(R.id.change_basic_info).setOnClickListener(view -> {
@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
     );
 
     findViewById(R.id.open_with_fragment).setOnClickListener(v ->
-        startActivity(new Intent(MainActivity.this, BaseFlutterActivity.class)));
+        MuffinNavigator.pushForResult("/home"));
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {

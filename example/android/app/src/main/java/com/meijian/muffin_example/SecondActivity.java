@@ -16,12 +16,11 @@ import java.util.HashMap;
  */
 public class SecondActivity extends Activity implements PathProvider {
 
-
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_second);
 
-    findViewById(R.id.first).setOnClickListener(v -> MuffinNavigator.push(SecondActivity.this, "main"));
+    findViewById(R.id.first).setOnClickListener(v -> MuffinNavigator.push("main"));
   }
 
   @Override public String getPath() {
