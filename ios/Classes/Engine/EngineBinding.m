@@ -37,8 +37,9 @@
             
             result(map);
         }else if ([call.method isEqualToString:@"syncFlutterStack"]) {
-            NavigatorStack *stack = [[NavigatorStack alloc] initWithVC:weakSelf.weakVC pageName:call.arguments[@"pageName"]];
-            [[NavigatorStackManager sharedInstance] syncFlutterStack:stack];
+            [[NavigatorStackManager sharedInstance] addFlutterPage:call.arguments[@"pageName"]];
+//            NavigatorStack *stack = [[NavigatorStack alloc] initWithVC:weakSelf.weakVC pageName:call.arguments[@"pageName"]];
+//            [[NavigatorStackManager sharedInstance] syncFlutterStack:stack];
             result(@{});
         }else if ([call.method isEqualToString:@"pop"] || [call.method isEqualToString:@"popUntil"]) {
             [[NavigatorStackManager sharedInstance] pop:call.arguments[@"pageName"] result:call.arguments[@"result"]];
@@ -84,8 +85,8 @@
     [self.methodChannel invokeMethod:@"popUntil" arguments:map];
 }
 
-- (void)syncDataModel:(NSString *)key andArg:(id)argument{
-    [self.methodChannel invokeMethod:key arguments:argument];
+- (void)syncDataModelWithArg:(id)argument{
+    [self.methodChannel invokeMethod:@"syncDataModel" arguments:argument];
 }
 
 

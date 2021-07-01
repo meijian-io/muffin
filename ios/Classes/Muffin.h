@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)getDataModelByKey:(NSString *)key;
 
+- (void)syncDataModelAll:(id)data;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -88,6 +88,7 @@ public class NavigatorStackManager {
       logStack();
       return;
     }
+
     if (shouldPoppedStacks.isEmpty()) {
       Logger.log(TAG, "no stack to pop ,size = " + stacks.size());
       logStack();

@@ -6,7 +6,8 @@
 //
 
 #import "Muffin.h"
-#import "UIViewController+Muffin.h"
+#import "NavigatorStackManager.h"
+
 @implementation Muffin
 
 static Muffin * _instance = nil;
@@ -15,13 +16,16 @@ static Muffin * _instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _instance = [[Muffin alloc] init];
-        [UIViewController exchangeMethod];
     });
     return _instance;
 }
 
 - (NSDictionary *)getDataModelByKey:(NSString *)key{
     return self.getDataModelByKey();
+}
+
+- (void)syncDataModelAll:(id)data{
+    [[NavigatorStackManager sharedInstance] syncDataModelAll:data];
 }
 
 //- (NSDictionary *)listener:(NSString *)key{

@@ -39,8 +39,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iec-kY-Ef5">
-                                <rect key="frame" x="164.66666666666666" y="297" width="98.999999999999972" height="30"/>
-                                <state key="normal" title="push flutter vc"/>
+                                <rect key="frame" x="171.66666666666666" y="297" width="84.999999999999972" height="30"/>
+                                <state key="normal" title="push first vc"/>
                                 <connections>
                                     <action selector="clickpushBtn:" destination="r4F-Io-6fb" eventType="touchUpInside" id="etO-ug-XJO"/>
                                 </connections>
@@ -51,6 +51,53 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wut-RK-eX3">
+                                <rect key="frame" x="154" y="381" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="-"/>
+                                <connections>
+                                    <action selector="downAction:" destination="r4F-Io-6fb" eventType="touchUpInside" id="QsF-px-aaR"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Trc-da-maf">
+                                <rect key="frame" x="233" y="381" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="+"/>
+                                <connections>
+                                    <action selector="upAction:" destination="r4F-Io-6fb" eventType="touchUpInside" id="nl0-SV-kYn"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mXP-FD-PbB">
+                                <rect key="frame" x="199" y="480" width="31" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="同步"/>
+                                <connections>
+                                    <action selector="syncAction:" destination="r4F-Io-6fb" eventType="touchUpInside" id="7Cx-tv-r4B"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NIh-W2-fpM">
+                                <rect key="frame" x="207" y="558" width="44" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fxC-U7-MQr">
+                                <rect key="frame" x="165" y="259" width="91" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="push main vc"/>
+                                <connections>
+                                    <action selector="mainvc:" destination="r4F-Io-6fb" eventType="touchUpInside" id="l1X-ln-W6m"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AkK-6D-bGf">
+                                <rect key="frame" x="196" y="221" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="pop"/>
+                                <connections>
+                                    <action selector="secondVC:" destination="r4F-Io-6fb" eventType="touchUpInside" id="v81-la-mxz"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
@@ -60,10 +107,13 @@
                             <constraint firstItem="buQ-Yo-9Gu" firstAttribute="centerX" secondItem="o2U-Ij-Znv" secondAttribute="centerX" id="gzc-Kf-7jR"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="countL" destination="NIh-W2-fpM" id="kDo-Db-xG1"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OsF-wU-lVE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="817" y="-20"/>
+            <point key="canvasLocation" x="815.8878504672897" y="-20.086393088552917"/>
         </scene>
         <!--SecondVC-->
         <scene sceneID="EaZ-3v-L6B">

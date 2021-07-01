@@ -8,6 +8,7 @@
 #import "MuffinVC.h"
 #import "Muffin.h"
 #import "NavigatorStackManager.h"
+#import "NavigatorStack.h"
 
 @interface MuffinVC ()
 
@@ -31,6 +32,11 @@
 - (void)viewDidLoad{
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    NavigatorStack *stack = [[NavigatorStack alloc] init];
+    stack.vc = self;
+    
+    [[NavigatorStackManager sharedInstance] addStackTop:stack];
     
     EngineBinding *binding = binding = [[EngineBinding alloc] init];
     binding.flutterEngine = self.flutterEngine;

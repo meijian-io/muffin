@@ -6,7 +6,6 @@
 //
 
 #import "MuffinNavigator.h"
-#import "NavigatorStackManager.h"
 #import "MuffinVC.h"
 #import "NSObject+visibleVC.h"
 

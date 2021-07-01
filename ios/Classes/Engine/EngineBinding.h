@@ -28,9 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)popUntil:(NSString *)pageName result:(id)result;
 
-- (void)syncDataModel:(NSString *)key andArg:(id)argument;
+- (void)syncDataModelWithArg:(id)argument;
 
 - (void)createFlutterMethodChannel;
+
+
 
 @end
 

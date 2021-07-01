@@ -16,19 +16,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NavigatorStackManager *)sharedInstance;
 
-- (void)syncFlutterStack:(NavigatorStack *)stack;
+//往栈顶添加容器
+- (void)addStackTop:(NavigatorStack *)stack;
 
-- (void)pop:(NSString *)target result:(id)result;
+//移除栈顶容器
+- (void)removeStackTop;
 
+//往栈顶容器的pages中添加page
+- (void)addFlutterPage:(NSString *)pagename;
+
+//移除栈顶容器的pages中添加page
+- (void)removeFlutterPage:(NSString *)pagename;
+
+//用于flutter侧获取返回页面
 - (NSString *)findPopTarget;
 
+//获取push原生页面
 - (BOOL)pushNamed:(NSString *)pageName data:(id) data;
 
-- (void)viewControllerCreate:(MuffinVC *)vc;
+//同步数据
+- (void)syncDataModelAll:(id)data;
 
-- (void)viewControllerDestroyed:(UIViewController *)vc;
-
-- (MuffinVC *)getTopVC;
+//- (void)syncFlutterStack:(NavigatorStack *)stack;
+//
+- (void)pop:(NSString *)target result:(id)result;
 
 @end
 

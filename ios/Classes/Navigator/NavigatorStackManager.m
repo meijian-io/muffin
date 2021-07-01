@@ -26,10 +26,63 @@ static NavigatorStackManager * _instance = nil;
     return _instance;
 }
 
-- (void)syncFlutterStack:(NavigatorStack *)stack{
-    [self.stacks insertObject:stack atIndex:0];
-    NSLog(@"flutter has pushed, size = %ld",self.stacks.count);
+//往栈顶添加容器
+- (void)addStackTop:(NavigatorStack *)stack{
+    [self.stacks addObject:stack];
 }
+
+//移除栈顶容器
+- (void)removeStackTop{
+    if (self.stacks.count) {
+        [self.stacks removeLastObject];
+    }
+}
+
+//往栈顶容器的pages中添加page
+- (void)addFlutterPage:(NSString *)pagename{
+    if (self.stacks.count) {
+        NavigatorStack *stack = self.stacks.lastObject;
+        [stack.flutterPages addObject:pagename];
+    }
+}
+
+//移除栈顶容器的pages中添加page
+- (void)removeFlutterPage:(NSString *)pagename{
+    if (self.stacks.count) {
+        NavigatorStack *stack = self.stacks.lastObject;
+        if (stack.flutterPages.count) {
+            [stack.flutterPages removeLastObject];
+            if (stack.flutterPages.count == 0) {
+                [self removeStackTop];
+                //todo: 是否需要pop?
+                
+            }
+        }
+        
+    }
+}
+
+//移除栈顶容器的pages中添加page
+- (void)popFlutterPage{
+    if (self.stacks.count) {
+        NavigatorStack *stack = self.stacks.lastObject;
+        if (stack.flutterPages.count) {
+            [stack.flutterPages removeLastObject];
+            if (stack.flutterPages.count == 0) {
+                [self removeStackTop];
+                //todo: 是否需要pop?
+                
+            }
+        }
+        
+    }
+}
+
+//
+//- (void)syncFlutterStack:(NavigatorStack *)stack{
+////    [self.stacks insertObject:stack atIndex:0];
+//    NSLog(@"flutter has pushed, size = %ld",self.stacks.count);
+//}
 
 - (void)pop:(NSString *)target result:(id)result{
     [self popUnitl:target result:result];
@@ -37,65 +90,93 @@ static NavigatorStackManager * _instance = nil;
 
 - (void)popUnitl:(NSString *)target result:(id)result{
     
+    if ([target isEqualToString:@"/"]) {
+        NavigatorStack *stack = self.stacks.lastObject;
+        [stack.vc.navigationController popViewControllerAnimated:YES];
+        [self.stacks removeLastObject];
+        return;
+    }
+    
     NSMutableArray *shouldPoppedStacks = [NSMutableArray array];
     NavigatorStack *targetStack = nil;
     BOOL findTarget = false;
     
-    //寻找目标栈
-    while (!findTarget) {
-        if (self.stacks.count != 0) {
-            NavigatorStack *temp = self.stacks.firstObject;
-            if ([temp.pageName isEqualToString:target]) {
+    for (NSUInteger i = self.stacks.count - 1; i >= 0; i--) {
+        NavigatorStack *temp = self.stacks[i];
+        
+        for (NSUInteger j = temp.flutterPages.count - 1; j >= 0; j--) {
+            NSString *pagename = temp.flutterPages[j];
+            if ([pagename isEqualToString:target]) {
                 targetStack = temp;
                 findTarget = true;
-            }else {
-                NavigatorStack *popped = self.stacks.firstObject;
-                [shouldPoppedStacks addObject:popped];
-                [self.stacks removeObject:popped];
+                break;
+            }else{
             }
-        }else {
-            findTarget = true;
         }
+        if (findTarget == true) {
+            break;
+        }
+        [shouldPoppedStacks addObject:temp];
     }
     
+    //寻找目标栈
+//    while (!findTarget) {
+//        if (self.stacks.count != 0) {
+//            NavigatorStack *temp = self.stacks.firstObject;
+//            if ([temp.pageName isEqualToString:target]) {
+//                targetStack = temp;
+//                findTarget = true;
+//            }else {
+//                NavigatorStack *popped = self.stacks.firstObject;
+//                [shouldPoppedStacks addObject:popped];
+//                [self.stacks removeObject:popped];
+//            }
+//        }else {
+//            findTarget = true;
+//        }
+//    }
+
     if (targetStack == nil) {
         NSLog(@"target not found size = %ld",self.stacks.count);
         [self logStack];
         return;
     }
-    
+
     BOOL allInFlutterStack = true;
-    
+
     for (NavigatorStack *shouldPoppedStack in shouldPoppedStacks) {
-        if (shouldPoppedStack.currentVC != targetStack.currentVC) {
+        if (shouldPoppedStack.vc != targetStack.vc) {
             allInFlutterStack = false;
             break;
         }
     }
-    
+
     if (allInFlutterStack) {
+        [self popFlutterPage];
         NSLog(@"only flutter pop, pop finish, size = %ld",self.stacks.count);
         [self logStack];
         return;
     }
+
+//    for (NSUInteger i = shouldPoppedStacks.count - 1; i >= 0; i--) {
+//        if (shouldPoppedStacks[i] == targetStack) {
+//            [self.stacks insertObject:shouldPoppedStacks[i] atIndex:0];
+//            [self addStackTop:shouldPoppedStacks[i]];
+//        }
+//    }
     
-    for (int i = (int)shouldPoppedStacks.count - 1; i >= 0; i--) {
-        if (shouldPoppedStacks[i] == targetStack) {
-            [self.stacks insertObject:shouldPoppedStacks[i] atIndex:0];
-        }
-    }
     for (NavigatorStack *popppedStack in shouldPoppedStacks) {
         if (popppedStack == targetStack) {
             continue;
         }
-        [popppedStack.currentVC.navigationController popViewControllerAnimated:YES];
+        [popppedStack.vc.navigationController popViewControllerAnimated:YES];
     }
-    
-    if (![targetStack.pageName isEqualToString:@"MuffinVC"]) {
+
+    if (![NSStringFromClass([targetStack.vc class]) isEqualToString:@"MuffinVC"]) {
         return;
     }
-    
-    [targetStack.currentVC.engineBinding popUntil:target result:result];
+
+    [targetStack.vc.engineBinding popUntil:target result:result];
     
 }
 
@@ -108,54 +189,23 @@ static NavigatorStackManager * _instance = nil;
     return YES;
 }
 
-- (MuffinVC *)getTopVC{
-    if (self.stacks.count == 0) {
-        return nil;
-    }
-    NavigatorStack *stack = self.stacks.firstObject;
-    return stack.currentVC;
-}
-
-- (NavigatorStack *)findTargetNavigatorStack:(NSString *)pageName {
-    NavigatorStack *targetStack = nil;
-    
-    for (NavigatorStack *navigatorStack in self.stacks) {
-        if ([pageName isEqualToString:navigatorStack.pageName]) {
-            targetStack = navigatorStack;
-            break;
-        }
-    }
-    return targetStack;
-}
-
-- (void)viewControllerCreate:(MuffinVC *)vc{
-    
-    if (![NSStringFromClass([vc class]) isEqualToString:@"MuffinVC"]) {
-        NavigatorStack *stack = [[NavigatorStack alloc] initWithVC:vc];
-        [self.stacks insertObject:stack atIndex:0];
-        NSLog(@"stack add, size = %ld",self.stacks.count);
-    }
-
-}
-
-- (void)viewControllerDestroyed:(UIViewController *)vc{
-    if (![NSStringFromClass([vc class]) isEqualToString:@"MuffinVC"]) {
-        if (self.stacks.count > 0) {
-            NavigatorStack *stack = [self.stacks firstObject];
-            if (stack.currentVC == vc) {
-                [self.stacks removeObject:stack];
-                NSLog(@"stack remove, system back press, size = %ld",self.stacks.count);
-            }
-        }
-    }
-}
-
 - (NSString *)findPopTarget{
-    if (self.stacks.count > 1) {
-        NavigatorStack *stack = self.stacks[1];
-        return stack.pageName;
+    if (self.stacks.count) {
+        NavigatorStack *stack = self.stacks.lastObject;
+        if (stack.flutterPages.count > 1) {
+            return stack.flutterPages[stack.flutterPages.count - 2];
+        }
     }
     return @"/";
+}
+
+- (void)syncDataModelAll:(id)data{
+    
+    for (NavigatorStack *stack in self.stacks) {
+        MuffinVC *vc = stack.vc;
+        [vc.engineBinding syncDataModelWithArg:data];
+    }
+    
 }
 
 - (void)logStack{
@@ -164,7 +214,8 @@ static NavigatorStackManager * _instance = nil;
     }
     
     for (NavigatorStack *stack in self.stacks) {
-        NSLog(@"NavigatorStackManager pageName ==== %@",stack.pageName);
+        NSLog(@"NavigatorStackManager pageName ==== %@",[stack.flutterPages componentsJoinedByString:@","]);
+        NSLog(@"NavigatorStackManager count ==== %ld",stack.flutterPages.count);
     }
     
 }

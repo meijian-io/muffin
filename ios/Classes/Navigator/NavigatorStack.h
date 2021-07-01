@@ -12,13 +12,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NavigatorStack : NSObject
 
-@property (nonatomic, strong)NSString *pageName;
+//@property (nonatomic, strong)NSString *pageName;
 
-@property (nonatomic, strong)MuffinVC *currentVC;
+@property (nonatomic, strong)NSMutableArray *flutterPages;
 
-- (instancetype)initWithVC:(MuffinVC *)vc;
+@property (nonatomic, strong)MuffinVC *vc;
 
-- (instancetype)initWithVC:(MuffinVC *)vc pageName:(NSString *)pageName;
+//- (instancetype)initWithVC:(MuffinVC *)vc;
+//
+//- (instancetype)initWithVC:(MuffinVC *)vc pageName:(NSString *)pageName;
 
 @end
 
