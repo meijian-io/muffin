@@ -20,6 +20,25 @@ static Muffin * _instance = nil;
     return _instance;
 }
 
+- (NSDictionary *)getDataModelByKey:(NSString *)key{
+    
+    //todo:监听查找
+    if ([key isEqualToString:@"BasicInfo"]) {
+        return @{@"key":@"BasicInfo",@"userId":@"10",@"isBindTbk":@(YES)};
+    }else if ([key isEqualToString:@""]) {
+        return @{@"url":@"/first",@"arguments":@{}};
+    }
+    
+    return @{@"userId":@"",@"isBindTbk":@(YES)};
+}
+
+//- (NSDictionary *)listener:(NSString *)key{
+//
+//    //todo:监听查找
+//
+//    return @{};
+//}
+
 - (FlutterEngineGroup *)engineGroup{
     if (!_engineGroup) {
         _engineGroup = [[FlutterEngineGroup alloc] initWithName:@"main" project:nil];
@@ -33,5 +52,7 @@ static Muffin * _instance = nil;
     }
     return _intentConfigs;
 }
+
+
 
 @end

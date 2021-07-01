@@ -22,50 +22,45 @@
 
 @implementation EngineBinding
 
-- (instancetype)initWithEntryPoint:(nonnull NSString *)entryPoint{
-    return [self initWithEntryPoint:entryPoint withArg:nil];
-}
+- (void)createFlutterMethodChannel{
+    self.methodChannel = [FlutterMethodChannel methodChannelWithName:@"muffin_navigate" binaryMessenger:self.flutterEngine.binaryMessenger];
 
-- (instancetype)initWithEntryPoint:(nonnull NSString *)entryPoint withArg:(nullable NSDictionary *)arguments{
-    self = [super init];
-    if (self) {
-        
-        FlutterEngineGroup *group = [Muffin sharedInstance].engineGroup;
-        FlutterEngine *flutterEngine = [group makeEngineWithEntrypoint:entryPoint libraryURI:nil];
-        self.flutterEngine = flutterEngine;
-        self.methodChannel = [FlutterMethodChannel methodChannelWithName:@"muffin_navigate" binaryMessenger:self.flutterEngine.binaryMessenger];
-        
-        MJWeakSelf
-        [self.methodChannel setMethodCallHandler:^(FlutterMethodCall * _Nonnull call, FlutterResult  _Nonnull result) {
-            if ([call.method isEqualToString:@"getArguments"]) {
-                if (arguments != nil) {
-                    result(arguments);
-                }else{
-                    result(@{});
-                }
-            }else if ([call.method isEqualToString:@"syncFlutterStack"]) {
-                NavigatorStack *stack = [[NavigatorStack alloc] initWithVC:weakSelf.weakVC pageName:call.arguments[@"pageName"]];
-                [[NavigatorStackManager sharedInstance] syncFlutterStack:stack];
-                result(@{});
-            }else if ([call.method isEqualToString:@"pop"] || [call.method isEqualToString:@"popUntil"]) {
-                [[NavigatorStackManager sharedInstance] pop:call.arguments[@"pageName"] result:call.arguments[@"result"]];
-                result(@{});
-            }else if ([call.method isEqualToString:@"findPopTarget"]) {
-                NSString *target = [[NavigatorStackManager sharedInstance] findPopTarget];
-                result(target);
-            }else if ([call.method isEqualToString:@"pushNamed"]) {
-                [[NavigatorStackManager sharedInstance] pushNamed:call.arguments[@"pageName"] data:call.arguments[@"data"]];
-                result(@{});
-            }else if ([call.method isEqualToString:@"setArguments"]) {
-                
-            }else{
-                result(@{});
-
+    MJWeakSelf
+    [self.methodChannel setMethodCallHandler:^(FlutterMethodCall * _Nonnull call, FlutterResult  _Nonnull result) {
+        if ([call.method isEqualToString:@"getArguments"]) {
+            
+            NSMutableDictionary * map = [NSMutableDictionary dictionary];
+            [map setValue:weakSelf.pageName forKey:@"url"];
+            if (weakSelf.arguments) {
+                [map setValue:weakSelf.arguments forKey:@"arguments"];
             }
-           
-        }];
-    }
-    return self;
+            
+            result(map);
+        }else if ([call.method isEqualToString:@"syncFlutterStack"]) {
+            NavigatorStack *stack = [[NavigatorStack alloc] initWithVC:weakSelf.weakVC pageName:call.arguments[@"pageName"]];
+            [[NavigatorStackManager sharedInstance] syncFlutterStack:stack];
+            result(@{});
+        }else if ([call.method isEqualToString:@"pop"] || [call.method isEqualToString:@"popUntil"]) {
+            [[NavigatorStackManager sharedInstance] pop:call.arguments[@"pageName"] result:call.arguments[@"result"]];
+            result(@{});
+        }else if ([call.method isEqualToString:@"findPopTarget"]) {
+            NSString *target = [[NavigatorStackManager sharedInstance] findPopTarget];
+            result(target);
+        }else if ([call.method isEqualToString:@"pushNamed"]) {
+            [[NavigatorStackManager sharedInstance] pushNamed:call.arguments[@"pageName"] data:call.arguments[@"data"]];
+            result(@{});
+        }else if ([call.method isEqualToString:@"setArguments"]) {
+            
+        }else if ([call.method isEqualToString:@"initDataModel"]) {
+            NSString *key =  call.arguments[@"key"];
+            result([[Muffin sharedInstance] getDataModelByKey:key]);
+        }else if ([call.method isEqualToString:@"syncDataModel"]) {
+            NSDictionary *model = call.arguments;
+            result(@{});
+        }else{
+            result(@{});
+        }
+    }];
 }
 
 - (void)attach{

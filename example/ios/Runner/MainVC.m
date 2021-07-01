@@ -6,7 +6,10 @@
 //
 
 #import "MainVC.h"
-#import <muffin/MuffinVC.h>
+
+#import <muffin/MuffinNavigator.h>
+//
+//#import <muffin/MuffinVC.h>
 #import <muffin/Muffin.h>
 #import "SecondVC.h"
 @interface MainVC ()
@@ -35,9 +38,7 @@
 
 - (IBAction)clickpushBtn:(UIButton *)sender {
         
-    MuffinVC *vc = [[MuffinVC alloc] initWithPageName:@"first" AndParams:@{@"count":@1,@"desc":@"This is cool",@"good":@(true)}];
-    [self.navigationController pushViewController:vc animated:YES];
-    
+    [MuffinNavigator push:@"/first" andArg:@{@"count":@1,@"desc":@"This is cool",@"good":@(true)}];
     
 }
 

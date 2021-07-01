@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (Muffin *)sharedInstance;
 
-
+- (NSDictionary *)getDataModelByKey:(NSString *)key;
 
 @end
 

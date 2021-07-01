@@ -7,43 +7,41 @@
 
 #import "MuffinVC.h"
 #import "Muffin.h"
+#import "NavigatorStackManager.h"
 
 @interface MuffinVC ()
 
-@property (nonatomic, strong)id params;
-@property (nonatomic, strong)NSString *pageName;
-@property (nonatomic, strong)EngineBinding *engineBinding;
+@property (nonatomic,strong)FlutterEngine *flutterEngine;
 
 @end
 
 @implementation MuffinVC
 
-- (instancetype)initWithPageName:(nonnull NSString *)pageName AndParams:(nullable id)params{
+- (instancetype)init{
 
-    EngineBinding *binding = nil;
-    if (params == nil) {
-        binding = [[EngineBinding alloc] initWithEntryPoint:pageName];
-    }else{
-        binding = [[EngineBinding alloc] initWithEntryPoint:pageName withArg:params];
-    }
-    
-    self = [super initWithEngine:binding.flutterEngine nibName:nil bundle:nil];
+    FlutterEngineGroup *group = [Muffin sharedInstance].engineGroup;
+    FlutterEngine *flutterEngine = [group makeEngineWithEntrypoint:@"main" libraryURI:nil];
+    self = [super initWithEngine:flutterEngine nibName:nil bundle:nil];
     if (self) {
-        binding.weakVC = self;
-        self.engineBinding = binding;
-        [self.engineBinding attach];
+        self.flutterEngine = flutterEngine;
     }
     return self;
 }
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-    
     self.view.backgroundColor = [UIColor whiteColor];
-}
-
-- (EngineBinding *)getCurrentEngineBinding{
-    return self.engineBinding;
+    
+    EngineBinding *binding = binding = [[EngineBinding alloc] init];
+    binding.flutterEngine = self.flutterEngine;
+    binding.pageName = self.pageName;
+    binding.arguments = self.params;
+    binding.weakVC = self;
+    [binding createFlutterMethodChannel];
+//    [[NavigatorStackManager sharedInstance] pushNamed:self.pageName data:self.params];
+    self.engineBinding = binding;
+    [self.engineBinding attach];
+    
 }
 
 - (void)dealloc{

@@ -8,23 +8,27 @@
 #import <Foundation/Foundation.h>
 #import <Flutter/Flutter.h>
 
+@class MuffinVC;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface EngineBinding : NSObject
 
 @property (nonatomic, strong)FlutterEngine *flutterEngine;
 
-@property (nonatomic, weak)UIViewController *weakVC;
+@property (nonatomic, weak)MuffinVC *weakVC;
 
-- (instancetype)initWithEntryPoint:(nonnull NSString *)entryPoint;
+@property (nonatomic, strong)NSString *pageName;
 
-- (instancetype)initWithEntryPoint:(nonnull NSString *)entryPoint withArg:(nullable NSDictionary *)arguments;
+@property (nonatomic, strong)NSDictionary *arguments;
 
 - (void)detach;
 
 - (void)attach;
 
 - (void)popUntil:(NSString *)pageName result:(id)result;
+
+- (void)createFlutterMethodChannel;
 
 @end
 

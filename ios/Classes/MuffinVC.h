@@ -12,9 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MuffinVC : FlutterViewController
 
-- (instancetype)initWithPageName:(nonnull NSString *)pageName AndParams:(nullable id)params;
+@property (nonatomic, strong)EngineBinding *engineBinding;
 
-- (EngineBinding *)getCurrentEngineBinding;
+@property (nonatomic, strong)NSString *pageName;
+
+@property (nonatomic, strong)NSDictionary *params;
+
+@property (nonatomic, strong)NSString *uri;
 
 @end
 

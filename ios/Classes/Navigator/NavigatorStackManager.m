@@ -123,6 +123,14 @@ static NavigatorStackManager * _instance = nil;
     return find;
 }
 
+- (MuffinVC *)getTopVC{
+    if (self.stacks.count == 0) {
+        return nil;
+    }
+    NavigatorStack *stack = self.stacks.firstObject;
+    return stack.currentVC;
+}
+
 - (NavigatorStack *)findTargetNavigatorStack:(NSString *)pageName {
     NavigatorStack *targetStack = nil;
     
@@ -135,7 +143,7 @@ static NavigatorStackManager * _instance = nil;
     return targetStack;
 }
 
-- (void)viewControllerCreate:(UIViewController *)vc{
+- (void)viewControllerCreate:(MuffinVC *)vc{
     
     if (![NSStringFromClass([vc class]) isEqualToString:@"MuffinVC"]) {
         NavigatorStack *stack = [[NavigatorStack alloc] initWithVC:vc];

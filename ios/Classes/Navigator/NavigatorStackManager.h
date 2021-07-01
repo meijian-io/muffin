@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 
 @class NavigatorStack;
+@class MuffinVC;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,9 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)pushNamed:(NSString *)pageName data:(id) data;
 
-- (void)viewControllerCreate:(UIViewController *)vc;
+- (void)viewControllerCreate:(MuffinVC *)vc;
 
 - (void)viewControllerDestroyed:(UIViewController *)vc;
+
+- (MuffinVC *)getTopVC;
+
 @end
 
 NS_ASSUME_NONNULL_END
