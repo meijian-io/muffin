@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:muffin/channel/navigator_channel.dart';
+import 'package:muffin/navigator/muffin_page.dart';
 
 import 'navigator_stack_manager.dart';
 
@@ -48,7 +49,9 @@ class MuffinNavigator extends RouterDelegate<Uri>
   Widget build(BuildContext context) {
     return Navigator(
       key: navigatorKey,
-      pages: [for (final page in navigatorStackManager.pages) page],
+      pages: navigatorStackManager.pages.isEmpty
+          ? [MuffinRoutePage(child: Container())]
+          : [for (final page in navigatorStackManager.pages) page],
       onPopPage: (route, result) {
         ///监听Navigator pop 只有触发 [Navigator.pop]时才会回调，一般为material下的默认导航返回
         if (!route.didPop(result)) {
