@@ -121,12 +121,23 @@ public class EngineBinding implements PropertyChangeListener {
     }
   }
 
-
+  /**
+   * 防止内存泄漏
+   */
   public void detach() {
     if (flutterEngine != null) {
       //activeEngines in FlutterEngineGroup will call [onEngineWillDestroy]
       flutterEngine.destroy();
     }
+    fragmentDetach();
+  }
+
+  /**
+   * 防止内存泄漏
+   * 与上方方法不一致的原因是，在使用Fragment 时，FlutterEngine会自动释放，
+   * 所有不能再次调用 flutterEngine.destroy()
+   */
+  public void fragmentDetach() {
     if (methodChannel != null) {
       methodChannel.setMethodCallHandler(null);
     }
