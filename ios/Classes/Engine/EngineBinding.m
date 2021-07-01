@@ -47,26 +47,31 @@
             NSString *target = [[NavigatorStackManager sharedInstance] findPopTarget];
             result(target);
         }else if ([call.method isEqualToString:@"pushNamed"]) {
-            [[NavigatorStackManager sharedInstance] pushNamed:call.arguments[@"pageName"] data:call.arguments[@"data"]];
-            result(@{});
+           BOOL pushResult = [[NavigatorStackManager sharedInstance] pushNamed:call.arguments[@"pageName"] data:call.arguments[@"data"]];
+            result(@(pushResult));
         }else if ([call.method isEqualToString:@"setArguments"]) {
             
         }else if ([call.method isEqualToString:@"initDataModel"]) {
             NSString *key =  call.arguments[@"key"];
             result([[Muffin sharedInstance] getDataModelByKey:key]);
         }else if ([call.method isEqualToString:@"syncDataModel"]) {
-            NSDictionary *model = call.arguments;
+//            NSDictionary *model = call.arguments;
             result(@{});
         }else{
             result(@{});
         }
+        
     }];
 }
-
+  
 - (void)attach{
     
 }
 
+- (void)detach{
+
+}
+     
 - (void)popUntil:(NSString *)pageName result:(id)result{
     if (pageName.length == 0) {
         NSLog(@"pageName 不能未空");
@@ -79,11 +84,10 @@
     [self.methodChannel invokeMethod:@"popUntil" arguments:map];
 }
 
-- (void)detach{
-    [self.methodChannel setMethodCallHandler:^(FlutterMethodCall * _Nonnull call, FlutterResult  _Nonnull result) {
-            
-    }];
+- (void)syncDataModel:(NSString *)key andArg:(id)argument{
+    [self.methodChannel invokeMethod:key arguments:argument];
 }
+
 
 
 @end

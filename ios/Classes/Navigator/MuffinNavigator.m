@@ -13,15 +13,12 @@
 @implementation MuffinNavigator
 
 + (void)push:(NSString *)pageName{
-//    MuffinVC *vc = [[NavigatorStackManager sharedInstance] getTopVC];
     MuffinVC *vc = [[MuffinVC alloc] init];
     vc.pageName = pageName;
     [self.mjTopViewController.navigationController pushViewController:vc animated:YES];
 }
 
 + (void)push:(NSString *)pageName andArg:(NSDictionary *)arguments{
-//    MuffinVC *vc = [[NavigatorStackManager sharedInstance] getTopVC];
-
     MuffinVC *vc = [[MuffinVC alloc] init];
     vc.pageName = pageName;
     vc.params = arguments;
@@ -29,7 +26,6 @@
 }
 
 + (void)pushUri:(NSString *)uri{
-//    MuffinVC *vc = [[NavigatorStackManager sharedInstance] getTopVC];
     MuffinVC *vc = [[MuffinVC alloc] init];
     vc.uri = uri;
     [self.mjTopViewController.navigationController pushViewController:vc animated:YES];

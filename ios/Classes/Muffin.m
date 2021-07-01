@@ -21,15 +21,7 @@ static Muffin * _instance = nil;
 }
 
 - (NSDictionary *)getDataModelByKey:(NSString *)key{
-    
-    //todo:监听查找
-    if ([key isEqualToString:@"BasicInfo"]) {
-        return @{@"key":@"BasicInfo",@"userId":@"10",@"isBindTbk":@(YES)};
-    }else if ([key isEqualToString:@""]) {
-        return @{@"url":@"/first",@"arguments":@{}};
-    }
-    
-    return @{@"userId":@"",@"isBindTbk":@(YES)};
+    return self.getDataModelByKey();
 }
 
 //- (NSDictionary *)listener:(NSString *)key{
@@ -45,14 +37,5 @@ static Muffin * _instance = nil;
     }
     return _engineGroup;
 }
-
-- (NSMutableArray *)intentConfigs{
-    if (!_intentConfigs) {
-        _intentConfigs = [NSMutableArray array];
-    }
-    return _intentConfigs;
-}
-
-
 
 @end

@@ -158,7 +158,6 @@ public class EngineBinding implements PropertyChangeListener {
     methodChannel.invokeMethod("pop", new HashMap<>());
   }
 
-
   public FlutterEngine getFlutterEngine() {
     return flutterEngine;
   }

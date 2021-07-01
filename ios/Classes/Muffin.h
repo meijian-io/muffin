@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong)FlutterEngineGroup *engineGroup;
 
-@property (nonatomic, strong)NSMutableArray *intentConfigs;
-
 @property (nonatomic, strong)void (^pushNativeVC)(NSString *pageName,id data);
+
+@property (nonatomic, strong)NSDictionary *(^getDataModelByKey)(void);
 
 + (Muffin *)sharedInstance;
 

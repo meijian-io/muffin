@@ -104,23 +104,8 @@ static NavigatorStackManager * _instance = nil;
     if ([Muffin sharedInstance].pushNativeVC) {
         [Muffin sharedInstance].pushNativeVC(pageName,data);
     }
-    
-    
-//    NSArray *configs = [Muffin sharedInstance].intentConfigs;
-//    if (configs.count == 0) {
-//        return false;
-//    }
-    BOOL find = false;
-//
-//    for (UIViewController *vc in configs) {
-//        if ([NSStringFromClass([vc class]) isEqualToString:pageName]) {
-//            find = true;
-//
-//            NSLog(@"todo : push %@",pageName);
-//            break;
-//        }
-//    }
-    return find;
+
+    return YES;
 }
 
 - (MuffinVC *)getTopVC{
@@ -160,7 +145,6 @@ static NavigatorStackManager * _instance = nil;
             if (stack.currentVC == vc) {
                 [self.stacks removeObject:stack];
                 NSLog(@"stack remove, system back press, size = %ld",self.stacks.count);
-
             }
         }
     }

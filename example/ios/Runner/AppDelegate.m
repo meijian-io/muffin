@@ -10,8 +10,9 @@
 //  [GeneratedPluginRegistrant registerWithRegistry:self];
   // Override point for customization after application launch.
     
-    [Muffin sharedInstance].intentConfigs = [@[] mutableCopy];
-    
+    [[Muffin sharedInstance] setGetDataModelByKey:^NSDictionary * _Nonnull{
+        return @{@"key":@"BasicInfo",@"userId":@"10",@"isBindTbk":@(YES)};
+    }];
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
