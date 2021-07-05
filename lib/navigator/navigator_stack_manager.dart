@@ -93,9 +93,16 @@ class NavigatorStackManager extends ChangeNotifier {
   Future<void> push(Uri uri, {dynamic arguments}) =>
       _push(uri, arguments: arguments);
 
-  /// push a page with [Uri], similar to [Navigator.of(context).pushNamed]
+  /// push a page with [Uri] or [String], similar to [Navigator.of(context).pushNamed]
   /// call eg.. - [MuffinNavigator.of(context).pushNamed]
-  Future<T?> pushNamed<T extends Object?>(Uri uri, [dynamic arguments]) async {
+  Future<T?> pushNamed<T extends Object?>(dynamic name,
+      [dynamic arguments]) async {
+    Uri uri;
+    if (name is String) {
+      uri = Uri.parse(name);
+    } else {
+      uri = name;
+    }
     final Completer<T?> callback = Completer<T?>();
 
     ///set to current route
