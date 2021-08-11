@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:muffin/channel/navigator_channel.dart';
 import 'package:muffin/navigator/muffin_navigator.dart';
+import 'package:muffin/navigator/route_config.dart';
 import 'package:muffin/sharing/share.dart';
 
 ///管理所有的路由和页面信息
@@ -13,13 +14,13 @@ class NavigatorStackManager extends ChangeNotifier {
   final bool multiple;
 
   ///所有路由
-  final Map<Pattern, MuffinPageBuilder> routes;
+  final Map<String, MuffinPageBuilder> routes;
 
   final _pages = <Page>[];
-  final _uris = <Uri>[];
+  final _history = <RouteConfig>[];
 
   ///callbacks, use for push async and pop with result
-  Map<Uri, Completer<dynamic>>? callbacks = {};
+  Map<RouteConfig, Completer<dynamic>>? callbacks = {};
 
   List<Page> get pages => UnmodifiableListView(_pages);
 
@@ -27,8 +28,7 @@ class NavigatorStackManager extends ChangeNotifier {
     NavigatorChannel.channel.setMethodCallHandler((call) {
       switch (call.method) {
         case 'popUntil':
-          popUntil(
-              Uri.parse(call.arguments['pageName']), call.arguments['result']);
+          popUntil(call.arguments['pageName'], call.arguments['result']);
           break;
         case "pop":
           pop();
@@ -45,14 +45,14 @@ class NavigatorStackManager extends ChangeNotifier {
 
   /// push a uri, if find the target uri, will add a callback
   /// internal push, find target uri-> push, otherwise push a [No find page]
-  Future<void> _push(Uri uri, {dynamic arguments}) async {
+  Future<void> _push(String path, {dynamic arguments}) async {
     bool _findRoute = false;
     Pattern _findPattern = '/';
     for (int i = 0; i < routes.keys.length; i++) {
       final key = routes.keys.elementAt(i);
-      if (key.matchAsPrefix(uri.path)?.group(0) == uri.path) {
+      if (key == path) {
         ///第一个页面若已经push 就不再push了
-        if (_uris.contains(uri) && key == routes.keys.first) {
+        if (foundInCurrentRoutes(path) && key == routes.keys.first) {
           _findRoute = true;
           break;
         }
@@ -75,53 +75,47 @@ class NavigatorStackManager extends ChangeNotifier {
       );
       _pages.add(page);
     } else {
-      _pages.add(routes[_findPattern]!(uri, arguments));
+      _pages.add(routes[_findPattern]!(arguments));
     }
 
     ///add to uris
-    _uris.add(uri);
+    _history.add(RouteConfig(path: path, arguments: arguments));
 
     notifyListeners();
     if (multiple) {
       ///sync native NavigatorStack
-      await NavigatorChannel.syncFlutterStack(uri.path);
+      await NavigatorChannel.syncFlutterStack(path);
     }
     return SynchronousFuture(null);
   }
 
   /// only used in [MuffinNavigator] init [MuffinNavigator.setNewRoutePath]
-  Future<void> push(Uri uri, {dynamic arguments}) =>
-      _push(uri, arguments: arguments);
+  Future<void> push(String path, {dynamic arguments}) =>
+      _push(path, arguments: arguments);
 
-  /// push a page with [Uri] or [String], similar to [Navigator.of(context).pushNamed]
+  /// push a page with [String], similar to [Navigator.of(context).pushNamed]
   /// call eg.. - [MuffinNavigator.of(context).pushNamed]
-  Future<T?> pushNamed<T extends Object?>(dynamic name,
+  Future<T?> pushNamed<T extends Object?>(String named,
       [dynamic arguments]) async {
-    Uri uri;
-    if (name is String) {
-      uri = Uri.parse(name);
-    } else {
-      uri = name;
-    }
     final Completer<T?> callback = Completer<T?>();
 
     ///set to current route
-    callbacks![_uris.last] = callback;
+    callbacks![_history.last] = callback;
 
     /// find route , if exit push, else find in native
-    if (foundInTotalRoutes(uri)) {
-      await _push(uri, arguments: arguments);
+    if (foundInTotalRoutes(named)) {
+      await _push(named, arguments: arguments);
     } else {
       if (multiple) {
         /// found in native
-        bool find = await NavigatorChannel.pushNamed(uri.path, arguments);
+        bool find = await NavigatorChannel.pushNamed(named, arguments);
         if (!find) {
           ///will show not found
-          await _push(uri, arguments: arguments);
+          await _push(named, arguments: arguments);
         }
       } else {
         ///will show not found
-        await _push(uri, arguments: arguments);
+        await _push(named, arguments: arguments);
       }
     }
     return callback.future;
@@ -133,12 +127,12 @@ class NavigatorStackManager extends ChangeNotifier {
   void pop<T extends Object>([T? result]) async {
     if (multiple) {
       String target = await NavigatorChannel.findPopTarget();
-      popUntil(Uri.parse(target), result);
+      popUntil(target, result);
     } else {
-      if (_uris.length <= 1) {
+      if (_history.length <= 1) {
         return;
       }
-      popUntil(_uris[_uris.length - 2], result);
+      popUntil(_history[_history.length - 2].path!, result);
     }
   }
 
@@ -146,18 +140,18 @@ class NavigatorStackManager extends ChangeNotifier {
   /// find in native, this way will remove all un match VC and route
   ///
   /// eg: N1(/main) F1(/home) F1(/first) [popUntil(/main)] will remove /home /first and VC(F1)
-  void popUntil<T extends Object>(Uri target, [T? result]) {
+  void popUntil<T extends Object>(String target, [T? result]) {
     ///find in current routes, remove top
     if (foundInCurrentRoutes(target)) {
       bool findTarget = false;
       while (!findTarget) {
-        if (_uris.isNotEmpty) {
-          Uri temp = _uris.last;
-          if (temp.path == target.path) {
+        if (_history.isNotEmpty) {
+          RouteConfig temp = _history.last;
+          if (temp.path == target) {
             findTarget = true;
             callbacks![temp]!.complete(result);
           } else {
-            _uris.removeLast();
+            _history.removeLast();
             _pages.removeLast();
           }
         } else {
@@ -166,36 +160,36 @@ class NavigatorStackManager extends ChangeNotifier {
       }
       notifyListeners();
     } else {
-      print('not find ${target.path} in Uris');
+      print('not find ${target} in Uris');
     }
     if (multiple) {
       /// multiply flutters should chat with native
-      NavigatorChannel.popUntil(target.path, result);
+      NavigatorChannel.popUntil(target, result);
     }
   }
 
   void removeLastUri() {
     _pages.removeLast();
-    _uris.removeLast();
+    _history.removeLast();
     notifyListeners();
   }
 
-  bool foundInCurrentRoutes(Uri uri) {
+  bool foundInCurrentRoutes(String path) {
     bool foundMatching = false;
-    for (Uri element in _uris) {
-      if (element.path == uri.path) {
+    for (RouteConfig element in _history) {
+      if (element.path == path) {
         foundMatching = true;
       }
     }
     return foundMatching;
   }
 
-  bool foundInTotalRoutes(Uri uri) {
+  bool foundInTotalRoutes(String path) {
     bool _findRoute = false;
     for (int i = 0; i < routes.keys.length; i++) {
       final key = routes.keys.elementAt(i);
-      if (key.matchAsPrefix(uri.path)?.group(0) == uri.path) {
-        if (_uris.contains(uri) && key == routes.keys.first) {
+      if (key == path) {
+        if (foundInCurrentRoutes(path) && key == routes.keys.first) {
           _findRoute = true;
           break;
         }

@@ -43,8 +43,8 @@ class FirstScreen extends StatelessWidget {
                   child: Text('back with data')),
               TextButton(
                   onPressed: () {
-                    MuffinNavigator.of(context).pushNamed(Uri.parse("/main"),
-                        {'data': 'response from first screen'});
+                    MuffinNavigator.of(context).pushNamed(
+                        "/main", {'data': 'response from first screen'});
                   },
                   child: Text('push native main'))
             ],
