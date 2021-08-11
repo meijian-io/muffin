@@ -9,9 +9,6 @@ import 'package:muffin/sharing/share.dart';
 
 ///管理所有的路由和页面信息
 class NavigatorStackManager extends ChangeNotifier {
-  /// if multiple is true, will not call channel method
-  final bool multiple;
-
   ///所有路由
   final Map<Pattern, MuffinPageBuilder> routes;
 
@@ -23,7 +20,7 @@ class NavigatorStackManager extends ChangeNotifier {
 
   List<Page> get pages => UnmodifiableListView(_pages);
 
-  NavigatorStackManager({required this.routes, required this.multiple}) {
+  NavigatorStackManager({required this.routes}) {
     NavigatorChannel.channel.setMethodCallHandler((call) {
       switch (call.method) {
         case 'popUntil':
@@ -82,10 +79,8 @@ class NavigatorStackManager extends ChangeNotifier {
     _uris.add(uri);
 
     notifyListeners();
-    if (multiple) {
       ///sync native NavigatorStack
       await NavigatorChannel.syncFlutterStack(uri.path);
-    }
     return SynchronousFuture(null);
   }
 
@@ -112,17 +107,13 @@ class NavigatorStackManager extends ChangeNotifier {
     if (foundInTotalRoutes(uri)) {
       await _push(uri, arguments: arguments);
     } else {
-      if (multiple) {
         /// found in native
         bool find = await NavigatorChannel.pushNamed(uri.path, arguments);
         if (!find) {
           ///will show not found
           await _push(uri, arguments: arguments);
         }
-      } else {
-        ///will show not found
-        await _push(uri, arguments: arguments);
-      }
+
     }
     return callback.future;
   }
@@ -131,15 +122,8 @@ class NavigatorStackManager extends ChangeNotifier {
   /// similar to [Navigator.of(context).pop]
   /// same as [popUntil(uris.last)]
   void pop<T extends Object>([T? result]) async {
-    if (multiple) {
       String target = await NavigatorChannel.findPopTarget();
       popUntil(Uri.parse(target), result);
-    } else {
-      if (_uris.length <= 1) {
-        return;
-      }
-      popUntil(_uris[_uris.length - 2], result);
-    }
   }
 
   /// pop until a page, find the first match [target], if not find in this navigator,
@@ -168,10 +152,8 @@ class NavigatorStackManager extends ChangeNotifier {
     } else {
       print('not find ${target.path} in Uris');
     }
-    if (multiple) {
       /// multiply flutters should chat with native
       NavigatorChannel.popUntil(target.path, result);
-    }
   }
 
   void removeLastUri() {

@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)getDataModelByKey:(NSString *)key;
 
+- (void)push:(NSString *)pageName andArg:(NSDictionary *)arguments;
+
 - (void)syncDataModelAll:(id)data;
 
 @end

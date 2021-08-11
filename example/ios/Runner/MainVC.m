@@ -6,11 +6,11 @@
 //
 
 #import "MainVC.h"
-
-#import <muffin/MuffinNavigator.h>
 #import <muffin/Muffin.h>
-#import "SecondVC.h"
 #import <muffin/NSObject+visibleVC.h>
+
+#import "SecondVC.h"
+
 
 @interface MainVC ()
 
@@ -33,7 +33,6 @@
     self.count = 1;
     
     [[Muffin sharedInstance] setPushNativeVC:^(NSString * _Nonnull pageName, id  _Nonnull data) {
-//        SecondVC *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SecondVC"];
         MainVC *vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"MainVC"];
         [self.mj_topViewController.navigationController pushViewController:vc animated:YES];
     }];
@@ -43,17 +42,16 @@
 
 - (IBAction)clickpushBtn:(UIButton *)sender {
         
-    [MuffinNavigator push:@"/first" andArg:@{@"count":@(self.count),@"desc":@"This is cool",@"good":@(true)}];
+    [[Muffin sharedInstance] push:@"/first" andArg:@{@"count":@(self.count),@"desc":@"This is cool",@"good":@(true)}];
     
 }
 
 - (IBAction)secondVC:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
-//    [MuffinNavigator push:@"/second" andArg:@{@"count":@(self.count),@"desc":@"This is cool",@"good":@(true)}];
 }
 
 - (IBAction)mainvc:(UIButton *)sender {
-    [MuffinNavigator push:@"/home" andArg:@{@"count":@(self.count),@"desc":@"This is cool",@"good":@(true)}];
+    [[Muffin sharedInstance] push:@"/home" andArg:@{@"count":@(self.count),@"desc":@"This is cool",@"good":@(true)}];
 }
 
 - (IBAction)downAction:(UIButton *)sender {
@@ -69,15 +67,5 @@
 - (IBAction)syncAction:(UIButton *)sender {
     [[Muffin sharedInstance] syncDataModelAll:@{@"key":@"BasicInfo",@"userId":[NSString stringWithFormat:@"%ld",self.count],@"isBindTbk":@(YES)}];
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

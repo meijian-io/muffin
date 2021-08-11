@@ -7,6 +7,7 @@
 
 #import "Muffin.h"
 #import "NavigatorStackManager.h"
+#import "MuffinNavigator.h"
 
 @implementation Muffin
 
@@ -28,12 +29,9 @@ static Muffin * _instance = nil;
     [[NavigatorStackManager sharedInstance] syncDataModelAll:data];
 }
 
-//- (NSDictionary *)listener:(NSString *)key{
-//
-//    //todo:监听查找
-//
-//    return @{};
-//}
+- (void)push:(NSString *)pageName andArg:(NSDictionary *)arguments{
+    [MuffinNavigator push:pageName andArg:arguments];
+}
 
 - (FlutterEngineGroup *)engineGroup{
     if (!_engineGroup) {

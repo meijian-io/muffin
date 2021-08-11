@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:muffin/sharing/share.dart';
+
+import 'package:muffin/muffin.dart';
 import 'package:muffin/navigator/muffin_navigator.dart';
 import 'package:muffin/navigator/muffin_page.dart';
 import 'package:muffin_example/basic_info.dart';
@@ -14,8 +15,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   ///sharing data
-  await Share.instance.init([BasicInfo.instance]);
+  Muffin.instance.initShare([BasicInfo.instance]);
+  Muffin.instance.onMockFunc = (String key,dynamic value) {
+    return '';
+  };
   runApp(await getApp());
+
+  dynamic mockFuc (String key,[dynamic value]){
+    return '';
+  }
+
 }
 
 ///get a App with dif initialRoute
@@ -26,7 +35,7 @@ Future<Widget> getApp() async {
             child: FirstScreen(
           arguments: arguments,
         ))
-  }, multiple: true);
+  });
   await navigator.init();
   return MaterialApp.router(
     routeInformationParser: MuffinInformationParser(),
