@@ -17,6 +17,7 @@
 @interface EngineBinding()
 
 @property (nonatomic, strong)FlutterMethodChannel *methodChannel;
+@property (nonatomic, strong)FlutterMethodChannel *nativeChannel;
 
 @end
 
@@ -24,7 +25,12 @@
 
 - (void)createFlutterMethodChannel{
     self.methodChannel = [FlutterMethodChannel methodChannelWithName:@"muffin_navigate" binaryMessenger:self.flutterEngine.binaryMessenger];
-
+    self.nativeChannel = [FlutterMethodChannel methodChannelWithName:@"mj_channel" binaryMessenger:self.flutterEngine.binaryMessenger];
+    
+    [self.nativeChannel setMethodCallHandler:^(FlutterMethodCall * _Nonnull call, FlutterResult  _Nonnull result) {
+        result([Muffin sharedInstance].nativeChannelBlock(call.method,call.arguments));
+    }];
+    
     MJWeakSelf
     [self.methodChannel setMethodCallHandler:^(FlutterMethodCall * _Nonnull call, FlutterResult  _Nonnull result) {
         if ([call.method isEqualToString:@"getArguments"]) {

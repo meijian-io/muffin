@@ -14,8 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong)FlutterEngineGroup *engineGroup;
 
+//原生跳转
 @property (nonatomic, strong)void (^pushNativeVC)(NSString *pageName,id data);
 
+//channel
+@property (nonatomic, strong)NSDictionary *(^nativeChannelBlock)(NSString *methodName, NSDictionary *data);
+
+//获取基础数据
 @property (nonatomic, strong)NSDictionary *(^getDataModelByKey)(void);
 
 + (Muffin *)sharedInstance;
