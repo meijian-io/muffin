@@ -16,29 +16,27 @@ void main() async {
 
   ///sharing data
   Muffin.instance.initShare([BasicInfo.instance]);
-  Muffin.instance.onMockFunc = (String key,dynamic value) {
+  Muffin.instance.onMockFunc = (String key, dynamic value) {
     return '';
   };
   runApp(await getApp());
 
-  dynamic mockFuc (String key,[dynamic value]){
+  dynamic mockFuc(String key, [dynamic value]) {
     return '';
   }
-
 }
 
 ///get a App with dif initialRoute
 Future<Widget> getApp() async {
   final navigator = MuffinNavigator(routes: {
-    '/home': (uri, arguments) => MuffinRoutePage(child: HomeScreen()),
-    '/first': (uri, arguments) => MuffinRoutePage(
+    '/home': (arguments) => MuffinRoutePage(child: HomeScreen()),
+    '/first': (arguments) => MuffinRoutePage(
             child: FirstScreen(
           arguments: arguments,
         ))
-  });
-  await navigator.init();
+  }, multiple: true);
   return MaterialApp.router(
-    routeInformationParser: MuffinInformationParser(),
+    routeInformationParser: MuffinInformationParser(navigator: navigator),
     routerDelegate: navigator,
     backButtonDispatcher: MuffinBackButtonDispatcher(navigator: navigator),
   );

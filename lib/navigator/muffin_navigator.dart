@@ -2,13 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:muffin/channel/navigator_channel.dart';
 import 'package:muffin/navigator/muffin_page.dart';
+import 'package:muffin/navigator/route_config.dart';
 
 import 'navigator_stack_manager.dart';
 
-typedef MuffinPageBuilder = Page Function(Uri uri, dynamic params);
+typedef MuffinPageBuilder = Page Function(dynamic params);
 
-class MuffinNavigator extends RouterDelegate<Uri>
-    with PopNavigatorRouterDelegateMixin<Uri>, ChangeNotifier {
+class MuffinNavigator extends RouterDelegate<RouteConfig>
+    with PopNavigatorRouterDelegateMixin<RouteConfig>, ChangeNotifier {
   ///get manager instance
   static NavigatorStackManager of(BuildContext context) {
     return (Router.of(context).routerDelegate as MuffinNavigator)
@@ -21,21 +22,18 @@ class MuffinNavigator extends RouterDelegate<Uri>
 
   late dynamic initArguments;
 
-  init() async {
-      dynamic arguments = await NavigatorChannel.arguments;
-      initRoute = arguments['url'];
-      initArguments = arguments['arguments'];
-    return this;
-  }
+  bool? multiple;
 
   MuffinNavigator(
-      {required Map<Pattern, MuffinPageBuilder> routes,
+      {required Map<String, MuffinPageBuilder> routes,
+      required bool multiple,
       String initRoute = '/',
       dynamic initArguments}) {
+    this.multiple = multiple;
     this.initRoute = initRoute;
     this.initArguments = initArguments;
     navigatorStackManager =
-        NavigatorStackManager(routes: routes);
+        NavigatorStackManager(routes: routes, multiple: multiple);
     navigatorStackManager.addListener(notifyListeners);
   }
 
@@ -65,28 +63,42 @@ class MuffinNavigator extends RouterDelegate<Uri>
 
   ///Navigator初始化时默认为 '/'，标记已经是当前home
   @override
-  Future<void> setNewRoutePath(Uri configuration) async {
+  Future<void> setNewRoutePath(RouteConfig configuration) async {
     ///2. setNewRoutePath
     print('setNewRoutePath ${configuration.toString()}');
-    if (configuration.toString() == '/') {
-      return navigatorStackManager.push(Uri.parse(initRoute),
-          arguments: initArguments);
-    }
-    return navigatorStackManager.push(configuration);
+    return navigatorStackManager.push(configuration.path!,
+        arguments: configuration.arguments);
   }
 }
 
-class MuffinInformationParser extends RouteInformationParser<Uri> {
+class MuffinInformationParser extends RouteInformationParser<RouteConfig> {
+  final MuffinNavigator navigator;
+
+  MuffinInformationParser({required this.navigator});
+
   @override
-  Future<Uri> parseRouteInformation(RouteInformation routeInformation) async {
-    ///1. parseRouteInformation
-    print('parseRouteInformation ${routeInformation.location}');
-    return Uri.parse(routeInformation.location!);
+  Future<RouteConfig> parseRouteInformation(
+      RouteInformation routeInformation) async {
+    ///一般在APP中，系统Navigator的初始路由都是 '/'， 但在浏览器中可能通过修改地址栏重新回调次方法，且路由不为'/'
+    ///TODO 兼容 Web 浏览器 路由
+    ///
+    if (navigator.multiple!) {
+      dynamic arguments = await NavigatorChannel.arguments;
+      String initRoute = arguments['url'];
+      dynamic initArguments = arguments['arguments'];
+
+      print(
+          'open flutter with multiple mode, init route $initRoute , arguments $arguments');
+      return RouteConfig(path: initRoute, arguments: initArguments);
+    }
+    return RouteConfig(
+        path: navigator.initRoute, arguments: navigator.initArguments);
   }
 
   @override
-  RouteInformation? restoreRouteInformation(Uri configuration) {
-    RouteInformation(location: Uri.decodeComponent(configuration.toString()));
+  RouteInformation? restoreRouteInformation(RouteConfig configuration) {
+    RouteInformation(
+        location: configuration.path, state: configuration.arguments);
   }
 }
 
@@ -100,7 +112,6 @@ class MuffinBackButtonDispatcher extends RootBackButtonDispatcher {
   Future<bool> didPopRoute() {
     if (navigator.navigatorStackManager.pages.length > 1) {
       navigator.navigatorStackManager.pop();
-
       /// handle by us
       return Future.value(true);
     }

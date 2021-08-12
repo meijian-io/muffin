@@ -7,7 +7,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Center(
         child: Column(
           children: [
@@ -16,7 +15,7 @@ class HomeScreen extends StatelessWidget {
             TextButton(
                 onPressed: () async {
                   var response = await MuffinNavigator.of(context)
-                      .pushNamed(Uri(path: '/first'), 'data from home screen');
+                      .pushNamed('/first', 'data from home screen');
                   print(response);
                 },
                 child: Text('To First Screen')),
@@ -29,8 +28,7 @@ class HomeScreen extends StatelessWidget {
             TextButton(
                 onPressed: () async {
                   MuffinNavigator.of(context).pushNamed(
-                      Uri.parse('/native_second'),
-                      {'data': "data from Home Screen"});
+                      '/native_second', {'data': "data from Home Screen"});
                 },
                 child: Text('pushNamed Native second')),
             ChangeNotifierProvider.value(
