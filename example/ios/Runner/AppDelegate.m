@@ -13,6 +13,13 @@
     [[Muffin sharedInstance] setGetDataModelByKey:^NSDictionary * _Nonnull{
         return @{@"key":@"BasicInfo",@"userId":@"10",@"isBindTbk":@(YES)};
     }];
+    [[Muffin sharedInstance] setNativeChannelBlock:^NSDictionary * _Nonnull(NSString * _Nonnull methodName, NSDictionary * _Nonnull data) {
+       
+        NSLog(@"method name === %@",methodName);
+        NSLog(@"%@",data);
+        
+        return @{};
+    }];
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
