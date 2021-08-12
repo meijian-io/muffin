@@ -18,22 +18,17 @@ class MuffinNavigator extends RouterDelegate<RouteConfig>
 
   late NavigatorStackManager navigatorStackManager;
 
-  late String initRoute;
+  late String initRoute = '/';
 
-  late dynamic initArguments;
-
-  bool? multiple;
+  late dynamic initArguments = {};
 
   MuffinNavigator(
       {required Map<String, MuffinPageBuilder> routes,
-      required bool multiple,
       String initRoute = '/',
       dynamic initArguments}) {
-    this.multiple = multiple;
     this.initRoute = initRoute;
     this.initArguments = initArguments;
-    navigatorStackManager =
-        NavigatorStackManager(routes: routes, multiple: multiple);
+    navigatorStackManager = NavigatorStackManager(routes: routes);
     navigatorStackManager.addListener(notifyListeners);
   }
 
@@ -81,18 +76,12 @@ class MuffinInformationParser extends RouteInformationParser<RouteConfig> {
       RouteInformation routeInformation) async {
     ///一般在APP中，系统Navigator的初始路由都是 '/'， 但在浏览器中可能通过修改地址栏重新回调次方法，且路由不为'/'
     ///TODO 兼容 Web 浏览器 路由
-    ///
-    if (navigator.multiple!) {
-      dynamic arguments = await NavigatorChannel.arguments;
-      String initRoute = arguments['url'];
-      dynamic initArguments = arguments['arguments'];
 
-      print(
-          'open flutter with multiple mode, init route $initRoute , arguments $arguments');
-      return RouteConfig(path: initRoute, arguments: initArguments);
-    }
-    return RouteConfig(
-        path: navigator.initRoute, arguments: navigator.initArguments);
+    dynamic arguments = await NavigatorChannel.arguments;
+    String initRoute = arguments['url'] ?? navigator.initRoute;
+    dynamic initArguments = arguments['arguments'] ?? navigator.initArguments;
+    print('open flutter , init route $initRoute , arguments $arguments');
+    return RouteConfig(path: initRoute, arguments: initArguments);
   }
 
   @override
@@ -112,6 +101,7 @@ class MuffinBackButtonDispatcher extends RootBackButtonDispatcher {
   Future<bool> didPopRoute() {
     if (navigator.navigatorStackManager.pages.length > 1) {
       navigator.navigatorStackManager.pop();
+
       /// handle by us
       return Future.value(true);
     }

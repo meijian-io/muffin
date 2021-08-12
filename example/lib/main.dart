@@ -16,14 +16,10 @@ void main() async {
 
   ///sharing data
   Muffin.instance.initShare([BasicInfo.instance]);
-  Muffin.instance.onMockFunc = (String key, dynamic value) {
-    return '';
-  };
-  runApp(await getApp());
+  // 添加自定义 mock 数据
+  // Muffin.instance.addMock(MockConfig('getArguments', (key, value) => {}));
 
-  dynamic mockFuc(String key, [dynamic value]) {
-    return '';
-  }
+  runApp(await getApp());
 }
 
 ///get a App with dif initialRoute
@@ -34,7 +30,7 @@ Future<Widget> getApp() async {
             child: FirstScreen(
           arguments: arguments,
         ))
-  }, multiple: true);
+  });
   return MaterialApp.router(
     routeInformationParser: MuffinInformationParser(navigator: navigator),
     routerDelegate: navigator,
