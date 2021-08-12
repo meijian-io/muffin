@@ -48,6 +48,10 @@ public class BaseFlutterActivity extends FragmentActivity implements BindingProv
     });
   }
 
+  @Override public void onBackPressed() {
+    provideEngineBinding().pop();
+  }
+
   @Override protected void onDestroy() {
     if (customChannel != null) {
       customChannel.setMethodCallHandler(null);
