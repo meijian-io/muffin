@@ -13,6 +13,8 @@ class NavigatorStackManager extends ChangeNotifier {
   ///所有路由
   final Map<String, MuffinPageBuilder> routes;
 
+  final Page emptyPage;
+
   final _pages = <Page>[];
   final _history = <RouteConfig>[];
 
@@ -21,7 +23,7 @@ class NavigatorStackManager extends ChangeNotifier {
 
   List<Page> get pages => UnmodifiableListView(_pages);
 
-  NavigatorStackManager({required this.routes}) {
+  NavigatorStackManager({required this.routes, required this.emptyPage}) {
     NavigatorChannel.channel.setMethodCallHandler((call) {
       switch (call.method) {
         case 'popUntil':
@@ -61,17 +63,7 @@ class NavigatorStackManager extends ChangeNotifier {
 
     ///create page
     if (!_findRoute) {
-      var page = MaterialPage(
-        child: Scaffold(
-          appBar: AppBar(),
-          body: Container(
-            child: const Center(
-              child: Text('Page not found'),
-            ),
-          ),
-        ),
-      );
-      _pages.add(page);
+      _pages.add(emptyPage);
     } else {
       _pages.add(routes[_findPattern]!(arguments));
     }

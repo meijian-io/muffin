@@ -25,10 +25,13 @@ class MuffinNavigator extends RouterDelegate<RouteConfig>
   MuffinNavigator(
       {required Map<String, MuffinPageBuilder> routes,
       String initRoute = '/',
-      dynamic initArguments}) {
+      dynamic initArguments,
+      Widget? emptyWidget}) {
     this.initRoute = initRoute;
     this.initArguments = initArguments;
-    navigatorStackManager = NavigatorStackManager(routes: routes);
+    navigatorStackManager = NavigatorStackManager(
+        routes: routes,
+        emptyPage: MaterialPage(child: emptyWidget ?? createEmptyWidget()));
     navigatorStackManager.addListener(notifyListeners);
   }
 
@@ -63,6 +66,17 @@ class MuffinNavigator extends RouterDelegate<RouteConfig>
     print('setNewRoutePath ${configuration.toString()}');
     return navigatorStackManager.push(configuration.path!,
         arguments: configuration.arguments);
+  }
+
+  Widget createEmptyWidget() {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Container(
+        child: const Center(
+          child: Text('Page not found'),
+        ),
+      ),
+    );
   }
 }
 
