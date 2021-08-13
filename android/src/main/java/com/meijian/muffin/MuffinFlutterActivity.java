@@ -49,6 +49,11 @@ public class MuffinFlutterActivity extends FlutterActivity implements BindingPro
     engineBinding.attach();
   }
 
+  @Override public void onBackPressed() {
+    provideEngineBinding().pop();
+  }
+
+
   @Override protected void onDestroy() {
     super.onDestroy();
     //FlutterEngine detach ,clean method channel
