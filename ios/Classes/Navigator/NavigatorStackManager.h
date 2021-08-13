@@ -37,9 +37,14 @@ NS_ASSUME_NONNULL_BEGIN
 //同步数据
 - (void)syncDataModelAll:(id)data;
 
-//- (void)syncFlutterStack:(NavigatorStack *)stack;
-//
+//返回
 - (void)pop:(NSString *)target result:(id)result;
+
+//单引擎channel发送
+- (void)sendSystemEvent:(NSString *)name params:(NSDictionary *)params;
+
+//全引擎channel发送
+- (void)sendAllSystemEvent:(NSString *)name params:(NSDictionary *)params;
 
 @end
 

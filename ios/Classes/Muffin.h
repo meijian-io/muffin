@@ -31,6 +31,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)syncDataModelAll:(id)data;
 
+//单引擎channel发送
+- (void)sendSystemEvent:(NSString *)name params:(NSDictionary *)params;
+
+//全引擎channel发送
+- (void)sendAllSystemEvent:(NSString *)name params:(NSDictionary *)params;
+
 @end
 
 NS_ASSUME_NONNULL_END

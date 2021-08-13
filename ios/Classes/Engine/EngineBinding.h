@@ -27,12 +27,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)attach;
 
 - (void)popUntil:(NSString *)pageName result:(id)result;
-
+/**
+    同步basic数据
+    argument: basic数据
+ */
 - (void)syncDataModelWithArg:(id)argument;
 
 - (void)createFlutterMethodChannel;
 
-
+/**
+    原生调用flutter
+    name: channel key
+    params: channel 参数
+ */
+- (void)sendChannelSystemEvent:(NSString *)name params:(NSDictionary *)params;
 
 @end
 

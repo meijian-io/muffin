@@ -29,6 +29,14 @@ static Muffin * _instance = nil;
     [[NavigatorStackManager sharedInstance] syncDataModelAll:data];
 }
 
+- (void)sendSystemEvent:(NSString *)name params:(NSDictionary *)params{
+    [[NavigatorStackManager sharedInstance] sendSystemEvent:name params:params];
+}
+
+- (void)sendAllSystemEvent:(NSString *)name params:(NSDictionary *)params{
+    [[NavigatorStackManager sharedInstance] sendAllSystemEvent:name params:params];
+}
+
 - (void)push:(NSString *)pageName andArg:(NSDictionary *)arguments{
     [MuffinNavigator push:pageName andArg:arguments];
 }

@@ -208,6 +208,22 @@ static NavigatorStackManager * _instance = nil;
     
 }
 
+- (void)sendSystemEvent:(NSString *)name params:(NSDictionary *)params{
+    if (self.stacks.count) {
+        NavigatorStack *stack = self.stacks.lastObject;
+        MuffinVC *vc = stack.vc;
+        [vc.engineBinding sendChannelSystemEvent:name params:params];
+    }
+
+}
+
+- (void)sendAllSystemEvent:(NSString *)name params:(NSDictionary *)params{
+    for (NavigatorStack *stack in self.stacks) {
+        MuffinVC *vc = stack.vc;
+        [vc.engineBinding sendChannelSystemEvent:name params:params];
+    }
+}
+
 - (void)logStack{
     if (self.stacks.count == 0) {
         return;

@@ -91,10 +91,23 @@
     [self.methodChannel invokeMethod:@"popUntil" arguments:map];
 }
 
+/**
+    同步basic数据
+    argument: basic数据
+ */
+
 - (void)syncDataModelWithArg:(id)argument{
     [self.methodChannel invokeMethod:@"syncDataModel" arguments:argument];
 }
 
+/**
+    原生调用flutter
+    name: channel key
+    params: channel 参数
+ */
+- (void)sendChannelSystemEvent:(NSString *)name params:(NSDictionary *)params{
+    [self.nativeChannel invokeMethod:name arguments:params];
+}
 
 
 @end
