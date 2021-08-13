@@ -63,6 +63,7 @@ class NavigatorStackManager extends ChangeNotifier {
     if (!_findRoute) {
       var page = MaterialPage(
         child: Scaffold(
+          appBar: AppBar(),
           body: Container(
             child: const Center(
               child: Text('Page not found'),

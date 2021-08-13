@@ -10,6 +10,12 @@
 #import "NavigatorStackManager.h"
 #import "NavigatorStack.h"
 
+#if __has_include(<webview_flutter/FLTWebViewFlutterPlugin.h>)
+#import <webview_flutter/FLTWebViewFlutterPlugin.h>
+#else
+//@import webview_flutter;
+#endif
+
 @interface MuffinVC ()
 
 @property (nonatomic,strong)FlutterEngine *flutterEngine;
@@ -47,6 +53,14 @@
 //    [[NavigatorStackManager sharedInstance] pushNamed:self.pageName data:self.params];
     self.engineBinding = binding;
     [self.engineBinding attach];
+    
+#if __has_include(<webview_flutter/FLTWebViewFlutterPlugin.h>)
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [FLTWebViewFlutterPlugin registerWithRegistrar:[self registrarForPlugin:@"FLTWebViewFlutterPlugin"]];
+    });
+#else
+#endif
     
 }
 
