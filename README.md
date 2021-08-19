@@ -7,7 +7,6 @@
 
 #### Feature
 ✅ `Native push Flutter` 携带参数、获取返回值
-
 ✅ 自定义 `PushFlutterHandler` （定义Uri解析）实现 从 Schema 跳转 Flutter
 ✅ `Flutter push Native` 携带参数、获取返回值
 ✅ 自定义 `PushNativeHandler`（灵活根据path跳转）
