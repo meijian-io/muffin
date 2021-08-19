@@ -7,18 +7,28 @@
 
 #### Feature
 ✅ `Native push Flutter` 携带参数、获取返回值
+
 ✅ 自定义 `PushFlutterHandler` （定义Uri解析）实现 从 Schema 跳转 Flutter
+
 ✅ `Flutter push Native` 携带参数、获取返回值
+
 ✅ 自定义 `PushNativeHandler`（灵活根据path跳转）
+
 ✅ `Flutter pop` 携带参数
+
 ✅ 数据同步共享，实现原生 和 `Flutter` 一些类数据改变同步
+
 ✅ `Android Fragment`级别支持
+
 ✅ 单独运行 **module** 时，可为 原生通信事件自定 **Mock** 数据
+
 ✅ 支持自定义 `MethodChannel`
 
 #### TODO
 ❎ `Native`页面路由标记，实现 `popUntil`
+
 ❎ 支持 **Web**
+
 ❎ 支持 二级路由 配置，比如 `/home/detail`
 
 ## API
