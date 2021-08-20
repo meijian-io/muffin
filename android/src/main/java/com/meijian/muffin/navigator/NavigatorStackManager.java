@@ -118,7 +118,7 @@ public class NavigatorStackManager {
       if (poppedStack.getHost().hashCode() == targetStack.getHost().hashCode()) {
         continue;
       }
-      poppedStack.setResult(result, target);
+      poppedStack.setResult(result);
       poppedStack.getHost().finish();
     }
 

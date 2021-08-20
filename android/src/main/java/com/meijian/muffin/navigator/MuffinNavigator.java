@@ -1,7 +1,6 @@
 package com.meijian.muffin.navigator;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
@@ -41,12 +40,28 @@ public class MuffinNavigator {
     //while flutter has pushed, then add a new NavigatorStack to NavigatorStackManager
   }
 
+  public static void pushForResult(String pageName, int requestCode) {
+    Activity context = NavigatorStackManager.getInstance().getTopActivity();
+    Intent intent = new Intent(context, Muffin.getInstance().getAttachVc());
+    intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);
+    context.startActivityForResult(intent, requestCode);
+    //while flutter has pushed, then add a new NavigatorStack to NavigatorStackManager
+  }
+
   public static void pushForResult(String pageName, Map<String, Object> arguments) {
     Activity context = NavigatorStackManager.getInstance().getTopActivity();
     Intent intent = new Intent(context, Muffin.getInstance().getAttachVc());
     intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);
     intent.putExtra(MuffinFlutterActivity.ARGUMENTS, (Serializable) arguments);
     context.startActivityForResult(intent, MuffinFlutterActivity.REQUEST_CODE);
+  }
+
+  public static void pushForResult(String pageName, Map<String, Object> arguments, int requestCode) {
+    Activity context = NavigatorStackManager.getInstance().getTopActivity();
+    Intent intent = new Intent(context, Muffin.getInstance().getAttachVc());
+    intent.putExtra(MuffinFlutterActivity.PAGE_NAME, pageName);
+    intent.putExtra(MuffinFlutterActivity.ARGUMENTS, (Serializable) arguments);
+    context.startActivityForResult(intent, requestCode);
   }
 
   public static void push(String pageName, Map<String, Object> arguments) {
@@ -70,6 +85,13 @@ public class MuffinNavigator {
     Intent intent = new Intent(context, Muffin.getInstance().getAttachVc());
     intent.putExtra(MuffinFlutterActivity.URI, uri);
     context.startActivityForResult(intent, MuffinFlutterActivity.REQUEST_CODE);
+  }
+
+  public static void pushForResult(Uri uri, int requestCode) {
+    Activity context = NavigatorStackManager.getInstance().getTopActivity();
+    Intent intent = new Intent(context, Muffin.getInstance().getAttachVc());
+    intent.putExtra(MuffinFlutterActivity.URI, uri);
+    context.startActivityForResult(intent, requestCode);
   }
 
 }

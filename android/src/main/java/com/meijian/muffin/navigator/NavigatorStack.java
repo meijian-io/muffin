@@ -66,13 +66,11 @@ public class NavigatorStack {
    * Top vc finish ,set result
    *
    * @param result result
-   * @param pageName finished page's name
    */
-  public void setResult(Object result, String pageName) {
+  public void setResult(Object result) {
     if (getHost() != null && result instanceof HashMap) {
       Intent intent = new Intent();
       intent.putExtra("result", (Serializable) result);
-      intent.putExtra("pageName", pageName);
       getHost().setResult(MuffinFlutterActivity.RESULT_CODE, intent);
     }
   }

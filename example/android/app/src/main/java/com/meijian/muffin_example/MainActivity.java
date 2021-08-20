@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 
 import androidx.annotation.Nullable;
 
+import com.meijian.muffin.Muffin;
 import com.meijian.muffin.navigator.MuffinNavigator;
 
 import java.util.HashMap;
@@ -21,7 +23,14 @@ public class MainActivity extends Activity {
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    findViewById(R.id.main).setOnClickListener(view -> MuffinNavigator.push("/home"));
+
+    TextView textView = findViewById(R.id.text);
+    textView.setText(textView.getText() + "\n 当前模式： " + Muffin.getInstance().getAttachVc().getSimpleName());
+
+    findViewById(R.id.home).setOnClickListener(view -> MuffinNavigator.push("/home"));
+
+    findViewById(R.id.home_result).setOnClickListener(view -> MuffinNavigator.pushForResult("/home", 100));
+
 
     findViewById(R.id.first).setOnClickListener(view -> {
       Map<String, Object> arguments = new HashMap<>();
@@ -31,7 +40,20 @@ public class MainActivity extends Activity {
       MuffinNavigator.push("/first", arguments);
     });
 
-    findViewById(R.id.second).setOnClickListener(view -> {
+    findViewById(R.id.first_result).setOnClickListener(view -> {
+      Map<String, Object> arguments = new HashMap<>();
+      arguments.put("count", 1);
+      arguments.put("desc", "This is cool");
+      arguments.put("good", true);
+      MuffinNavigator.pushForResult("/first", arguments, 101);
+    });
+
+
+    findViewById(R.id.open_with_uri).setOnClickListener(view -> {
+      MuffinNavigator.push(Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
+    });
+
+    findViewById(R.id.open_with_uri_result).setOnClickListener(view -> {
       MuffinNavigator.pushForResult(Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
     });
 
@@ -53,17 +75,13 @@ public class MainActivity extends Activity {
             }
           }).start();
         }
-
     );
-
-    findViewById(R.id.open_with_fragment).setOnClickListener(v ->
-        MuffinNavigator.pushForResult("/home"));
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (data != null) {
-      Log.e("AAA", data.getStringExtra("pageName"));
+      Log.e("AAA", "requestCode : " + requestCode + "; resultCode : " + resultCode);
       Log.e("AAA", (data.getSerializableExtra("result")).toString());
     }
   }

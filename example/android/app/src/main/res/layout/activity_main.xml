@@ -2,48 +2,112 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     >
 
   <TextView
+      android:id="@+id/text"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="This is Native Main Activity"
+      android:layout_marginTop="50dp"
+      android:text="This is Native Main Activity\n Muffin初始化时若设置 attachVC则使用的是 Fragment模式\n
+若没有设置，则使用Activity模式"
       />
 
-  <Button
-      android:id="@+id/main"
-      android:layout_width="wrap_content"
+  <LinearLayout
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Flutter main"
-      />
-  <Button
-      android:id="@+id/first"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Flutter first"
-      />
+      android:layout_marginTop="16dp"
+      android:orientation="horizontal"
+      >
 
-  <Button
-      android:id="@+id/second"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Flutter second"
-      />
+    <TextView
+        android:id="@+id/home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:background="#FF8966"
+        android:padding="16dp"
+        android:text="Flutter /home"
+        />
 
-  <Button
+    <TextView
+        android:id="@+id/home_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:background="#FF8966"
+        android:padding="16dp"
+        android:text="Flutter /home 返回值"
+        />
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+
+    <TextView
+        android:id="@+id/first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="#FF8966"
+        android:padding="16dp"
+        android:text="Flutter /fist 携带参数"
+        />
+
+    <TextView
+        android:id="@+id/first_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="#FF8966"
+        android:padding="16dp"
+        android:text="Flutter /fist 携带参数 返回值"
+        />
+
+  </LinearLayout>
+
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+    <TextView
+        android:id="@+id/open_with_uri"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="#FF8966"
+        android:padding="16dp"
+        android:text="Flutter /second \n使用 Uri"
+        />
+
+    <TextView
+        android:id="@+id/open_with_uri_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="#FF8966"
+        android:padding="16dp"
+        android:text="Flutter /second \n使用 Uri 返回值"
+        />
+  </LinearLayout>
+
+  <TextView
       android:id="@+id/change_basic_info"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="change basic info"
+      android:layout_marginLeft="16dp"
+      android:layout_marginTop="16dp"
+      android:background="#FF8966"
+      android:padding="16dp"
+      android:text="改变可观察对象 BasicInfo.class"
       />
-
-  <Button
-      android:id="@+id/open_with_fragment"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="open with fragment"
-      />
-
 </LinearLayout>

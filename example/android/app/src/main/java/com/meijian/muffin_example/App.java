@@ -3,6 +3,7 @@ package com.meijian.muffin_example;
 import android.app.Application;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 
 import com.meijian.muffin.Muffin;
@@ -32,6 +33,8 @@ public class App extends Application {
           if (TextUtils.equals("/main", pageName)) {
             Intent intent = new Intent(activity, MainActivity.class);
             activity.startActivity(intent);
+          } else {
+            Toast.makeText(getApplicationContext(), "没有找到命名为 " + pageName + " 的页面", Toast.LENGTH_LONG).show();
           }
         })
         .setModels(models)
