@@ -106,12 +106,7 @@ Muffin.instance.addMock(MockConfig('getArguments', (key, value) => {}));
 ## Android 接入Muffin
 ```
 1.在Flutter项目中添加依赖 
- 
- muffin:
-    git:
-      url: 'git@gitlab.qunhequnhe.com:app/flutter/muffin.git'
-      ref: 'master'
- pub get
+ muffin: ^0.0.1
  
 2.路由配置&&数据共享配置&&各种配置
    void main() async {
