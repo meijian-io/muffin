@@ -1,7 +1,8 @@
 name: muffin
-description: A new Flutter plugin.
+description: Muffin is a Flutter plugin used to implement mixed stack management based on multiple Engine and Navigator 2.0.
 version: 0.0.1
-homepage:
+author: designDo<tangmaking@163.com>
+homepage: https://github.com/Openflutter/flutter_ok_image
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
