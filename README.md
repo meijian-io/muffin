@@ -34,7 +34,8 @@
 ## API
 
 **Native push Flutter**
-```
+
+```dart
 //基本push
 MuffinNavigator.push("/home");
 
@@ -59,7 +60,7 @@ MuffinNavigator.push(Uri.parse("meijianclient://meijian.io?url=first&name=uri_te
 ```
 
 **Flutter push Flutter**
-```
+```dart
 //与平常使用的NavigatorAPI一样
 //pushNamed
 MuffinNavigator.of(context).pushNamed('/second',{'data': "data from Home Screen"});
@@ -68,14 +69,14 @@ MuffinNavigator.of(context).pushNamed('/second',{'data': "data from Home Screen"
 ```
 
 **Flutter push Native**
-```
+```dart
 //将页面路径和参数传递到原生，原生根据参数跳转，可以通过ARouter，可以if else 判断 等
 //pushNamed
 MuffinNavigator.of(context).pushNamed('/native_main',{'data': "data from Home Screen"});
 ```
 
 **Flutter pop**
-```
+```dart
 //pop
 MuffinNavigator.of(context).pop({'data': "data from Home Screen"});
 
@@ -85,7 +86,7 @@ MuffinNavigator.of(context).popUntil('/first', {'data': "data from Home Screen"}
 
 **数据同步**
 
-```
+```dart
 //原理是监听字段改变，通知所有监听者
 //实现DataModelChangeListener接口，添加被监听字段，监听器等
 //具体参考 Demo [BasicInfo] 类
@@ -95,7 +96,7 @@ MuffinNavigator.of(context).popUntil('/first', {'data': "data from Home Screen"}
 
 
 **Mock**
-```
+```dart
 //在单独运行时，当需要调用 method channel 的方法时，因为原生没有注册方法，导致报错。我们在调用通信事件时进行拦截，返回 mock 的数据。
 //在Flutter初始化时 配置 mock 数据
 
@@ -104,7 +105,7 @@ Muffin.instance.addMock(MockConfig('getArguments', (key, value) => {}));
 ```
 
 ## Android 接入Muffin
-```
+```dart
 1.在Flutter项目中添加依赖 
  muffin: ^0.0.1
  
@@ -146,7 +147,6 @@ Muffin.instance.addMock(MockConfig('getArguments', (key, value) => {}));
   }
 
 3.原生，在Applocation中初始化 Muffin
-   
    //普通初始化，第二个参数为 各种提供给上层的接口实现
    Muffin.init(this, options());
 
