@@ -41,6 +41,6 @@ class Muffin {
   }
 
   Future<void> initShare(List<DataModelChangeListener> models) async {
-    Share.instance.init(models);
+   await Share.instance.init(models);
   }
 }
