@@ -10,9 +10,10 @@
 //  [GeneratedPluginRegistrant registerWithRegistry:self];
   // Override point for customization after application launch.
     
-    [[Muffin sharedInstance] setGetDataModelByKey:^NSDictionary * _Nonnull{
+    [[Muffin sharedInstance] setGetDataModelByKey:^NSDictionary * _Nonnull(NSString * _Nonnull key) {
         return @{@"key":@"BasicInfo",@"userId":@"10",@"isBindTbk":@(YES)};
     }];
+    
     [[Muffin sharedInstance] setNativeChannelBlock:^NSDictionary * _Nonnull(NSString * _Nonnull methodName, NSDictionary * _Nonnull data) {
        
         NSLog(@"method name === %@",methodName);

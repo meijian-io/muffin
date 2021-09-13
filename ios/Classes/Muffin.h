@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong)NSDictionary *(^nativeChannelBlock)(NSString *methodName, NSDictionary *data);
 
 //获取基础数据
-@property (nonatomic, strong)NSDictionary *(^getDataModelByKey)(void);
+@property (nonatomic, strong)NSDictionary *(^getDataModelByKey)(NSString *key);
 
 + (Muffin *)sharedInstance;
 

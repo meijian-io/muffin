@@ -22,7 +22,7 @@ static Muffin * _instance = nil;
 }
 
 - (NSDictionary *)getDataModelByKey:(NSString *)key{
-    return self.getDataModelByKey();
+    return self.getDataModelByKey(key);
 }
 
 - (void)syncDataModelAll:(id)data{
