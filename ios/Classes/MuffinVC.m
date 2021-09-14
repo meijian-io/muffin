@@ -44,7 +44,6 @@
     binding.arguments = self.params;
     binding.weakVC = self;
     [binding createFlutterMethodChannel];
-//    [[NavigatorStackManager sharedInstance] pushNamed:self.pageName data:self.params];
     self.engineBinding = binding;
     [self.engineBinding attach];
     

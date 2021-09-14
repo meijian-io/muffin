@@ -23,6 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 //获取基础数据
 @property (nonatomic, strong)NSDictionary *(^getDataModelByKey)(NSString *key);
 
+//注册插件
+@property (nonatomic, strong)void (^registerPluginBlock)(NSObject<FlutterPluginRegistry> *object);
+
+
 + (Muffin *)sharedInstance;
 
 - (NSDictionary *)getDataModelByKey:(NSString *)key;
