@@ -60,6 +60,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  get:
+    dependency: "direct main"
+    description:
+      path: "/Users/apple/getx"
+      relative: false
+    source: path
+    version: "4.3.8"
   matcher:
     dependency: transitive
     description:
