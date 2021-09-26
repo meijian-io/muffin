@@ -38,7 +38,7 @@ public class App extends Application {
           }
         })
         .setModels(models)
-        .setPushFlutterHandler(new DefaultPushFlutterHandler())
-        .setAttachVc(BaseFlutterActivity.class);
+        .setPushFlutterHandler(new DefaultPushFlutterHandler());
+        //.setAttachVc(BaseFlutterActivity.class);
   }
 }

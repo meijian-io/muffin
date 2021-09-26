@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:muffin/muffin.dart';
-import 'package:muffin/navigator/muffin_navigator.dart';
-import 'package:muffin/navigator/muffin_page.dart';
 import 'package:muffin_example/basic_info.dart';
+import 'package:muffin_example/routes/app_pages.dart';
 
-import 'first.dart';
-import 'home.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/parse_route.dart';
 
 ///这些定义只能写在 main.dart 中
 void main() async {
@@ -24,39 +22,19 @@ void main() async {
 
 ///get a App with dif initialRoute
 Future<Widget> getApp() async {
-  final navigator = MuffinNavigator(routes: {
-    '/home': (arguments) => MuffinRoutePage(child: HomeScreen()),
-    '/first': (arguments) => MuffinRoutePage(
-            child: FirstScreen(
-          arguments: arguments,
-        ))
-  });
-  return MaterialApp.router(
-    routeInformationParser: MuffinInformationParser(navigator: navigator),
-    routerDelegate: navigator,
-    backButtonDispatcher: MuffinBackButtonDispatcher(navigator: navigator),
+  return GetMaterialApp.router(
+    debugShowCheckedModeBanner: false,
+    enableLog: true,
+    getPages: AppPages.routes,
+    routeInformationParser: GetInformationParser(initialRoute: '/home'),
+    routerObserver: MyRouterObserver(),
   );
 }
 
-class SplashLoading extends StatefulWidget {
-  const SplashLoading({Key? key}) : super(key: key);
-
+class MyRouterObserver extends RouterObserver {
   @override
-  _SplashLoadingState createState() => _SplashLoadingState();
-}
-
-class _SplashLoadingState extends State<SplashLoading> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: CupertinoActivityIndicator(),
-      ),
-    );
+  Future<T> push<T>(RouteDecoder decoder) {
+    Get.log('Muffin handle this push ${decoder.treeBranch}');
+    return Future.value();
   }
 }
