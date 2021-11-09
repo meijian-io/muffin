@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:muffin/navigator/page_route.dart';
+import 'package:muffin/root/muffin_material_app.dart';
 
 import 'package:muffin_example/basic_info.dart';
+import 'package:muffin_example/second.dart';
 
 import 'first.dart';
 import 'home.dart';
@@ -22,17 +25,25 @@ void main() async {
 
 ///get a App with dif initialRoute
 Future<Widget> getApp() async {
-  final navigator = MuffinNavigator(routes: {
-    '/home': (arguments) => MuffinRoutePage(child: HomeScreen()),
-    '/first': (arguments) => MuffinRoutePage(
-            child: FirstScreen(
-          arguments: arguments,
-        ))
-  });
-  return MaterialApp.router(
-    routeInformationParser: MuffinInformationParser(navigator: navigator),
-    routerDelegate: navigator,
-    backButtonDispatcher: MuffinBackButtonDispatcher(navigator: navigator),
+  return MuffinMaterialApp(
+    muffinPages: [
+      MuffinPage(name: '/', page: () => HomeScreen(), children: [
+        MuffinPage(
+          name: '/first',
+          page: () => FirstScreen(),
+        ),
+        MuffinPage(name: '/second', page: () => SecondScreen()),
+
+        /// /home/first and /home/second
+        MuffinPage(name: '/home', page: () => HomeScreen(), children: [
+          MuffinPage(
+            name: '/first',
+            page: () => FirstScreen(),
+          ),
+          MuffinPage(name: '/second', page: () => SecondScreen()),
+        ])
+      ])
+    ],
   );
 }
 

@@ -49,7 +49,9 @@ public class BaseFlutterActivity extends FragmentActivity implements BindingProv
   }
 
   @Override public void onBackPressed() {
-    provideEngineBinding().pop();
+    if (flutterFragment != null) {
+      flutterFragment.onBackPressed();
+    }
   }
 
   @Override protected void onDestroy() {
