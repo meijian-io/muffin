@@ -28,6 +28,11 @@ class RouteDecoder {
       treeBranch[index] = _route.copy(parameters: parameters);
     }
   }
+
+  @override
+  String toString() {
+    return 'RouteDecoder(treeBranch: ${treeBranch.toString()})';
+  }
 }
 
 class ParseRouteTree {

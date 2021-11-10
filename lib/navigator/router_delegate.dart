@@ -75,7 +75,12 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     //Returning false will cause the entire app to be popped.
     print('handle system pop!!!');
     final wasPopup = await handlePopupRoutes(result: result);
-    if (wasPopup) return true;
+    if (wasPopup) {
+      print(
+          'pop route, use Navigator.push(ModalRoute route), will user Navigator.pop()');
+      return true;
+    }
+    print('pop route, remove top route and notifyListeners');
     final _popped = await _pop(popMode);
     notifyListeners();
     if (_popped != null) {
@@ -185,11 +190,13 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     if (parameters != null) {
       final uri = Uri(path: page, queryParameters: parameters);
       page = uri.toString();
+      print('toNamed with parameters, full page path is $page');
     }
 
     final decoder = Muffin.routeTree.matchRoute(page, arguments: arguments);
     decoder.replaceArguments(arguments);
 
+    print('page path match route, get decoder: $decoder');
     final completer = Completer<T>();
 
     if (decoder.route != null) {
