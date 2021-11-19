@@ -28,14 +28,15 @@ Future<Widget> getApp() async {
   return MuffinMaterialApp(
     muffinPages: [
       MuffinPage(name: '/', page: () => HomeScreen(), children: [
-        MuffinPage(
-          name: '/first',
-          page: () => FirstScreen(),
-        ),
-        MuffinPage(name: '/second', page: () => SecondScreen()),
-
         /// /home/first and /home/second
         MuffinPage(name: '/home', page: () => HomeScreen(), children: [
+          MuffinPage(
+            name: '/first',
+            page: () => FirstScreen(),
+          ),
+          MuffinPage(name: '/second', page: () => SecondScreen()),
+        ]),
+        MuffinPage(name: '/detail', page: () => HomeScreen(), children: [
           MuffinPage(
             name: '/first',
             page: () => FirstScreen(),

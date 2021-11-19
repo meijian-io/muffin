@@ -30,7 +30,7 @@ class MuffinInformationParser extends RouteInformationParser<RouteConfig> {
 
     return SynchronousFuture(
       RouteConfig(
-        currentTreeBranch: matchResult.treeBranch,
+        page: matchResult.route!,
         location: location,
         state: routeInformation.state,
       ),

@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:muffin/navigator/page_route.dart';
 
-///类似[RouteSettings]
+///App 路由 页面的 配置信息，[MuffinRouterDelegate]，根据[currentPage] rebuild Navigator
 ///[Router]中每个[Route] 页面 配置信息
-///之所以自定义，是因为之后可能对 [path] 的解析可能不同，每个使用者也可能不同
-///TODO 提供一个 Decoder 给外部调用
 class RouteConfig extends RouteInformation {
-  final List<MuffinPage> currentTreeBranch;
-
-  MuffinPage? get currentPage => currentTreeBranch.last;
+  ///正在或将要显示的 page，最终回调用[MuffinPageRoute]的 build 方法
+  final MuffinPage page;
 
   RouteConfig({
-    required this.currentTreeBranch,
+    required this.page,
     required String? location,
     required Object? state,
   }) : super(location: location, state: state);

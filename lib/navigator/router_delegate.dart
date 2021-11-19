@@ -37,7 +37,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
 
   @override
   Widget build(BuildContext context) {
-    final pages = getVisualPages();
+    final pages = getHistoryPages();
     if (pages.length == 0) return SizedBox.shrink();
     return Navigator(
       key: navigatorKey,
@@ -45,24 +45,11 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     );
   }
 
-  /// gets the visual pages from the current history entry
-  ///
-  /// visual pages must have [participatesInRootNavigator] set to true
-  List<MuffinPage> getVisualPages() {
+  /// gets the [MuffinPage]s from the current history entry
+  List<MuffinPage> getHistoryPages() {
     final currentHistory = currentConfiguration;
     if (currentHistory == null) return <MuffinPage>[];
-
-    final res = currentHistory.currentTreeBranch
-        .where((r) => r.participatesInRootNavigator != null);
-    if (res.length == 0) {
-      //default behavoir, all routes participate in root navigator
-      return history.map((e) => e.currentPage!).toList();
-    } else {
-      //user specified at least one participatesInRootNavigator
-      return res
-          .where((element) => element.participatesInRootNavigator == true)
-          .toList();
-    }
+    return history.map((e) => e.page).toList();
   }
 
   ///[Router.backButtonDispatcher]，系统返回按钮回调
@@ -192,7 +179,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       page = uri.toString();
       print('toNamed with parameters, full page path is $page');
     }
-
+    print('toNamed with page: $page');
     final decoder = Muffin.routeTree.matchRoute(page, arguments: arguments);
     decoder.replaceArguments(arguments);
 
@@ -203,7 +190,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       _allCompleters[decoder.route!] = completer;
       await pushHistory(
         RouteConfig(
-          currentTreeBranch: decoder.treeBranch,
+          page: decoder.route!,
           location: page,
           state: null,
         ),
