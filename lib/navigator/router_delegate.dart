@@ -186,11 +186,11 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     print('page path match route, get decoder: $decoder');
     final completer = Completer<T>();
 
-    if (decoder.route != null) {
-      _allCompleters[decoder.route!] = completer;
+    if (decoder.currentRoute != null) {
+      _allCompleters[decoder.currentRoute!] = completer;
       await pushHistory(
         RouteConfig(
-          page: decoder.route!,
+          page: decoder.currentRoute!,
           location: page,
           state: null,
         ),

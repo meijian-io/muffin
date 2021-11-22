@@ -4,28 +4,37 @@ import 'package:muffin/navigator/router_delegate.dart';
 ///[MuffinRouterDelegate].toNamed(String page) 方法，解析 page，获取匹配到的[MuffinPage]
 ///解析方法为[ParseRouteTree] matchRoute 方法，并携带page参数的解析，以及[arguments]
 class RouteDecoder {
-  final MuffinPage? route;
-
+  final List<MuffinPage> routes;
   final Map<String, String> parameters;
   final Object? arguments;
 
-  const RouteDecoder(
-    this.route,
-    this.parameters,
-    this.arguments,
-  );
+  MuffinPage? get currentRoute => routes.isEmpty ? null : routes.first;
+
+  RouteDecoder({
+    MuffinPage? route,
+    required this.parameters,
+    required this.arguments,
+  }) : routes = [route!];
 
   void replaceArguments(Object? arguments) {
-    route!.copy(arguments: arguments);
+    final _route = currentRoute;
+    if (_route != null) {
+      final index = routes.indexOf(_route);
+      routes[index] = _route.copy(arguments: arguments);
+    }
   }
 
-  void replaceParameters(Object? arguments) {
-    route!.copy(parameters: parameters);
+  void replaceParameters(Map<String, String> params) {
+    final _route = currentRoute;
+    if (_route != null) {
+      final index = routes.indexOf(_route);
+      routes[index] = _route.copy(parameters: params);
+    }
   }
 
   @override
   String toString() {
-    return 'RouteDecoder(route: ${route.toString()})';
+    return 'RouteDecoder(route: ${currentRoute!.toString()})';
   }
 }
 
@@ -46,19 +55,17 @@ class ParseRouteTree {
       print('matched route in flutter : $matched');
       final params = Map<String, String>.from(uri.queryParameters);
       return RouteDecoder(
-        matched,
-        params,
-        arguments,
-      )..replaceParameters(params);
+          route: matched, parameters: params, arguments: arguments)
+        ..replaceParameters(params);
     } else {
       //find in native
     }
 
     //route not found
     return RouteDecoder(
-      null,
-      {},
-      arguments,
+      route: null,
+      parameters: {},
+      arguments: arguments,
     );
   }
 
@@ -66,25 +73,6 @@ class ParseRouteTree {
     return routes.firstWhereOrNull(
       (route) => route.name.contains(name),
     );
-  }
-
-  Map<String, String> _parseParams(String path, PathDecoded routePath) {
-    final params = <String, String>{};
-    var idx = path.indexOf('?');
-    if (idx > -1) {
-      path = path.substring(0, idx);
-      final uri = Uri.tryParse(path);
-      if (uri != null) {
-        params.addAll(uri.queryParameters);
-      }
-    }
-    var paramsMatch = routePath.regex.firstMatch(path);
-
-    for (var i = 0; i < routePath.keys.length; i++) {
-      var param = Uri.decodeQueryComponent(paramsMatch![i + 1]!);
-      params[routePath.keys[i]!] = param;
-    }
-    return params;
   }
 
   ///将树形结构，子route拼接父route的path，保存到[routes]

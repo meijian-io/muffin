@@ -26,7 +26,6 @@ typedef MuffinPageBuilder = Widget Function();
 class MuffinPage<T> extends Page<T> {
   final MuffinPageBuilder page;
   final Map<String, String>? parameters;
-  final PathDecoded path;
   final bool preventDuplicates;
 
   ///参与根导航
@@ -50,8 +49,7 @@ class MuffinPage<T> extends Page<T> {
       this.children = const <MuffinPage>[],
       this.preventDuplicates = true,
       this.unknownRoute})
-      : path = _nameToRegex(name),
-        super(arguments: arguments, name: name);
+      : super(arguments: arguments, name: name);
 
   @override
   Route<T> createRoute(BuildContext context) {
@@ -80,27 +78,6 @@ class MuffinPage<T> extends Page<T> {
         unknownRoute: unknownRoute ?? this.unknownRoute,
         participatesInRootNavigator:
             participatesInRootNavigator ?? this.participatesInRootNavigator);
-  }
-
-  static PathDecoded _nameToRegex(String path) {
-    var keys = <String?>[];
-
-    String _replace(Match pattern) {
-      var buffer = StringBuffer('(?:');
-
-      if (pattern[1] != null) buffer.write('\.');
-      buffer.write('([\\w%+-._~!\$&\'()*,;=:@]+))');
-      if (pattern[3] != null) buffer.write('?');
-
-      keys.add(pattern[2]);
-      return "$buffer";
-    }
-
-    var stringPath = '$path/?'
-        .replaceAllMapped(RegExp(r'(\.)?:(\w+)(\?)?'), _replace)
-        .replaceAll('//', '/');
-
-    return PathDecoded(RegExp('^$stringPath\$'), keys);
   }
 
   @override
