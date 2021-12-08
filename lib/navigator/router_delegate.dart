@@ -14,9 +14,12 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
   GlobalKey<NavigatorState> get navigatorKey => Muffin.key;
 
   ///历史页面Route
-  final List<RouteConfig> history = <RouteConfig>[];
+  final List<RouteConfig> _history = <RouteConfig>[];
 
   final MuffinPage notFoundRoute;
+
+  ///callbacks, use for push async and pop with result
+  final Map<RouteConfig, Completer<dynamic>> _callbacks = {};
 
   MuffinRouterDelegate({MuffinPage? notFoundRoute})
       : notFoundRoute = notFoundRoute ??
@@ -26,12 +29,27 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
                       body: Text('Route page not found'),
                     )) {
     print('MuffinRouterDelegate has created!!!');
+    NavigatorChannel.channel.setMethodCallHandler((call) {
+      switch (call.method) {
+        case 'popUntil':
+          popUntil(call.arguments['pageName'], call.arguments['result']);
+          break;
+        case "pop":
+          pop();
+          break;
+        case 'syncDataModel':
+          print('native syncDataModel , flutter received : ${call.arguments}');
+          Muffin.syncDataModel(Map<String, dynamic>.from(call.arguments));
+          break;
+      }
+      return Future.value({});
+    });
   }
 
   @override
   RouteConfig? get currentConfiguration {
-    if (history.isEmpty) return null;
-    final route = history.last;
+    if (_history.isEmpty) return null;
+    final route = _history.last;
     return route;
   }
 
@@ -49,7 +67,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
   List<MuffinPage> getHistoryPages() {
     final currentHistory = currentConfiguration;
     if (currentHistory == null) return <MuffinPage>[];
-    return history.map((e) => e.page).toList();
+    return _history.map((e) => e.page).toList();
   }
 
   ///[Router.backButtonDispatcher]，系统返回按钮回调
@@ -68,62 +86,66 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       return true;
     }
     print('pop route, remove top route and notifyListeners');
-    final _popped = await _pop(popMode);
-    notifyListeners();
-    if (_popped != null) {
-      //emulate the old pop with result
-      return true;
+    await pop(result);
+    return true;
+  }
+
+  /// pop with arguments
+  /// similar to [Navigator.of(context).pop]
+  /// same as [popUntil(uris.last)]
+  Future<void> pop<T extends Object>([T? result]) async {
+    String target = await NavigatorChannel.findPopTarget();
+    print('find pop target in native $target');
+    if (target == '') {
+      /// not find target in native,it's not 'multiple' mode, find in Flutter
+      if (_history.length <= 1) {
+        return;
+      }
+      popUntil(_history[_history.length - 2].page.name, result);
+    } else {
+      ///find int native, it's 'multiple' mode
+      popUntil(target, result);
     }
-    return false;
   }
 
-  Future<RouteConfig?> _pop(PopMode mode) async {
-    switch (mode) {
-      case PopMode.History:
-        return await _popHistory();
-      case PopMode.Page:
-        return null;
-      default:
-        return null;
+  /// pop until a page, find the first match [target], if not find in this navigator,
+  /// find in native, this way will remove all un match VC and route
+  ///
+  /// eg: N1(/main) F1(/home) F1(/first) [popUntil(/main)] will remove /home /first and VC(F1)
+  void popUntil<T extends Object>(String target, [T? result]) async {
+    ///find in current routes, remove top
+    if (foundInCurrentRoutes(target)) {
+      bool findTarget = false;
+      while (!findTarget) {
+        if (_history.isNotEmpty) {
+          RouteConfig temp = _history.last;
+          if (temp.page.name == target) {
+            findTarget = true;
+            _callbacks[temp]?.complete(result);
+          } else {
+            _history.removeLast();
+          }
+        } else {
+          findTarget = true;
+        }
+      }
+      notifyListeners();
+    } else {
+      print('not find ${target} in Uris');
     }
+
+    /// multiply flutters should chat with native
+    await NavigatorChannel.popUntil(target, result);
   }
 
-  Future<RouteConfig?> _popHistory() async {
-    if (!_canPopHistory()) return null;
-    return await _doPopHistory();
-  }
-
-  Future<RouteConfig?> _doPopHistory() async {
-    return await _unsafeHistoryRemoveAt(history.length - 1);
-  }
-
-  bool _canPopHistory() {
-    return history.length > 1;
-  }
-
-  Future<RouteConfig?> _unsafeHistoryRemoveAt(int index) async {
-    if (index == history.length - 1 && history.length > 1) {
-      //removing WILL update the current route
-      final toCheck = history[history.length - 2];
-      final resMiddleware = await runMiddleware(toCheck);
-      if (resMiddleware == null) return null;
-      history[history.length - 2] = resMiddleware;
+  bool foundInCurrentRoutes(String path) {
+    bool foundMatching = false;
+    for (RouteConfig element in _history) {
+      if (element.page.name == path) {
+        foundMatching = true;
+      }
     }
-    return history.removeAt(index);
-  }
-
-  Future<RouteConfig?> runMiddleware(RouteConfig config) async {
-    final middlewares = null;
-    if (middlewares == null) {
-      return config;
-    }
-    var iterator = config;
-    for (var item in middlewares) {
-      var redirectRes = await item.redirectDelegate(iterator);
-      if (redirectRes == null) return null;
-      iterator = redirectRes;
-    }
-    return iterator;
+    return foundMatching;
   }
 
   Future<bool> handlePopupRoutes({
@@ -142,34 +164,21 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
 
   @override
   Future<void> setNewRoutePath(RouteConfig configuration) async {
-    await pushHistory(configuration);
+    await _pushHistory(configuration);
   }
 
   /// Adds a new history entry and waits for the result
-  Future<void> pushHistory(
-    RouteConfig config, {
-    bool rebuildStack = true,
-  }) async {
-    //this changes the currentConfiguration
-    await _pushHistory(config);
-    if (rebuildStack) {
-      notifyListeners();
-    }
-  }
-
   Future<void> _pushHistory(RouteConfig config) async {
     await _unsafeHistoryAdd(config);
+    notifyListeners();
   }
 
   Future<void> _unsafeHistoryAdd(RouteConfig config) async {
-    final res = await runMiddleware(config);
-    if (res == null) return;
-    history.add(res);
+    _history.add(config);
+    await NavigatorChannel.syncFlutterStack(config.page.name);
   }
 
-  final _allCompleters = <MuffinPage, Completer>{};
-
-  Future<T> toNamed<T>(
+  Future<T> pushNamed<T>(
     String page, {
     dynamic arguments,
     Map<String, String>? parameters,
@@ -186,20 +195,40 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     print('page path match route, get decoder: $decoder');
     final completer = Completer<T>();
 
+    ///find page in Flutter
     if (decoder.currentRoute != null) {
-      _allCompleters[decoder.currentRoute!] = completer;
-      await pushHistory(
-        RouteConfig(
-          page: decoder.currentRoute!,
-          location: page,
-          state: null,
-        ),
+      RouteConfig routeConfig = RouteConfig(
+        page: decoder.currentRoute!,
+        location: page,
+        state: null,
       );
 
-      return completer.future;
+      ///set to current route
+      _callbacks[_history.last] = completer;
+      await _pushHistory(routeConfig);
     } else {
-      ///TODO: IMPLEMENT ROUTE NOT FOUND
-      return Future.value();
+      /// found in native
+      bool find = await NavigatorChannel.pushNamed(page, arguments);
+      print('not found in Flutter, find int native $find');
+      if (!find) {
+        ///will show not found
+        RouteConfig notFound = RouteConfig(
+          page: notFoundRoute,
+          location: page,
+          state: null,
+        );
+        _callbacks[_history.last] = completer;
+        await _pushHistory(notFound);
+      }
     }
+    return completer.future;
+  }
+
+  T arguments<T>() {
+    return currentConfiguration?.page.arguments as T;
+  }
+
+  Map<String, String> get parameters {
+    return currentConfiguration?.page.parameters ?? {};
   }
 }

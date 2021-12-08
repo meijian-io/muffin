@@ -4,9 +4,11 @@ import 'package:muffin/muffin.dart';
 
 class MuffinInformationParser extends RouteInformationParser<RouteConfig> {
   final String initialRoute;
+  final Object arguments;
 
   MuffinInformationParser({
     this.initialRoute = '/',
+    this.arguments = const {},
   }) {
     print('MuffinInformationParser is created !');
   }
@@ -17,21 +19,15 @@ class MuffinInformationParser extends RouteInformationParser<RouteConfig> {
   ) {
     print(
         'MuffinInformationParser: route location: ${routeInformation.location}');
-    var location = routeInformation.location;
-    if (location == '/') {
-      //check if there is a corresponding page
-      //if not, relocate to initialRoute
-      if (!Muffin.routeTree.routes.any((element) => element.name == '/')) {
-        location = initialRoute;
-      }
-    }
 
-    final matchResult = Muffin.routeTree.matchRoute(location ?? initialRoute);
+    final matchResult =
+        Muffin.routeTree.matchRoute(initialRoute, arguments: arguments);
+    matchResult.replaceArguments(arguments);
 
     return SynchronousFuture(
       RouteConfig(
         page: matchResult.currentRoute!,
-        location: location,
+        location: initialRoute,
         state: routeInformation.state,
       ),
     );

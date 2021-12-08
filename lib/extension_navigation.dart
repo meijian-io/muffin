@@ -39,13 +39,29 @@ extension MuffinNavigation on MuffinInterface {
     routeTree.addRoutes(muffinPages);
   }
 
-  Future<T> toNamed<T>(
+  Future<T> pushNamed<T>(
     String page, {
     dynamic arguments,
     Map<String, String>? parameters,
   }) async {
-    return muffinRouterDelegate.toNamed(page,
+    return muffinRouterDelegate.pushNamed(page,
         arguments: arguments, parameters: parameters);
+  }
+
+  void pop<T extends Object>([T? result]) async {
+    return muffinRouterDelegate.pop(result);
+  }
+
+  void popUntil<T extends Object>(String target, [T? result]) async {
+    return muffinRouterDelegate.popUntil(target, result);
+  }
+
+  dynamic get arguments {
+    return muffinRouterDelegate.arguments();
+  }
+
+  Map<String, String> get parameters {
+    return muffinRouterDelegate.parameters;
   }
 }
 
@@ -68,5 +84,9 @@ extension MuffinConfig on MuffinInterface {
 
   Future<void> initShare(List<DataModelChangeListener> models) async {
     await Share.instance.init(models);
+  }
+
+  Future<void> syncDataModel(Map<String, dynamic> map) async {
+    return await Share.instance.syncDataModel(map);
   }
 }

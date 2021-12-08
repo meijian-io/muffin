@@ -14,7 +14,7 @@ class RouteDecoder {
     MuffinPage? route,
     required this.parameters,
     required this.arguments,
-  }) : routes = [route!];
+  }) : routes = route == null ? [] : [route];
 
   void replaceArguments(Object? arguments) {
     final _route = currentRoute;
@@ -34,7 +34,7 @@ class RouteDecoder {
 
   @override
   String toString() {
-    return 'RouteDecoder(route: ${currentRoute!.toString()})';
+    return 'RouteDecoder(route: ${currentRoute?.toString()})';
   }
 }
 
@@ -59,8 +59,8 @@ class ParseRouteTree {
         ..replaceParameters(params);
     } else {
       //find in native
-    }
 
+    }
     //route not found
     return RouteDecoder(
       route: null,

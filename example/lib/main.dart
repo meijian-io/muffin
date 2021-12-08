@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:muffin/navigator/information_parser.dart';
 import 'package:muffin/navigator/page_route.dart';
 import 'package:muffin/root/muffin_material_app.dart';
 
@@ -19,13 +20,17 @@ void main() async {
   Muffin.initShare([BasicInfo.instance]);
   // 添加自定义 mock 数据
   Muffin.addMock(MockConfig('getArguments', (key, value) => {}));
-
   runApp(await getApp());
 }
 
 ///get a App with dif initialRoute
 Future<Widget> getApp() async {
+  var arguments = await NavigatorChannel.arguments;
+  print(arguments);
+
   return MuffinMaterialApp(
+    routeInformationParser: MuffinInformationParser(
+        initialRoute: arguments?['url'], arguments: arguments?['arguments']),
     muffinPages: [
       MuffinPage(name: '/', page: () => HomeScreen(), children: [
         /// /home/first and /home/second

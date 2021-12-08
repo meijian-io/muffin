@@ -17,10 +17,9 @@ class HomeScreen extends StatelessWidget {
             Text('Home Screen'),
             TextButton(
                 onPressed: () async {
-                  /* var response = await Muffin.routerDelegate
-                      .pushNamed('/first', 'data from home screen');
-                  print(response);*/
-                  await Muffin.toNamed('/first');
+                  var response = await Muffin.pushNamed('/first',
+                      arguments: 'data from home screen');
+                  print(response);
                 },
                 child: Text('To First Screen')),
             TextButton(
@@ -33,6 +32,7 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () async {
                   /* MuffinNavigator.of(context).pushNamed(
                       '/native_second', {'data': "data from Home Screen"});*/
+                  await Muffin.pushNamed('/native_second');
                 },
                 child: Text('pushNamed Native second')),
             ChangeNotifierProvider.value(
