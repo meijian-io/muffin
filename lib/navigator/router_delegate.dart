@@ -67,7 +67,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
   List<MuffinPage> getHistoryPages() {
     final currentHistory = currentConfiguration;
     if (currentHistory == null) return <MuffinPage>[];
-    return _history.map((e) => e.page).toList();
+    return _history.map((e) => e.currentPage!).toList();
   }
 
   ///[Router.backButtonDispatcher]，系统返回按钮回调
@@ -101,7 +101,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       if (_history.length <= 1) {
         return;
       }
-      popUntil(_history[_history.length - 2].page.name, result);
+      popUntil(_history[_history.length - 2].currentPage!.name, result);
     } else {
       ///find int native, it's 'multiple' mode
       popUntil(target, result);
@@ -119,7 +119,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       while (!findTarget) {
         if (_history.isNotEmpty) {
           RouteConfig temp = _history.last;
-          if (temp.page.name == target) {
+          if (temp.currentPage!.path.regex.hasMatch(target)) {
             findTarget = true;
             _callbacks[temp]?.complete(result);
           } else {
@@ -141,7 +141,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
   bool foundInCurrentRoutes(String path) {
     bool foundMatching = false;
     for (RouteConfig element in _history) {
-      if (element.page.name == path) {
+      if (element.currentPage!.path.regex.hasMatch(path)) {
         foundMatching = true;
       }
     }
@@ -164,6 +164,11 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
 
   @override
   Future<void> setNewRoutePath(RouteConfig configuration) async {
+    if (configuration.currentPage == null) {
+      //404
+      configuration = RouteConfig(
+          currentTreeBranch: [notFoundRoute], location: '/404', state: null);
+    }
     await _pushHistory(configuration);
   }
 
@@ -175,7 +180,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
 
   Future<void> _unsafeHistoryAdd(RouteConfig config) async {
     _history.add(config);
-    await NavigatorChannel.syncFlutterStack(config.page.name);
+    await NavigatorChannel.syncFlutterStack(config.currentPage!.name);
   }
 
   Future<T> pushNamed<T>(
@@ -198,7 +203,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     ///find page in Flutter
     if (decoder.currentRoute != null) {
       RouteConfig routeConfig = RouteConfig(
-        page: decoder.currentRoute!,
+        currentTreeBranch: decoder.treeBranch,
         location: page,
         state: null,
       );
@@ -213,7 +218,7 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       if (!find) {
         ///will show not found
         RouteConfig notFound = RouteConfig(
-          page: notFoundRoute,
+          currentTreeBranch: [notFoundRoute],
           location: page,
           state: null,
         );
@@ -225,10 +230,10 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
   }
 
   T arguments<T>() {
-    return currentConfiguration?.page.arguments as T;
+    return currentConfiguration?.currentPage!.arguments as T;
   }
 
   Map<String, String> get parameters {
-    return currentConfiguration?.page.parameters ?? {};
+    return currentConfiguration?.currentPage!.parameters ?? {};
   }
 }

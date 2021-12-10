@@ -29,28 +29,18 @@ Future<Widget> getApp() async {
   print(arguments);
 
   return MuffinMaterialApp(
-    routeInformationParser: MuffinInformationParser(
-        initialRoute: arguments?['url'], arguments: arguments?['arguments']),
-    muffinPages: [
-      MuffinPage(name: '/', page: () => HomeScreen(), children: [
+      routeInformationParser: MuffinInformationParser(
+          initialRoute: arguments?['url'], arguments: arguments?['arguments']),
+      muffinPages: [
         /// /home/first and /home/second
         MuffinPage(name: '/home', page: () => HomeScreen(), children: [
           MuffinPage(
             name: '/first',
             page: () => FirstScreen(),
           ),
-          MuffinPage(name: '/second', page: () => SecondScreen()),
-        ]),
-        MuffinPage(name: '/detail', page: () => HomeScreen(), children: [
-          MuffinPage(
-            name: '/first',
-            page: () => FirstScreen(),
-          ),
-          MuffinPage(name: '/second', page: () => SecondScreen()),
+          MuffinPage(name: '/second/:id', page: () => SecondScreen()),
         ])
-      ])
-    ],
-  );
+      ]);
 }
 
 class SplashLoading extends StatefulWidget {

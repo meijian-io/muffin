@@ -4,31 +4,31 @@ import 'package:muffin/navigator/router_delegate.dart';
 ///[MuffinRouterDelegate].toNamed(String page) 方法，解析 page，获取匹配到的[MuffinPage]
 ///解析方法为[ParseRouteTree] matchRoute 方法，并携带page参数的解析，以及[arguments]
 class RouteDecoder {
-  final List<MuffinPage> routes;
+  final List<MuffinPage> treeBranch;
   final Map<String, String> parameters;
   final Object? arguments;
 
-  MuffinPage? get currentRoute => routes.isEmpty ? null : routes.first;
+  MuffinPage? get currentRoute => treeBranch.isEmpty ? null : treeBranch.last;
 
-  RouteDecoder({
-    MuffinPage? route,
-    required this.parameters,
-    required this.arguments,
-  }) : routes = route == null ? [] : [route];
+  RouteDecoder(
+    this.treeBranch,
+    this.parameters,
+    this.arguments,
+  );
 
   void replaceArguments(Object? arguments) {
     final _route = currentRoute;
     if (_route != null) {
-      final index = routes.indexOf(_route);
-      routes[index] = _route.copy(arguments: arguments);
+      final index = treeBranch.indexOf(_route);
+      treeBranch[index] = _route.copy(arguments: arguments);
     }
   }
 
   void replaceParameters(Map<String, String> params) {
     final _route = currentRoute;
     if (_route != null) {
-      final index = routes.indexOf(_route);
-      routes[index] = _route.copy(parameters: params);
+      final index = treeBranch.indexOf(_route);
+      treeBranch[index] = _route.copy(parameters: params);
     }
   }
 
@@ -50,29 +50,92 @@ class ParseRouteTree {
     final uri = Uri.parse(name);
     String path = uri.path;
     print('match path start: $path');
-    var matched = _findRoute(path);
-    if (matched != null) {
-      print('matched route in flutter : $matched');
-      final params = Map<String, String>.from(uri.queryParameters);
-      return RouteDecoder(
-          route: matched, parameters: params, arguments: arguments)
-        ..replaceParameters(params);
-    } else {
-      //find in native
 
+    // /home/profile/123 => home,profile,123 => /,/home,/home/profile,/home/profile/123
+    final split = uri.path.split('/').where((element) => element.isNotEmpty);
+    var curPath = '/';
+    final cumulativePaths = <String>[
+      '/',
+    ];
+    for (var item in split) {
+      if (curPath.endsWith('/')) {
+        curPath += '$item';
+      } else {
+        curPath += '/$item';
+      }
+      cumulativePaths.add(curPath);
     }
+
+    print('split path end: $cumulativePaths');
+
+    final treeBranch = cumulativePaths
+        .map((e) => MapEntry(e, _findRoute(e)))
+        .where((element) => element.value != null)
+        .map((e) => MapEntry(e.key, e.value!))
+        .toList();
+
+    final params = Map<String, String>.from(uri.queryParameters);
+    print('parse params: $params');
+
+    if (treeBranch.isNotEmpty) {
+      //route is found, do further parsing to get nested query params
+      final lastRoute = treeBranch.last;
+      final parsedParams = _parseParams(name, lastRoute.value.path);
+      if (parsedParams.isNotEmpty) {
+        params.addAll(parsedParams);
+      }
+      //copy parameters to all pages.
+      final mappedTreeBranch = treeBranch
+          .map(
+            (e) => e.value.copy(
+              parameters: {
+                if (e.value.parameters != null) ...e.value.parameters!,
+                ...params,
+              },
+              name: e.key,
+            ),
+          )
+          .toList();
+      print('matched route in flutter : $mappedTreeBranch');
+      return RouteDecoder(
+        mappedTreeBranch,
+        params,
+        arguments,
+      );
+    }
+
+    print('route not found in flutter');
     //route not found
     return RouteDecoder(
-      route: null,
-      parameters: {},
-      arguments: arguments,
+      treeBranch.map((e) => e.value).toList(),
+      params,
+      arguments,
     );
   }
 
   MuffinPage? _findRoute(String name) {
     return routes.firstWhereOrNull(
-      (route) => route.name.contains(name),
+      (route) => route.path.regex.hasMatch(name),
     );
+  }
+
+  Map<String, String> _parseParams(String path, PathDecoded routePath) {
+    final params = <String, String>{};
+    var idx = path.indexOf('?');
+    if (idx > -1) {
+      path = path.substring(0, idx);
+      final uri = Uri.tryParse(path);
+      if (uri != null) {
+        params.addAll(uri.queryParameters);
+      }
+    }
+    var paramsMatch = routePath.regex.firstMatch(path);
+
+    for (var i = 0; i < routePath.keys.length; i++) {
+      var param = Uri.decodeQueryComponent(paramsMatch![i + 1]!);
+      params[routePath.keys[i]!] = param;
+    }
+    return params;
   }
 
   ///将树形结构，子route拼接父route的path，保存到[routes]
