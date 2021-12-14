@@ -49,7 +49,7 @@ extension MuffinNavigation on MuffinInterface {
   }
 
   void pop<T extends Object>([T? result]) async {
-    return muffinRouterDelegate.pop(result);
+    return await muffinRouterDelegate.pop(result);
   }
 
   void popUntil<T extends Object>(String target, [T? result]) async {
@@ -62,6 +62,12 @@ extension MuffinNavigation on MuffinInterface {
 
   Map<String, String> get parameters {
     return muffinRouterDelegate.parameters;
+  }
+
+  ///获取当前路由name，这个值在过度动画之前就被设置，所以可能在起始页面看到准备跳转页面的name
+  ///这个方法当前只用作测试
+  String get currentRouteName {
+    return muffinRouterDelegate.currentConfiguration!.currentPage!.name;
   }
 }
 

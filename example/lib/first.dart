@@ -16,35 +16,41 @@ class FirstScreen extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('First page'),
+          title: Text('First Page ${Muffin.currentRouteName}'),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'This is page',
-              ),
-              Text(
-                'first',
-                style: Theme.of(context).textTheme.headline4,
+                'Get arguments by [Muffin.arguments]',
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Text(
                 '${Muffin.arguments}',
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               TextButton(
                   onPressed: () {
-                    Muffin.pop({'data': 'response from first screen'});
+                    Muffin.pop('response from first screen');
                   },
                   child: Text('back with data')),
               TextButton(
                   onPressed: () {
-                    /*MuffinNavigator.of(context).pushNamed(
-                        "/main", {'data': 'response from first screen'});*/
-                    Navigator.of(context).pop();
+                    Muffin.pop({'response': 'response from first screen'});
                   },
-                  child: Text('push native main'))
+                  child: Text('back with map data')),
+              TextButton(
+                  onPressed: () {
+                    Muffin.pop();
+                  },
+                  child: Text('back with no data')),
+              TextButton(
+                  onPressed: () {
+                    Muffin.popUntil(
+                        'MainActivity', {'data': 'data from first screen'});
+                  },
+                  child: Text('Pop until Main')),
             ],
           ),
         ),

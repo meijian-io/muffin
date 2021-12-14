@@ -29,6 +29,7 @@ Future<Widget> getApp() async {
   print(arguments);
 
   return MuffinMaterialApp(
+      notFoundRoute: MuffinPage(name: '/404', page: () => NotFoundPage()),
       routeInformationParser: MuffinInformationParser(
           initialRoute: arguments?['url'], arguments: arguments?['arguments']),
       muffinPages: [
@@ -61,6 +62,23 @@ class _SplashLoadingState extends State<SplashLoading> {
     return Scaffold(
       body: Center(
         child: CupertinoActivityIndicator(),
+      ),
+    );
+  }
+}
+
+class NotFoundPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.red.withOpacity(0.6),
+      body: Container(
+        child: Center(
+          child: Text(
+            '哎哟、没有找到哦',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ),
       ),
     );
   }

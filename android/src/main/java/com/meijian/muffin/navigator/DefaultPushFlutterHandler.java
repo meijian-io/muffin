@@ -10,7 +10,14 @@ import java.util.HashMap;
  */
 public class DefaultPushFlutterHandler implements PushFlutterHandler {
   @Override public String getPath(Uri uri) {
-    return "/" + uri.getQueryParameter("url");
+    String url = uri.getQueryParameter("url");
+    if (url == null) {
+      url = "/";
+    }
+    if (!url.startsWith("/")) {
+      url = "/" + url;
+    }
+    return url;
   }
 
   @Override public HashMap<String, Object> getArguments(Uri uri) {

@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -37,7 +38,7 @@ public class MainActivity extends Activity {
       arguments.put("count", 1);
       arguments.put("desc", "This is cool");
       arguments.put("good", true);
-      MuffinNavigator.push("/first", arguments);
+      MuffinNavigator.push("/home/first", arguments);
     });
 
     findViewById(R.id.first_result).setOnClickListener(view -> {
@@ -45,17 +46,18 @@ public class MainActivity extends Activity {
       arguments.put("count", 1);
       arguments.put("desc", "This is cool");
       arguments.put("good", true);
-      MuffinNavigator.pushForResult("/first", arguments, 101);
+      MuffinNavigator.pushForResult("/home/first", arguments, 101);
     });
 
-
     findViewById(R.id.open_with_uri).setOnClickListener(view -> {
-      MuffinNavigator.push(Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
+      MuffinNavigator.push(Uri.parse("meijianclient://meijian.io?url=/home/first&name=uri_test"));
     });
 
     findViewById(R.id.open_with_uri_result).setOnClickListener(view -> {
-      MuffinNavigator.pushForResult(Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
+      MuffinNavigator.pushForResult(Uri.parse("meijianclient://meijian.io?url=/home/second/111&name=uri_test"));
     });
+
+    findViewById(R.id.not_found).setOnClickListener(v -> MuffinNavigator.push("/hoome"));
 
     findViewById(R.id.change_basic_info).setOnClickListener(view -> {
           new Thread(new Runnable() {
@@ -82,7 +84,9 @@ public class MainActivity extends Activity {
     super.onActivityResult(requestCode, resultCode, data);
     if (data != null) {
       Log.e("AAA", "requestCode : " + requestCode + "; resultCode : " + resultCode);
-      Log.e("AAA", (data.getSerializableExtra("result")).toString());
+      String result = (data.getSerializableExtra("result")).toString();
+      Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+      Log.e("AAA", result);
     }
   }
 }

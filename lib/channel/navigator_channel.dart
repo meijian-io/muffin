@@ -30,15 +30,15 @@ class NavigatorChannel {
 
   static Future<dynamic> pop(String pageName, [dynamic result]) async {
     // return await _channel.invokeMethod('pop', {'pageName': pageName, 'result': result});
-    final dynamic call =
-        await invokeMethod('pop', {'pageName': pageName, 'result': result});
+    final dynamic call = await invokeMethod(
+        'pop', {'pageName': pageName, 'result': result ?? {}});
     return call;
   }
 
   static Future<dynamic> popUntil(String pageName, [dynamic result]) async {
     // return await _channel.invokeMethod('popUntil', {'pageName': pageName, 'result': result});
     final dynamic call = await invokeMethod(
-        'popUntil', {'pageName': pageName, 'result': result});
+        'popUntil', {'pageName': pageName, 'result': result ?? {}});
     return call;
   }
 
@@ -73,7 +73,9 @@ class NavigatorChannel {
   static Future<dynamic> invokeMethod(String key, [dynamic value]) async {
     try {
       return await _channel.invokeMethod(key, value);
-    } catch (e) {
+    } catch (e, s) {
+      print(e);
+      print(s);
       return Muffin.onMockFunc(key, value);
     }
   }

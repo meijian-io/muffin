@@ -8,22 +8,21 @@ class SecondScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('second page'),
+        actions: [],
+        automaticallyImplyLeading: false,
+        title: Text('Second Page ${Muffin.currentRouteName}'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'This is page',
-            ),
-            Text(
-              'second',
-              style: Theme.of(context).textTheme.headline4,
+              'Get arguments by [Muffin.arguments]',
+              style: Theme.of(context).textTheme.subtitle1,
             ),
             Text(
               '${Muffin.arguments}',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.subtitle1,
             )
           ],
         ),

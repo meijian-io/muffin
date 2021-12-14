@@ -93,6 +93,8 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
   /// pop with arguments
   /// similar to [Navigator.of(context).pop]
   /// same as [popUntil(uris.last)]
+  ///
+  /// 若回到原生去，这里约定了只能传Map，若是对象的话 需要能够在 intent 中传递（TODO support）
   Future<void> pop<T extends Object>([T? result]) async {
     String target = await NavigatorChannel.findPopTarget();
     print('find pop target in native $target');
