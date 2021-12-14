@@ -2,19 +2,25 @@
 **Multiple Flutters In**，基于Flutter2.0多Engine、Navigator2.0实现的一套混合栈管理方案。
    与单Engine的本质区别在于，单Engine模式下pop或者push操作的是同一个Flutter路由，同一个Engine需要attach到不同的FlutterVC上，导致混合栈维护复杂。
    多Engine模式下，Engine是底层spwan的，一个FlutterVC对应一个Engine，每一个FlutterVC中的Flutter路由保证独立，混合栈维护简单，可以实现类似popUntil的功能。
-
 ## 功能
 
 #### Feature
+
+✅  Muffin API 无 `Context`
+
+✅  Flutter 树形结构 路由配置
+
 ✅ `Native push Flutter` 携带参数、获取返回值
 
-✅ 自定义 `PushFlutterHandler` （定义Uri解析）实现 从 Schema 跳转 Flutter
+✅ 自定义 `UrlParser` （定义Uri解析）实现 从 Schema 跳转 Flutter
 
 ✅ `Flutter push Native` 携带参数、获取返回值
 
 ✅ 自定义 `PushNativeHandler`（灵活根据path跳转）
 
 ✅ `Flutter pop` 携带参数
+
+✅ `Flutter popUntil` 携带参数
 
 ✅ 数据同步共享，实现原生 和 `Flutter` 一些类数据改变同步
 
@@ -24,12 +30,13 @@
 
 ✅ 支持自定义 `MethodChannel`
 
+✅ 支持 二级路由 配置，比如 `/home/detail`、`/home/first/:id` 携带参数
+
 #### TODO
-❎ `Native`页面路由标记，实现 `popUntil`
 
-❎ 支持 **Web**
+❎ `Native`页面路由标记方式，目前使用Class类名作为path。兼容`ARouter`
 
-❎ 支持 二级路由 配置，比如 `/home/detail`
+❎ 任然 使用 Navigator API 可能会遇到问题
 
 ## API
 
@@ -44,8 +51,13 @@ Map<String, Object> arguments = new HashMap<>();
 arguments.put("count", 1);
 MuffinNavigator.push("/first",arguments);
 
-//push Uri
-MuffinNavigator.push(Uri.parse("meijianclient://meijian.io?url=first&name=uri_test"));
+//push scheme
+MuffinNavigator.push("meijianclient://meijian.io?url=first&name=uri_test");
+
+//push scheme 携带参数，将会拼接 query 参数
+Map<String, Object> arguments = new HashMap<>();
+arguments.put("count", 1);
+MuffinNavigator.push("meijianclient://meijian.io?url=first&name=uri_test");
 
 //对应都有pushForResult API
 @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -63,25 +75,26 @@ MuffinNavigator.push(Uri.parse("meijianclient://meijian.io?url=first&name=uri_te
 ```dart
 //与平常使用的NavigatorAPI一样
 //pushNamed
-MuffinNavigator.of(context).pushNamed('/second',{'data': "data from Home Screen"});
+Muffin.pushNamed('/second',{'data': "data from Home Screen"});
 
 //获取返回值 使用 await 即可 
 ```
+
 
 **Flutter push Native**
 ```dart
 //将页面路径和参数传递到原生，原生根据参数跳转，可以通过ARouter，可以if else 判断 等
 //pushNamed
-MuffinNavigator.of(context).pushNamed('/native_main',{'data': "data from Home Screen"});
+Muffin.pushNamed('/native_main',{'data': "data from Home Screen"});
 ```
 
 **Flutter pop**
 ```dart
 //pop
-MuffinNavigator.of(context).pop({'data': "data from Home Screen"});
+Muffin.pop({'data': "data from Home Screen"});
 
 //TODO popUntil
-MuffinNavigator.of(context).popUntil('/first', {'data': "data from Home Screen"});
+Muffin.popUntil('/first', {'data': "data from Home Screen"});
 ```
 
 **数据同步**
@@ -101,7 +114,7 @@ MuffinNavigator.of(context).popUntil('/first', {'data': "data from Home Screen"}
 //在Flutter初始化时 配置 mock 数据
 
 /// getArguments：事件名，（key，value）：（事件名，参数）=> dynamic(具体类型)
-Muffin.instance.addMock(MockConfig('getArguments', (key, value) => {}));
+Muffin.addMock(MockConfig('getArguments', (key, value) => {}));
 ```
 
 ## Android 接入Muffin
@@ -114,37 +127,60 @@ Muffin.instance.addMock(MockConfig('getArguments', (key, value) => {}));
      ///确保channel初始化  
      WidgetsFlutterBinding.ensureInitialized();
      ///如果需要数据同步，则添加下面的代码，将原生的数据同步到Flutter侧
-     await Share.instance.init([BasicInfo.instance]);
+     await Muffin.initShare([BasicInfo.instance]);
      ///添加 channel method mock
-     Muffin.instance.addMock(MockConfig('someMethod', (key, value) => {}));
+     Muffin.addMock(MockConfig('someMethod', (key, value) => {}));
      ///get Navigator Widget
      runApp(await getApp());
     }
 
-    Future<Widget> getApp() async {
-     ///初始化 Navigator，配置页面路由信息
-     ///initRoute参数：在单独运行时可以配置打开默认的页面
-     ///initArguments参数：在单独运行时可以配置打开默认的页面参数
-     ///emptyWidget参数：在跳转时没有找对应的页面，则显示定义的空页面
-     final navigator = MuffinNavigator(routes: {
-       '/home': (arguments) => MuffinRoutePage(child: HomeScreen()),
-       '/first': (arguments) => MuffinRoutePage(
-            child: FirstScreen(
-          arguments: arguments,
-        ))
-    },
-        initRoute:'/',
-        initArguments:{},
-        emptyWidget: CustomEmptyView()
-    );
-    return MaterialApp.router(
-      ///路由解析  
-      routeInformationParser: MuffinInformationParser(navigator: navigator),
-      routerDelegate: navigator,
-      ///系统返回键监听
-      backButtonDispatcher: MuffinBackButtonDispatcher(navigator: navigator),
-   );
+  ///get a App with dif initialRoute
+  Future<Widget> getApp() async {
+   ///从原生跳转到Flutter第一次，需要的一些参数 
+   var arguments = await NavigatorChannel.arguments;
+
+   return MuffinMaterialApp(
+      notFoundRoute: MuffinPage(name: '/404', page: () => NotFoundPage()),
+      ///自定义Parser
+      routeInformationParser: MuffinInformationParser(MeiJianUrlParser(),
+          initialRoute: arguments.path, arguments: arguments.arguments),
+      ///路由树  
+      muffinPages: [
+        /// /home/first and /home/second
+        MuffinPage(name: '/home', page: () => HomeScreen(), children: [
+          MuffinPage(
+            name: '/first',
+            page: () => FirstScreen(),
+          ),
+          MuffinPage(name: '/second/:id', page: () => SecondScreen()),
+        ])
+      ]);
+}
+///自定义Schema 解析
+class MeiJianUrlParser extends UrlParser {
+  @override
+  Map<String, String> getParams(Uri uri) {
+    Map<String, String> params = Map.from(uri.queryParameters);
+    params.remove('url');
+    return params;
   }
+
+  @override
+  String getPath(Uri uri) {
+    if (uri.host.isEmpty) {
+      return uri.path;
+    }
+    String path = uri.queryParameters['url']!;
+    if (path.isEmpty) {
+      path = "/";
+    }
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
+    return path;
+  }
+}
+
 
 3.原生，在Applocation中初始化 Muffin
    //普通初始化，第二个参数为 各种提供给上层的接口实现
@@ -164,8 +200,6 @@ Muffin.instance.addMock(MockConfig('getArguments', (key, value) => {}));
         activity.startActivity(intent);
       }
     })
-    //Native Uri 类型跳转到 Flutter 接口，可参考默认实现
-    .setPushFlutterHandler(new DefaultPushFlutterHandler())
     //带有数据同步能力
     .setModels(models)
     //新增自定义VC，使用【MuffinFlutterFragment】, 参考[BaseFlutterActivity]
@@ -175,6 +209,21 @@ Muffin.instance.addMock(MockConfig('getArguments', (key, value) => {}));
 4.在 Manifest.xml文件中配置 FlutterActivity  
 5. 好了，Muffin已经集成完了。
 ```
+
+## 补充
+### Flutter页面获取参数
+```
+老旧的方式，是在混合栈路由配置时，作为参数传递到对应的页面，新的方式 汲取了 Getx的经验，可以直接使用 Muffin 的API获取
+参考 first.dart
+
+  Text('Get arguments by [Muffin.arguments]',
+        style: Theme.of(context).textTheme.subtitle1,),
+
+  ///Muffin.arguments 
+  Text('${Muffin.arguments}',
+        style: Theme.of(context).textTheme.subtitle1, ),
+```
+
 
 ## 时序图 /结构图
 
