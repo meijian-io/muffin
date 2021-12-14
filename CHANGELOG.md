@@ -1,3 +1,5 @@
-## 0.0.1
+## 1.0.0
 
-* TODO: Describe initial release.
+* 简化Muffin API
+* 优化路由结构
+* 支持多级路由
