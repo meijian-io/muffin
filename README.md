@@ -120,7 +120,7 @@ Muffin.addMock(MockConfig('getArguments', (key, value) => {}));
 ## Android 接入Muffin
 ```dart
 1.在Flutter项目中添加依赖 
- muffin: ^0.0.1
+ muffin: ^1.0.0
  
 2.路由配置&&数据共享配置&&各种配置
    void main() async {
