@@ -2,6 +2,14 @@ import 'package:flutter/services.dart';
 import 'package:muffin/core/muffin_main.dart';
 import 'package:muffin/muffin.dart';
 
+class InitArgument {
+  final String path;
+
+  final Map<String, Object> arguments;
+
+  InitArgument(this.path, this.arguments);
+}
+
 /// 与原生路由交互渠道
 /// 1.[getArguments] from native when open a Flutter page.
 class NavigatorChannel {
@@ -9,10 +17,12 @@ class NavigatorChannel {
 
   static MethodChannel get channel => _channel;
 
-  static Future<Map<String, dynamic>?> get arguments async {
+  static Future<InitArgument> get arguments async {
     // final dynamic arguments = await _channel.invokeMethod('getArguments');
     final dynamic arguments = await invokeMethod('getArguments');
-    return Map.from(arguments);
+    String path = arguments['url'];
+    Map<String, Object> params = Map.from(arguments['arguments']);
+    return InitArgument(path, params);
   }
 
   static Future<dynamic> get url async {

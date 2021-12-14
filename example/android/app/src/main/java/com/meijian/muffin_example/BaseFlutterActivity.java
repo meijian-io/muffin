@@ -1,6 +1,5 @@
 package com.meijian.muffin_example;
 
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -29,7 +28,7 @@ public class BaseFlutterActivity extends FragmentActivity implements BindingProv
     setContentView(R.layout.flutter_fragment_page);
 
     flutterFragment = new MuffinFlutterFragment.MuffinFlutterFragmentBuilder(MuffinFlutterFragment.class)
-        .setPageName(getPageName()).setArguments(getArguments()).setInitUri(getUri()).build();
+        .setPageName(getPageName()).setArguments(getArguments()).build();
 
     getSupportFragmentManager()
         .beginTransaction()
@@ -59,13 +58,6 @@ public class BaseFlutterActivity extends FragmentActivity implements BindingProv
       customChannel.setMethodCallHandler(null);
     }
     super.onDestroy();
-  }
-
-  @Override public Uri getUri() {
-    if (getIntent().hasExtra(URI)) {
-      return (Uri) getIntent().getParcelableExtra(URI);
-    }
-    return null;
   }
 
   @Override public String getPageName() {

@@ -50,11 +50,15 @@ public class MainActivity extends Activity {
     });
 
     findViewById(R.id.open_with_uri).setOnClickListener(view -> {
-      MuffinNavigator.push(Uri.parse("meijianclient://meijian.io?url=/home/first&name=uri_test"));
+      MuffinNavigator.push("meijianclient://meijian.io?url=/home/first&name=uri_test");
     });
 
     findViewById(R.id.open_with_uri_result).setOnClickListener(view -> {
-      MuffinNavigator.pushForResult(Uri.parse("meijianclient://meijian.io?url=/home/second/111&name=uri_test"));
+      Map<String, Object> arguments = new HashMap<>();
+      arguments.put("count", 1);
+      arguments.put("desc", "This is cool");
+      arguments.put("good", true);
+      MuffinNavigator.pushForResult("meijianclient://meijian.io?url=/home/second/111&name=uri_test", arguments);
     });
 
     findViewById(R.id.not_found).setOnClickListener(v -> MuffinNavigator.push("/hoome"));

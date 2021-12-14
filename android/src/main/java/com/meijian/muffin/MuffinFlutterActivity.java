@@ -29,21 +29,16 @@ public class MuffinFlutterActivity extends FlutterActivity implements BindingPro
 
   @SuppressWarnings("unchecked") @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
-    if (getUri() == null && getPageName() == null) {
-      throw new RuntimeException("FlutterActivity mast has 'pageName' or 'Uri'");
+    if (getPageName() == null) {
+      throw new RuntimeException("FlutterActivity mast has 'pageName'");
     }
-    if (getUri() != null) {
-      engineBinding = new EngineBinding(this, getUri());
+    String pageName = getPageName();
+    Map<String, Object> arguments = getArguments();
+    if (arguments == null) {
+      engineBinding = new EngineBinding(this, pageName);
     } else {
-      String pageName = getPageName();
-      Map<String, Object> arguments = getArguments();
-      if (arguments == null) {
-        engineBinding = new EngineBinding(this, pageName);
-      } else {
-        engineBinding = new EngineBinding(this, pageName, arguments);
-      }
+      engineBinding = new EngineBinding(this, pageName, arguments);
     }
-
     super.onCreate(savedInstanceState);
     //FlutterEngine attach, set method channel
     engineBinding.attach();
@@ -70,13 +65,6 @@ public class MuffinFlutterActivity extends FlutterActivity implements BindingPro
 
   @Override public void provideMethodChannel(BinaryMessenger messenger) {
 
-  }
-
-  @Override public Uri getUri() {
-    if (getIntent().hasExtra(URI)) {
-      return (Uri) getIntent().getParcelableExtra(URI);
-    }
-    return null;
   }
 
   @Override public String getPageName() {

@@ -71,27 +71,4 @@ public class MuffinNavigator {
     intent.putExtra(MuffinFlutterActivity.ARGUMENTS, (Serializable) arguments);
     context.startActivity(intent);
   }
-
-  public static void push(Uri uri) {
-    Activity context = NavigatorStackManager.getInstance().getTopActivity();
-    Intent intent = new Intent(context, Muffin.getInstance().getAttachVc());
-    intent.putExtra(MuffinFlutterActivity.URI, uri);
-    context.startActivity(intent);
-  }
-
-
-  public static void pushForResult(Uri uri) {
-    Activity context = NavigatorStackManager.getInstance().getTopActivity();
-    Intent intent = new Intent(context, Muffin.getInstance().getAttachVc());
-    intent.putExtra(MuffinFlutterActivity.URI, uri);
-    context.startActivityForResult(intent, MuffinFlutterActivity.REQUEST_CODE);
-  }
-
-  public static void pushForResult(Uri uri, int requestCode) {
-    Activity context = NavigatorStackManager.getInstance().getTopActivity();
-    Intent intent = new Intent(context, Muffin.getInstance().getAttachVc());
-    intent.putExtra(MuffinFlutterActivity.URI, uri);
-    context.startActivityForResult(intent, requestCode);
-  }
-
 }

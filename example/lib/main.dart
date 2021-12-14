@@ -30,8 +30,8 @@ Future<Widget> getApp() async {
 
   return MuffinMaterialApp(
       notFoundRoute: MuffinPage(name: '/404', page: () => NotFoundPage()),
-      routeInformationParser: MuffinInformationParser(
-          initialRoute: arguments?['url'], arguments: arguments?['arguments']),
+      routeInformationParser: MuffinInformationParser(MeiJianUrlParser(),
+          initialRoute: arguments.path, arguments: arguments.arguments),
       muffinPages: [
         /// /home/first and /home/second
         MuffinPage(name: '/home', page: () => HomeScreen(), children: [
@@ -81,5 +81,29 @@ class NotFoundPage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class MeiJianUrlParser extends UrlParser {
+  @override
+  Map<String, String> getParams(Uri uri) {
+    Map<String, String> params = Map.from(uri.queryParameters);
+    params.remove('url');
+    return params;
+  }
+
+  @override
+  String getPath(Uri uri) {
+    if (uri.host.isEmpty) {
+      return uri.path;
+    }
+    String path = uri.queryParameters['url']!;
+    if (path.isEmpty) {
+      path = "/";
+    }
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
+    return path;
   }
 }

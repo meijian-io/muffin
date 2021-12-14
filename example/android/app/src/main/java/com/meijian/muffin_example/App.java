@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 
 import com.meijian.muffin.Muffin;
-import com.meijian.muffin.navigator.DefaultPushFlutterHandler;
 import com.meijian.muffin.sharing.DataModelChangeListener;
 
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ public class App extends Application {
           }
         })
         .setModels(models)
-        .setPushFlutterHandler(new DefaultPushFlutterHandler())
         .setAttachVc(BaseFlutterActivity.class);
   }
 }

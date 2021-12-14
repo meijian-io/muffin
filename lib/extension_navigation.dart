@@ -21,6 +21,7 @@ extension MuffinNavigation on MuffinInterface {
   MuffinInformationParser createInformationParser({String initialRoute = '/'}) {
     if (routeInformationParser == null) {
       return routeInformationParser = MuffinInformationParser(
+        DefaultUrlParser(),
         initialRoute: initialRoute,
       );
     } else {

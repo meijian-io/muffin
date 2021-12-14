@@ -1,7 +1,6 @@
 package com.meijian.muffin;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,7 +23,7 @@ import io.flutter.embedding.engine.FlutterEngine;
  * 这些能力一般来自于原生CommonActivity, 那么所打开的Activity必须继承CommonActivity而不能继承 MuffinFlutterActivity
  * 那么就可能需要使用到 MuffinFlutterFragment，导致的冲突就是 NavigatorStack host 为 [Activity] 而不是[Fragment]
  * 从而给框架带来影响
- *
+ * <p>
  * MuffinFlutterFragment 导致flutter 返回键监听无法使用
  * 参考 BaseFlutterActivity 实现
  */
@@ -41,20 +40,18 @@ public class MuffinFlutterFragment extends FlutterFragment {
     if (getArguments() == null) {
       return;
     }
-    if (getArguments().getString(PAGE_NAME) == null && getArguments().getParcelable(URI) == null) {
-      throw new RuntimeException("FlutterFragment mast has 'pageName' or 'Uri'");
+    if (getArguments().getString(PAGE_NAME) == null) {
+      throw new RuntimeException("FlutterFragment mast has 'pageName'");
     }
-    if (getArguments().getParcelable(URI) != null) {
-      engineBinding = new EngineBinding(getActivity(), (Uri) getArguments().getParcelable(URI));
+
+    String pageName = getArguments().getString(PAGE_NAME);
+    Map<String, Object> arguments = (Map<String, Object>) getArguments().getSerializable(ARGUMENTS);
+    if (arguments == null) {
+      engineBinding = new EngineBinding(getActivity(), pageName);
     } else {
-      String pageName = getArguments().getString(PAGE_NAME);
-      Map<String, Object> arguments = (Map<String, Object>) getArguments().getSerializable(ARGUMENTS);
-      if (arguments == null) {
-        engineBinding = new EngineBinding(getActivity(), pageName);
-      } else {
-        engineBinding = new EngineBinding(getActivity(), pageName, arguments);
-      }
+      engineBinding = new EngineBinding(getActivity(), pageName, arguments);
     }
+
     //FlutterEngine attach, set method channel
     engineBinding.attach();
     super.onAttach(context);
@@ -70,7 +67,6 @@ public class MuffinFlutterFragment extends FlutterFragment {
 
   public static class MuffinFlutterFragmentBuilder extends FlutterFragment.NewEngineFragmentBuilder {
 
-    private Uri initUri ;
     private String pageName = "/";
     private Map<String, Object> arguments = new HashMap<>();
 
@@ -79,10 +75,6 @@ public class MuffinFlutterFragment extends FlutterFragment {
       super(subclass);
     }
 
-    public MuffinFlutterFragmentBuilder setInitUri(Uri initUri) {
-      this.initUri = initUri;
-      return this;
-    }
 
     public MuffinFlutterFragmentBuilder setPageName(String pageName) {
       this.pageName = pageName;
@@ -96,7 +88,6 @@ public class MuffinFlutterFragment extends FlutterFragment {
 
     @NonNull @Override protected Bundle createArgs() {
       Bundle bundle = super.createArgs();
-      bundle.putParcelable(URI, this.initUri);
       bundle.putString(PAGE_NAME, this.pageName);
       bundle.putSerializable(ARGUMENTS, (Serializable) this.arguments);
       return bundle;

@@ -19,8 +19,6 @@ public interface BindingProvider {
 
   void provideMethodChannel(BinaryMessenger messenger);
 
-  Uri getUri();
-
   String getPageName();
 
   Map<String, Object> getArguments();

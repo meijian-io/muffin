@@ -20,7 +20,7 @@ public class SecondActivity extends Activity implements PathProvider {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_second);
 
-    findViewById(R.id.first).setOnClickListener(v -> MuffinNavigator.push("main"));
+    findViewById(R.id.first).setOnClickListener(v -> MuffinNavigator.push("/home"));
   }
 
   @Override public String getPath() {
