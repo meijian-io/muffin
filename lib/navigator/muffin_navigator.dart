@@ -1,3 +1,4 @@
+/**
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:muffin/channel/navigator_channel.dart';
@@ -80,30 +81,6 @@ class MuffinNavigator extends RouterDelegate<RouteConfig>
   }
 }
 
-class MuffinInformationParser extends RouteInformationParser<RouteConfig> {
-  final MuffinNavigator navigator;
-
-  MuffinInformationParser({required this.navigator});
-
-  @override
-  Future<RouteConfig> parseRouteInformation(
-      RouteInformation routeInformation) async {
-    ///一般在APP中，系统Navigator的初始路由都是 '/'， 但在浏览器中可能通过修改地址栏重新回调次方法，且路由不为'/'
-    ///TODO 兼容 Web 浏览器 路由
-
-    dynamic arguments = await NavigatorChannel.arguments;
-    String initRoute = arguments['url'] ?? navigator.initRoute;
-    dynamic initArguments = arguments['arguments'] ?? navigator.initArguments;
-    print('open flutter , init route $initRoute , arguments $arguments');
-    return RouteConfig(path: initRoute, arguments: initArguments);
-  }
-
-  @override
-  RouteInformation? restoreRouteInformation(RouteConfig configuration) {
-    RouteInformation(
-        location: configuration.path, state: configuration.arguments);
-  }
-}
 
 ///监听系统返回事件
 class MuffinBackButtonDispatcher extends RootBackButtonDispatcher {
@@ -125,3 +102,4 @@ class MuffinBackButtonDispatcher extends RootBackButtonDispatcher {
     return super.didPopRoute();
   }
 }
+*/

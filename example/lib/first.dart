@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:muffin/navigator/muffin_navigator.dart';
+import 'package:muffin/core/muffin_main.dart';
+import 'package:muffin/muffin.dart';
 
 class FirstScreen extends StatelessWidget {
-  final dynamic arguments;
-
   const FirstScreen({
     Key? key,
-    this.arguments,
   }) : super(key: key);
 
   @override
@@ -18,35 +16,41 @@ class FirstScreen extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('First page'),
+          title: Text('First Page ${Muffin.currentRouteName}'),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'This is page',
+                'Get arguments by [Muffin.arguments]',
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Text(
-                'first',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              Text(
-                '$arguments',
-                style: Theme.of(context).textTheme.headline4,
+                '${Muffin.arguments}',
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               TextButton(
                   onPressed: () {
-                    MuffinNavigator.of(context)
-                        .pop({'data': 'response from first screen'});
+                    Muffin.pop('response from first screen');
                   },
                   child: Text('back with data')),
               TextButton(
                   onPressed: () {
-                    MuffinNavigator.of(context).pushNamed(
-                        "/main", {'data': 'response from first screen'});
+                    Muffin.pop({'response': 'response from first screen'});
                   },
-                  child: Text('push native main'))
+                  child: Text('back with map data')),
+              TextButton(
+                  onPressed: () {
+                    Muffin.pop();
+                  },
+                  child: Text('back with no data')),
+              TextButton(
+                  onPressed: () {
+                    Muffin.popUntil(
+                        'MainActivity', {'data': 'data from first screen'});
+                  },
+                  child: Text('Pop until Main')),
             ],
           ),
         ),

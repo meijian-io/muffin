@@ -85,7 +85,7 @@
         android:layout_marginTop="16dp"
         android:background="#FF8966"
         android:padding="16dp"
-        android:text="Flutter /second \n使用 Uri"
+        android:text=" /home/first \n使用 Uri"
         />
 
     <TextView
@@ -96,9 +96,36 @@
         android:layout_marginTop="16dp"
         android:background="#FF8966"
         android:padding="16dp"
-        android:text="Flutter /second \n使用 Uri 返回值"
+        android:text="/home/second \n使用 Uri 返回值"
         />
   </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
+    <TextView
+        android:id="@+id/not_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="#FF8966"
+        android:padding="16dp"
+        android:text="Custom Not Found Page"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="#FF8966"
+        android:padding="16dp"
+        android:text=""
+        />
+  </LinearLayout>
+
 
   <TextView
       android:id="@+id/change_basic_info"

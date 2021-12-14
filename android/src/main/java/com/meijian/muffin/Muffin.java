@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 
 import com.meijian.muffin.engine.BindingProvider;
 import com.meijian.muffin.engine.EngineGroupCache;
-import com.meijian.muffin.navigator.DefaultPushFlutterHandler;
 import com.meijian.muffin.navigator.NavigatorStackManager;
 import com.meijian.muffin.navigator.PushFlutterHandler;
 import com.meijian.muffin.navigator.PushNativeHandler;
@@ -35,7 +34,6 @@ public class Muffin {
 
   private PushNativeHandler nativeHandler;
 
-  private PushFlutterHandler flutterHandler;
 
   private Class<? extends BindingProvider> attachVc;
 
@@ -52,7 +50,6 @@ public class Muffin {
       Class<? extends BindingProvider> attachVc) {
     this.models = dataModels;
     this.nativeHandler = handler;
-    this.flutterHandler = flutterHandler == null ? new DefaultPushFlutterHandler() : flutterHandler;
     this.attachVc = attachVc;
   }
 
@@ -105,9 +102,6 @@ public class Muffin {
     return nativeHandler;
   }
 
-  public PushFlutterHandler getFlutterHandler() {
-    return flutterHandler;
-  }
 
   public static class Options {
 

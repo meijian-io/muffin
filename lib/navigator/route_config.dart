@@ -1,13 +1,18 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:muffin/navigator/page_route.dart';
 
-///类似[RouteSettings]
+///App 路由 页面的 配置信息，[MuffinRouterDelegate]，根据[currentPage] rebuild Navigator
 ///[Router]中每个[Route] 页面 配置信息
-///之所以自定义，是因为之后可能对 [path] 的解析可能不同，每个使用者也可能不同
-///TODO 提供一个 Decoder 给外部调用
-class RouteConfig {
-  final String? path;
+class RouteConfig extends RouteInformation {
+  final List<MuffinPage> currentTreeBranch;
 
-  final dynamic arguments;
+  ///正在或将要显示的 page，最终回调用[MuffinPageRoute]的 build 方法
+  MuffinPage? get currentPage =>
+      currentTreeBranch.isEmpty ? null : currentTreeBranch.last;
 
-  RouteConfig({this.path, this.arguments});
+  RouteConfig({
+    required this.currentTreeBranch,
+    required String? location,
+    required Object? state,
+  }) : super(location: location, state: state);
 }

@@ -34,12 +34,6 @@ public class EngineBinding implements PropertyChangeListener {
     this(context, pageName, null);
   }
 
-  public EngineBinding(Activity context, Uri uri) {
-    this(context,
-        Muffin.getInstance().getFlutterHandler().getPath(uri),
-        Muffin.getInstance().getFlutterHandler().getArguments(uri));
-  }
-
   public EngineBinding(final Activity context, final String pageName, final Map<String, Object> arguments) {
     flutterEngine = Muffin.getInstance().getEngineGroup().createAndRunEngine(context, "main");
     methodChannel = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "muffin_navigate");
