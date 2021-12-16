@@ -9,10 +9,11 @@ import 'core/parse_route.dart';
 import 'navigator/information_parser.dart';
 
 extension MuffinNavigation on MuffinInterface {
-  MuffinRouterDelegate createDelegate({MuffinPage<dynamic>? notFoundRoute}) {
+  MuffinRouterDelegate createDelegate(
+      {MuffinPage<dynamic>? notFoundRoute, required bool multiple}) {
     if (routerDelegate == null) {
-      return routerDelegate =
-          MuffinRouterDelegate(notFoundRoute: notFoundRoute);
+      return routerDelegate = MuffinRouterDelegate(
+          notFoundRoute: notFoundRoute, multiple: multiple);
     } else {
       return routerDelegate as MuffinRouterDelegate;
     }

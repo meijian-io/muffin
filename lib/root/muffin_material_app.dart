@@ -9,6 +9,7 @@ class MuffinMaterialApp extends StatelessWidget {
   final RouteInformationProvider? routeInformationProvider;
   final MuffinPage? notFoundRoute;
   final List<MuffinPage>? muffinPages;
+  final bool? multiple;
 
   MuffinMaterialApp(
       {Key? key,
@@ -17,9 +18,10 @@ class MuffinMaterialApp extends StatelessWidget {
       this.backButtonDispatcher,
       this.routeInformationProvider,
       required this.muffinPages,
+      this.multiple = true,
       this.notFoundRoute})
-      : routerDelegate = routerDelegate ??=
-            Muffin.createDelegate(notFoundRoute: notFoundRoute),
+      : routerDelegate = routerDelegate ??= Muffin.createDelegate(
+            notFoundRoute: notFoundRoute, multiple: multiple!),
         routeInformationParser =
             routeInformationParser ??= Muffin.createInformationParser(),
         super(key: key) {

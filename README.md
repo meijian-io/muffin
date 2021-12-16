@@ -140,6 +140,8 @@ Muffin.addMock(MockConfig('getArguments', (key, value) => {}));
    var arguments = await NavigatorChannel.arguments;
 
    return MuffinMaterialApp(
+      ///标识当前是否为混合模式；纯Flutter模式将不会走混合栈通信；默认为true
+      multiple:false,
       notFoundRoute: MuffinPage(name: '/404', page: () => NotFoundPage()),
       ///自定义Parser
       routeInformationParser: MuffinInformationParser(MeiJianUrlParser(),

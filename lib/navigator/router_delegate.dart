@@ -17,11 +17,12 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
   final List<RouteConfig> _history = <RouteConfig>[];
 
   final MuffinPage notFoundRoute;
+  final bool multiple;
 
   ///callbacks, use for push async and pop with result
   final Map<RouteConfig, Completer<dynamic>> _callbacks = {};
 
-  MuffinRouterDelegate({MuffinPage? notFoundRoute})
+  MuffinRouterDelegate({MuffinPage? notFoundRoute, required this.multiple})
       : notFoundRoute = notFoundRoute ??
             MuffinPage(
                 name: '/404',
@@ -60,6 +61,17 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     return Navigator(
       key: navigatorKey,
       pages: pages,
+      onPopPage: (route, result) {
+        ///监听Navigator pop 只有触发 [Navigator.pop]时才会回调，一般为material下的默认导航返回
+        if (!route.didPop(result)) {
+          return false;
+        }
+        if (_canPop()) {
+          pop(result);
+          return true;
+        }
+        return false;
+      },
     );
   }
 
@@ -68,6 +80,10 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     final currentHistory = currentConfiguration;
     if (currentHistory == null) return <MuffinPage>[];
     return _history.map((e) => e.currentPage!).toList();
+  }
+
+  bool _canPop() {
+    return _history.length > 1;
   }
 
   ///[Router.backButtonDispatcher]，系统返回按钮回调
@@ -86,6 +102,11 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       return true;
     }
     print('pop route, remove top route and notifyListeners');
+
+    ///如果在单独运行的情况下，只剩余一个页面，那么就让系统消费
+    if (!_canPop() && !multiple) {
+      return false;
+    }
     await pop(result);
     return true;
   }
@@ -96,8 +117,16 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
   ///
   /// 若回到原生去，这里约定了只能传Map，若是对象的话 需要能够在 intent 中传递（TODO support）
   Future<void> pop<T extends Object>([T? result]) async {
-    String target = await NavigatorChannel.findPopTarget();
-    print('find pop target in native $target');
+    ///混合模式，从Native获取需要pop到的页面
+    String target;
+    if (multiple) {
+      target = await NavigatorChannel.findPopTarget();
+      print('find pop target in native $target');
+    } else {
+      ///从flutter获取即可
+      target = findTargetInCurrentRoute();
+      print('find pop target in flutter $target');
+    }
     if (target == '') {
       /// not find target in native,it's not 'multiple' mode, find in Flutter
       if (_history.length <= 1) {
@@ -137,7 +166,9 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
     }
 
     /// multiply flutters should chat with native
-    await NavigatorChannel.popUntil(target, result);
+    if (multiple) {
+      await NavigatorChannel.popUntil(target, result);
+    }
   }
 
   bool foundInCurrentRoutes(String path) {
@@ -148,6 +179,13 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       }
     }
     return foundMatching;
+  }
+
+  String findTargetInCurrentRoute() {
+    if (_history.length > 1) {
+      return _history[_history.length - 2].currentPage!.name;
+    }
+    return '/';
   }
 
   Future<bool> handlePopupRoutes({
@@ -182,7 +220,9 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
 
   Future<void> _unsafeHistoryAdd(RouteConfig config) async {
     _history.add(config);
-    await NavigatorChannel.syncFlutterStack(config.currentPage!.name);
+    if (multiple) {
+      await NavigatorChannel.syncFlutterStack(config.currentPage!.name);
+    }
   }
 
   Future<T> pushNamed<T>(
@@ -215,8 +255,11 @@ class MuffinRouterDelegate extends RouterDelegate<RouteConfig>
       await _pushHistory(routeConfig);
     } else {
       /// found in native
-      bool find = await NavigatorChannel.pushNamed(page, arguments);
-      print('not found in Flutter, find int native $find');
+      bool find = false;
+      if (multiple) {
+        find = await NavigatorChannel.pushNamed(page, arguments);
+        print('not found in Flutter, find int native $find');
+      }
       if (!find) {
         ///will show not found
         RouteConfig notFound = RouteConfig(
